@@ -41,6 +41,7 @@ export function ControlSelector({ type, onChange }: ControlSelectorProps) {
         onChange={(e) => onChange(e.target.value as ControlType)}
         className="bg-transparent border border-gray-300 dark:border-gray-700 rounded-md px-2 py-1 text-black dark:text-white"
       >
+                <option value="dragFPS" className="bg-white dark:bg-black text-black dark:text-white">Drag FPS Controls</option>
         <option value="orbit" className="bg-white dark:bg-black text-black dark:text-white">Orbit Controls</option>
         {/* <option value="trackball" className="bg-white dark:bg-black text-black dark:text-white">Trackball Controls</option>
         <option value="firstPerson" className="bg-white dark:bg-black text-black dark:text-white">First Person Controls</option>
@@ -50,7 +51,6 @@ export function ControlSelector({ type, onChange }: ControlSelectorProps) {
         <option value="pointerLock" className="bg-white dark:bg-black text-black dark:text-white">Pointer Lock Controls</option>
         <option value="transform" className="bg-white dark:bg-black text-black dark:text-white">Transform Controls</option>
         <option value="arcball" className="bg-white dark:bg-black text-black dark:text-white">Arcball Controls</option> */}
-        <option value="dragFPS" className="bg-white dark:bg-black text-black dark:text-white">Drag FPS Controls</option>
       </select>
     </div>
   );
