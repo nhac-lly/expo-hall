@@ -30,7 +30,7 @@ type GLTFResult = GLTF & {
 export function Model(props: JSX.IntrinsicElements['group']) {
   const { nodes, materials } = useGLTF('VR/sankhau-transformed.glb') as unknown as GLTFResult
   return (
-    <group {...props} dispose={null}>
+    <group {...props} dispose={null} scale={[2, 2, 2]}>
       <mesh geometry={nodes.texture.geometry} material={materials['Material.002']} position={[1.471, 0.176, 1.227]} rotation={[Math.PI / 2, 0, 0]} scale={[0.018, 0.09, 0.018]} />
       <mesh geometry={nodes.ghe.geometry} material={materials.PaletteMaterial001} />
       <mesh geometry={nodes.KV_LED_1.geometry} material={materials['KV LED']} />

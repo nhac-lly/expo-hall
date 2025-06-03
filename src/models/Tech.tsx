@@ -253,4 +253,4 @@ export function Model(props: JSX.IntrinsicElements['group']) {
   )
 }
 
-useGLTF.preload('/VR/tech/tech-transformed.glb')
+useGLTF.preload('/VR/tech-transformed.glb')

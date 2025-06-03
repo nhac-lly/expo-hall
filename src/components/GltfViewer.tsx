@@ -370,6 +370,17 @@ const CameraManager = ({
   const mouseDownPoint = useRef<THREE.Vector3 | null>(null);
   const cameraBody = useRef<any>(null);
 
+  // Add Leva controls for character height
+  const { characterHeight } = useControls({
+    characterHeight: {
+      value: 1.7,
+      min: 1,
+      max: 2,
+      step: 0.1,
+      label: 'Character Height'
+    }
+  });
+
   // Function to stop camera movement
   const stopCameraMovement = () => {
     if (isMoving) {
@@ -380,7 +391,7 @@ const CameraManager = ({
   // Move camera to a specific position
   const moveCamera = (position: [number, number, number]) => {
     console.log('moveCamera called with position:', position);
-    const newTargetPosition = new THREE.Vector3(position[0], position[1], position[2]);
+    const newTargetPosition = new THREE.Vector3(position[0], characterHeight, position[2]);
     const newId = targetIdCounter.current++;
     setTargetPositions(prev => [...prev, { id: newId, position: newTargetPosition }]);
     setIsMoving(true);
@@ -411,7 +422,7 @@ const CameraManager = ({
       if (isMinimalMovement) {
         const targetPos = new THREE.Vector3(
           event.point.x,
-          1,
+          characterHeight,
           event.point.z
         );
         
