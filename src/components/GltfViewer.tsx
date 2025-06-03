@@ -243,15 +243,25 @@ function CameraPoint({ position, label, onClick }: { position: [number, number, 
 }
 
 // Target position effect component
-const TargetEffect = ({ position }: { position: THREE.Vector3 }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
+const TargetEffect = ({ position, onComplete }: { position: THREE.Vector3, onComplete: () => void }) => {
+  // const meshRef = useRef<THREE.Mesh>(null);
   const [opacity, setOpacity] = useState(1);
+  const [shouldComplete, setShouldComplete] = useState(false);
+
+  useEffect(() => {
+    if (shouldComplete) {
+      onComplete();
+    }
+  }, [shouldComplete, onComplete]);
 
   useEffect(() => {
     // Fade out effect
     const fadeOut = () => {
       setOpacity(prev => {
-        if (prev <= 0) return 0;
+        if (prev <= 0) {
+          setShouldComplete(true);
+          return 0;
+        }
         return prev - 0.02;
       });
     };
@@ -260,31 +270,27 @@ const TargetEffect = ({ position }: { position: THREE.Vector3 }) => {
     return () => clearInterval(interval);
   }, []);
 
-  useFrame((state) => {
-    if (meshRef.current) {
-      // Pulsing effect
-      const time = state.clock.getElapsedTime();
-      const scale = 1 + Math.sin(time * 5) * 0.1;
-      meshRef.current.scale.set(scale, scale, scale);
-    }
-  });
+  // useFrame((state) => {
+  //   if (meshRef.current) {
+  //     // Pulsing effect
+  //     const time = state.clock.getElapsedTime();
+  //     const scale = 1 + Math.sin(time * 5) * 0.1;
+  //     meshRef.current.scale.set(scale, scale, scale);
+  //   }
+  // });
 
   return (
-    <mesh ref={meshRef} position={position}>
-      <sphereGeometry args={[0.5, 32, 32]} />
-      <meshBasicMaterial
-        color="#4a9eff"
-        transparent
-        opacity={opacity}
-      />
+    <mesh 
+    // ref={meshRef} 
+    position={position}>
       {/* Glow effect */}
       <mesh>
-        <sphereGeometry args={[0.7, 32, 32]} />
+        {/* <sphereGeometry args={[0.7, 16, 16]} />
         <meshBasicMaterial
           color="#4a9eff"
           transparent
-          opacity={opacity * 0.3}
-        />
+          opacity={opacity * 0.1}
+        /> */}
       </mesh>
     </mesh>
   );
@@ -355,9 +361,9 @@ const CameraManager = ({
   cameraPositions: Array<{ position: [number, number, number], label: string }>;
 }) => {
   const { camera } = useThree();
-  const [targetPosition, setTargetPosition] = useState<THREE.Vector3 | null>(null);
+  const [targetPositions, setTargetPositions] = useState<Array<{ id: number, position: THREE.Vector3 }>>([]);
   const [isMoving, setIsMoving] = useState(false);
-  const [showTargetEffect, setShowTargetEffect] = useState(false);
+  const targetIdCounter = useRef(0);
   const [clickEffects, setClickEffects] = useState<Array<{ id: number, position: THREE.Vector3 }>>([]);
   const effectIdCounter = useRef(0);
   const mouseDownTime = useRef<number>(0);
@@ -368,7 +374,6 @@ const CameraManager = ({
   const stopCameraMovement = () => {
     if (isMoving) {
       setIsMoving(false);
-      setTargetPosition(null);
     }
   };
 
@@ -376,8 +381,14 @@ const CameraManager = ({
   const moveCamera = (position: [number, number, number]) => {
     console.log('moveCamera called with position:', position);
     const newTargetPosition = new THREE.Vector3(position[0], position[1], position[2]);
-    setTargetPosition(newTargetPosition);
+    const newId = targetIdCounter.current++;
+    setTargetPositions(prev => [...prev, { id: newId, position: newTargetPosition }]);
     setIsMoving(true);
+  };
+
+  // Remove completed target position
+  const removeTargetPosition = (id: number) => {
+    setTargetPositions(prev => prev.filter(target => target.id !== id));
   };
 
   // Handle ground click
@@ -442,20 +453,23 @@ const CameraManager = ({
 
   // Animate camera movement
   useFrame((_, delta) => {
-    if (targetPosition && isMoving && cameraBody.current) {
-      const distance = camera.position.distanceTo(targetPosition);
+    if (targetPositions.length > 0 && isMoving && cameraBody.current) {
+      const currentTarget = targetPositions[0];
+      const distance = camera.position.distanceTo(currentTarget.position);
       
       if (distance < 0.01) {
-        camera.position.copy(targetPosition);
+        camera.position.copy(currentTarget.position);
         setTimeout(() => {
-          stopCameraMovement();
-          setShowTargetEffect(false);
+          removeTargetPosition(currentTarget.id);
+          if (targetPositions.length <= 1) {
+            stopCameraMovement();
+          }
         }, 1000);
         return;
       }
 
       // Move camera smoothly
-      camera.position.lerp(targetPosition, delta * 2);
+      camera.position.lerp(currentTarget.position, delta * 2);
       camera.updateMatrixWorld(true);
     }
   });
@@ -471,7 +485,7 @@ const CameraManager = ({
         onCollisionEnter={() => {
           console.log('Collision detected!');
           stopCameraMovement();
-          setShowTargetEffect(false);
+          setTargetPositions([]);
         }}
       >
         <CuboidCollider args={[0.5, 0.5, 0.5]} />
@@ -506,10 +520,14 @@ const CameraManager = ({
         />
       ))}
 
-      {/* Target position effect */}
-      {showTargetEffect && targetPosition && (
-        <TargetEffect position={targetPosition} />
-      )}
+      {/* Target position effects */}
+      {targetPositions.map(target => (
+        <TargetEffect
+          key={target.id}
+          position={target.position}
+          onComplete={() => removeTargetPosition(target.id)}
+        />
+      ))}
 
       {/* Camera points */}
       {/* {cameraPositions.map((point, index) => (
@@ -518,7 +536,6 @@ const CameraManager = ({
           position={point.position as [number, number, number]}
           label={point.label}
           onClick={() => {
-            setShowTargetEffect(true);
             moveCamera(point.position as [number, number, number]);
           }}
         />
