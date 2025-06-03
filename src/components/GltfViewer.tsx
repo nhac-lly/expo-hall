@@ -150,10 +150,13 @@ const Model = React.memo(({ curModel }: { curModel: string }) => {
 
 // Define camera positions
 const DEFAULT_CAMERA_POSITIONS: Array<{ position: [number, number, number], label: string }> = [
-  { position: [5, 3, 0], label: 'Right' },
-  { position: [-5, 3, 0], label: 'Left' },
-  { position: [0, 3, 5], label: 'Front' },
-  { position: [0, 3, -5], label: 'Back' },
+  { position: [0, 1, -40], label: 'SanKhau' },
+  { position: [-3, 1, -10], label: 'Detmay' },
+  { position: [-3, 1, 15], label: 'Tech' },
+  { position: [-3, 1, 40], label: 'Wood' },
+  { position: [3, 1, -10], label: 'BoothThuysan' },
+  { position: [3, 1, 15], label: 'Thucong' },
+  { position: [3, 1, 40], label: 'Food' },
 ];
 
 // Create text texture function (moved from ControlSelector)
@@ -220,11 +223,42 @@ const CameraManager = ({
   cameraPositions: Array<{ position: [number, number, number], label: string }>;
 }) => {
   const { camera } = useThree();
+  const [targetPosition, setTargetPosition] = useState<THREE.Vector3 | null>(null);
+  const [isMoving, setIsMoving] = useState(false);
+
+  // Function to stop camera movement
+  const stopCameraMovement = () => {
+    if (isMoving) {
+      setIsMoving(false);
+      setTargetPosition(null);
+    }
+  };
+
+  // Add event listeners for user input
+  useEffect(() => {
+    const handleUserInput = () => {
+      stopCameraMovement();
+    };
+
+    // Add event listeners for various user inputs
+    window.addEventListener('keydown', handleUserInput);
+    window.addEventListener('wheel', handleUserInput);
+    window.addEventListener('touchmove', handleUserInput);
+    window.addEventListener('mousedown', handleUserInput);
+
+    // Cleanup event listeners
+    return () => {
+      window.removeEventListener('keydown', handleUserInput);
+      window.removeEventListener('wheel', handleUserInput);
+      window.removeEventListener('touchmove', handleUserInput);
+      window.removeEventListener('mousedown', handleUserInput);
+    };
+  }, [isMoving]);
 
   useControls('Camera', {
     position: monitor(() => 
       `x: ${camera.position.x.toFixed(2)}, y: ${camera.position.y.toFixed(2)}, z: ${camera.position.z.toFixed(2)}`
-  ),
+    ),
     rotation: monitor(() => 
       `x: ${camera.rotation.x.toFixed(2)}, y: ${camera.rotation.y.toFixed(2)}, z: ${camera.rotation.z.toFixed(2)}`
     ),
@@ -247,21 +281,40 @@ const CameraManager = ({
     };
   }, [camera]);
 
+  // Animate camera movement
+  useFrame((_, delta) => {
+    if (targetPosition && isMoving) {
+      // Calculate distance to target
+      const distance = camera.position.distanceTo(targetPosition);
+      
+      // If we're close enough to the target, start countdown to stop
+      if (distance < 0.01) {
+        camera.position.copy(targetPosition);
+        // Wait one second before stopping
+        setTimeout(() => {
+          stopCameraMovement();
+        }, 1000);
+        return;
+      }
+
+      // Smoothly interpolate camera position
+      camera.position.lerp(targetPosition, delta * 2); // Adjust the multiplier to control speed
+      
+      // Force camera update
+      camera.updateMatrixWorld(true);
+    }
+  });
+
   // Move camera to a specific position
   const moveCamera = (position: [number, number, number]) => {
     console.log('moveCamera called with position:', position);
     
     // Create a new Vector3 for the target position
-    const targetPosition = new THREE.Vector3(position[0], position[1], position[2]);
+    const newTargetPosition = new THREE.Vector3(position[0], position[1], position[2]);
     
-    // Set camera position
-    camera.position.copy(targetPosition);
-    
-    // Set quaternion to look straight ahead (identity quaternion)
-    camera.quaternion.set(0, 0, 0, 1);
-    
-    // Force camera update
-    camera.updateMatrixWorld(true);
+    // Set target position and start moving
+    setTargetPosition(newTargetPosition);
+    setIsMoving(true);
   };
 
   return (
@@ -283,7 +336,7 @@ export default function GltfViewer() {
   const [controlType, setControlType] = useState<ControlType>('orbit');
   const [curModel, setCurModel] = useState<string>('home');
   const [cameraPositions, setCameraPositions] = useState<Array<{ position: [number, number, number], label: string }>>(DEFAULT_CAMERA_POSITIONS);
-  const [cameraPosition, setCameraPosition] = useState(new THREE.Vector3(20, 20, 20));
+  const [cameraPosition, setCameraPosition] = useState(new THREE.Vector3(2.8, 3.4, 46));
 
   const handleAddCameraPosition = (position: [number, number, number], label: string) => {
     setCameraPositions(prev => [...prev, { position, label }]);
