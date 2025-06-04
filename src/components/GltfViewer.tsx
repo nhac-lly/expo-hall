@@ -134,16 +134,16 @@ const SingleModel = ({ modelName, position = [0, 0, 0], rotation = [0, 0, 0], is
   );
 };
 
-const Model = React.memo(({ curModel }: { curModel: string }) => {
+const Model = React.memo(({ curModel, rotation }: { curModel: string, rotation: [number, number, number] }) => {
   if (curModel === 'home') {
     return (
-      <>
-        <Suspense fallback={<LoadingPlaceholder position={[0, 0, 0]} />}>
+      <group rotation={rotation}>
+        {/* <Suspense fallback={<LoadingPlaceholder position={[0, 0, 0]} />}>
           <SingleModel modelName="hall" position={[0, 0, 0]} />
-        </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[0, 0.1, -45]} />}>
+        </Suspense> */}
+        {/* <Suspense fallback={<LoadingPlaceholder position={[0, 0.1, -45]} />}>
           <SingleModel modelName="sankhau" position={[0, 0.1, -45]} isRigidBody />
-        </Suspense>
+        </Suspense> */}
         <Suspense fallback={<LoadingPlaceholder position={[-11, 0.1, -10]} />}>
           <SingleModel modelName="detmay" position={[-11, 0.1, -10]} isRigidBody />
         </Suspense>
@@ -162,10 +162,10 @@ const Model = React.memo(({ curModel }: { curModel: string }) => {
         <Suspense fallback={<LoadingPlaceholder position={[12, 0.1, 40]} />}>
           <SingleModel modelName="food" position={[12, 0.1, 40]} rotation={[0, 9.41, 0]} isRigidBody />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[0, 0.1, -5]} />}>
+        {/* <Suspense fallback={<LoadingPlaceholder position={[0, 0.1, -5]} />}>
           <SingleModel modelName="way" position={[0, 0.1, -5]} rotation={[0, 0, 0]} />
-        </Suspense>
-      </>
+        </Suspense> */}
+      </group>
     );
   }
 
@@ -601,10 +601,10 @@ export default function GltfViewer() {
             cameraPositions={cameraPositions}
           />
           <Suspense fallback={<LoadingPlaceholder />}>
-            <Model curModel={curModel} />
+            <Model curModel={curModel} rotation={[0, 4.7, 0]} />
           </Suspense>
           <CameraControls type={controlType} cameraPositions={cameraPositions} />
-          <Environment files="https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/hdris/noon-grass/noon_grass_1k.hdr" background />
+          <Environment files="./VR/hall.hdr" background />
         </Physics>
       </Canvas>
       {/* <CameraPositionForm 
