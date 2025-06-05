@@ -40,4 +40,3 @@ export function Model(props: JSX.IntrinsicElements['group']) {
   )
 }
 
-useGLTF.preload('VR/sankhau-transformed.glb')

@@ -46,4 +46,3 @@ export function Model(props: JSX.IntrinsicElements['group']) {
   )
 }
 
-useGLTF.preload('/VR/display_led-transformed.glb')

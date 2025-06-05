@@ -261,4 +261,3 @@ export function Model(props: JSX.IntrinsicElements['group']) {
   )
 }
 
-useGLTF.preload('/VR/wood-transformed.glb')

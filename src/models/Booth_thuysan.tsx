@@ -143,4 +143,3 @@ export function Model(props: JSX.IntrinsicElements['group']) {
   )
 }
 
-useGLTF.preload('/VR/booth_thuysan-transformed.glb')

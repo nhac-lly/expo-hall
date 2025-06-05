@@ -107,4 +107,3 @@ export function Model(props: JSX.IntrinsicElements['group']) {
   )
 }
 
-useGLTF.preload('/VR/thucong-transformed.glb')

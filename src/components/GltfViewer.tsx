@@ -808,6 +808,7 @@ export default function GltfViewer() {
           <CameraControls type={controlType} cameraPositions={cameraPositions} />
           <Environment 
             files="./VR/hall.jpg" 
+            // files="./VR/cinema.exr"
             {...(environmentMode === 'background' 
               ? { background: true } 
               : { ground: { height: 10, radius: environmentRadius, scale: 150 } }
