@@ -489,7 +489,7 @@ const CameraManager = ({
     environmentRadius: {
       value: 90,
       min: 20,
-      max: 200,
+      max: 2000,
       step: 10,
       label: 'Environment Radius'
     },
@@ -807,10 +807,10 @@ export default function GltfViewer() {
           </Suspense>
           <CameraControls type={controlType} cameraPositions={cameraPositions} />
           <Environment 
-            files="./VR/hall.hdr" 
+            files="./VR/hall.jpg" 
             {...(environmentMode === 'background' 
               ? { background: true } 
-              : { ground: { height: 10, radius: environmentRadius, scale: 100 } }
+              : { ground: { height: 10, radius: environmentRadius, scale: 150 } }
             )}
             environmentIntensity={0.5}
           />
