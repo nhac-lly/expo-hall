@@ -10,7 +10,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { Leva, monitor, useControls } from "leva";
 import { Model as HallModel } from "../models/Hall";
 import { Model as FoodModel } from "../models/Food";
-import { Model as TechModel } from "../models/Tech";
+import { Model as TechModel, ObjectInfo } from "../models/Tech";
 import { Model as WoodModel } from "../models/Wood";
 import { Model as DisplayLedModel } from "../models/Display_led";
 import { Model as DetmayModel } from "../models/Detmay";
@@ -20,6 +20,82 @@ import { Model as BoothThuysanModel } from "../models/Booth_thuysan";
 import { Model as WayModel } from "../models/Way";
 import { Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
 import { useRapier } from "@react-three/rapier";
+import { useAppStore } from "../stores/useAppStore";
+
+// Modal component for displaying object information
+const ObjectModal = ({ objectInfo, onClose }: { objectInfo: ObjectInfo | null, onClose: () => void }) => {
+  if (!objectInfo) return null;
+
+  return (
+    <div className="fixed bottom-4 right-4 z-50 w-80 max-h-[60vh] overflow-y-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700">
+        <div className="p-4">
+          {/* Header */}
+          <div className="flex justify-between items-start mb-3">
+            <div>
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                {objectInfo.name}
+              </h2>
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                by {objectInfo.brand}
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-lg font-bold ml-2"
+            >
+              ×
+            </button>
+          </div>
+
+          {/* Price */}
+          {objectInfo.price && (
+            <div className="mb-3">
+              <span className="text-xl font-bold text-blue-600 dark:text-blue-400">
+                {objectInfo.price}
+              </span>
+            </div>
+          )}
+
+          {/* Description */}
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+              Description
+            </h3>
+            <p className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
+              {objectInfo.description}
+            </p>
+          </div>
+
+          {/* Specifications */}
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+              Specifications
+            </h3>
+            <ul className="space-y-1">
+              {objectInfo.specifications.map((spec, index) => (
+                <li key={index} className="flex items-start">
+                  <span className="text-blue-500 mr-2 text-xs">•</span>
+                  <span className="text-xs text-gray-700 dark:text-gray-300">{spec}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Close button */}
+          <div className="flex justify-end">
+            <button
+              onClick={onClose}
+              className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 interface CameraPositionFormProps {
   onSubmit: (position: [number, number, number], label: string) => void;
@@ -76,7 +152,12 @@ const LoadingPlaceholder = ({ position = [0, 0, 0] }: { position?: [number, numb
 };
 
 // Individual model component
-const SingleModel = ({ modelName, position = [0, 0, 0], rotation = [0, 0, 0], isRigidBody = false }: { modelName: string, position?: [number, number, number], rotation?: [number, number, number], isRigidBody?: boolean }) => {
+const SingleModel = ({ modelName, position = [0, 0, 0], rotation = [0, 0, 0], isRigidBody = false }: { 
+  modelName: string, 
+  position?: [number, number, number], 
+  rotation?: [number, number, number], 
+  isRigidBody?: boolean
+}) => {
   const modelRef = useRef<THREE.Group>(null);
   const [modelSize, setModelSize] = useState<[number, number, number]>([2, 2, 2]);
 
@@ -144,23 +225,23 @@ const Model = React.memo(({ curModel, rotation }: { curModel: string, rotation: 
         {/* <Suspense fallback={<LoadingPlaceholder position={[0, 0.1, -45]} />}>
           <SingleModel modelName="sankhau" position={[0, 0.1, -45]} isRigidBody />
         </Suspense> */}
-        <Suspense fallback={<LoadingPlaceholder position={[-11, 0.1, -10]} />}>
-          <SingleModel modelName="detmay" position={[-11, 0.1, -10]} isRigidBody />
+        <Suspense fallback={<LoadingPlaceholder position={[-20, 0.1, -10]} />}>
+          <SingleModel modelName="detmay" position={[-20, 0.1, -10]} isRigidBody />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[-12, 0.1, 15]} />}>
-          <SingleModel modelName="tech" position={[-12, 0.1, 15]} rotation={[0, -4.7, 0]} isRigidBody />
+        <Suspense fallback={<LoadingPlaceholder position={[-20, 0.1, 15]} />}>
+          <SingleModel modelName="tech" position={[-20, 0.1, 15]} rotation={[0, -4.7, 0]} isRigidBody />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[-13, 0.1, 40]} />}>  
-          <SingleModel modelName="wood" position={[-12, 0.1, 40]} rotation={[0, 0, 0]} isRigidBody />
+        <Suspense fallback={<LoadingPlaceholder position={[-20, 0.1, 40]} />}>
+          <SingleModel modelName="wood" position={[-20, 0.1, 40]} rotation={[0, 0, 0]} isRigidBody />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[11, 0.1, -10]} />}>
-          <SingleModel modelName="booth_thuysan" position={[11, 0.1, -10]} rotation={[0, 4.7, 0]} isRigidBody />s
+        <Suspense fallback={<LoadingPlaceholder position={[20, 0.1, -10]} />}>
+          <SingleModel modelName="booth_thuysan" position={[20, 0.1, -10]} rotation={[0, 4.7, 0]} isRigidBody />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[12, 0.1, 13]} />}>
-          <SingleModel modelName="thucong" position={[12, 0.1, 13]} rotation={[0, 4.7, 0]} isRigidBody />
+        <Suspense fallback={<LoadingPlaceholder position={[20, 0.1, 13]} />}>
+          <SingleModel modelName="thucong" position={[20, 0.1, 13]} rotation={[0, 4.7, 0]} isRigidBody />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[13, 0.1, 40]} />}>
-          <SingleModel modelName="food" position={[14, 0.1, 40]} rotation={[0, 9.41, 0]} isRigidBody />
+        <Suspense fallback={<LoadingPlaceholder position={[20, 0.1, 40]} />}>
+          <SingleModel modelName="food" position={[20, 0.1, 40]} rotation={[0, 9.41, 0]} isRigidBody />
         </Suspense>
         {/* <Suspense fallback={<LoadingPlaceholder position={[0, 0.1, -5]} />}>
           <SingleModel modelName="way" position={[0, 0.1, -5]} rotation={[0, 0, 0]} />
@@ -596,6 +677,9 @@ export default function GltfViewer() {
   const [cameraPosition, setCameraPosition] = useState(new THREE.Vector3(2.8, 3.4, 46));
   const [environmentRadius, setEnvironmentRadius] = useState(90);
   const [environmentMode, setEnvironmentMode] = useState('dome');
+  
+  // Use Zustand store
+  const { selectedObject, closeObjectModal } = useAppStore();
 
   const handleAddCameraPosition = (position: [number, number, number], label: string) => {
     setCameraPositions(prev => [...prev, { position, label }]);
@@ -660,12 +744,8 @@ export default function GltfViewer() {
           />
         </Physics>
       </Canvas>
-      {/* <CameraPositionForm 
-        onSubmit={handleAddCameraPosition} 
-        cameraPosition={cameraPosition}
-        onGoTo={handleGoTo}
-      /> */}
       <Leva />
+      <ObjectModal objectInfo={selectedObject} onClose={closeObjectModal} />
     </div>
   );
 }

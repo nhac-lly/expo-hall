@@ -5,9 +5,10 @@ Files: ./public/tech/tech.gltf [313.53KB] > C:\Users\zatag\3d-viewer\tech-transf
 */
 
 import * as THREE from 'three'
-import React, { JSX } from 'react'
+import React, { JSX, useState, useMemo } from 'react'
 import { useGLTF } from '@react-three/drei'
 import { GLTF } from 'three-stdlib'
+import { useAppStore } from '../stores/useAppStore'
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -154,8 +155,178 @@ type GLTFResult = GLTF & {
   animations: any[]
 }
 
+export interface ObjectInfo {
+  id: string
+  name: string
+  description: string
+  specifications: string[]
+  price?: string
+  brand: string
+}
+
+const OBJECT_INFO: Record<string, ObjectInfo> = {
+  'washing-machine': {
+    id: 'washing-machine',
+    name: 'Samsung WF50R8500AV Front Load Washer',
+    description: 'Smart front-load washing machine with AddWash™ door technology and Wi-Fi connectivity.',
+    specifications: [
+      '5.0 cu. ft. capacity',
+      'AddWash™ door for adding forgotten items',
+      'Steam technology for stain removal',
+      'Wi-Fi connectivity with SmartThings app',
+      'Super Speed wash cycle (36 minutes)',
+      'Self Clean+ technology'
+    ],
+    price: '$1,199',
+    brand: 'Samsung'
+  },
+  'side-by-side-fridge': {
+    id: 'side-by-side-fridge',
+    name: 'Samsung RS5000 Side-by-Side Refrigerator',
+    description: 'Spacious side-by-side refrigerator with advanced cooling technology and ice maker.',
+    specifications: [
+      '25 cu. ft. total capacity',
+      'External water and ice dispenser',
+      'Twin Cooling Plus™ technology',
+      'LED lighting',
+      'Fingerprint resistant finish',
+      'Energy Star certified'
+    ],
+    price: '$1,499',
+    brand: 'Samsung'
+  },
+  'family-hub-fridge': {
+    id: 'family-hub-fridge',
+    name: 'Samsung Family Hub™ Multi-Door Refrigerator',
+    description: 'Revolutionary smart refrigerator with 21.5" touchscreen and family connectivity features.',
+    specifications: [
+      '28 cu. ft. capacity',
+      '21.5" Wi-Fi enabled touchscreen',
+      'View inside cameras',
+      'Family calendar and notes',
+      'Stream music and entertainment',
+      'Food management system',
+      'Bixby voice assistant'
+    ],
+    price: '$3,999',
+    brand: 'Samsung'
+  },
+  'rb8000-fridge': {
+    id: 'rb8000-fridge',
+    name: 'Samsung RB8000 Bottom Freezer Refrigerator',
+    description: 'Energy-efficient bottom freezer refrigerator with spacious design and modern features.',
+    specifications: [
+      '18 cu. ft. capacity',
+      'Bottom mount freezer',
+      'Twin Cooling Plus™',
+      'LED lighting throughout',
+      'Adjustable shelves',
+      'High-efficiency compressor'
+    ],
+    price: '$1,299',
+    brand: 'Samsung'
+  },
+  'sofa': {
+    id: 'sofa',
+    name: 'Modern 3-Seat Sofa',
+    description: 'Contemporary sofa perfect for modern living spaces and tech showrooms.',
+    specifications: [
+      'Premium fabric upholstery',
+      '3-seat capacity',
+      'Ergonomic design',
+      'Durable hardwood frame',
+      'High-density foam cushions',
+      'Easy maintenance'
+    ],
+    price: '$899',
+    brand: 'TechSpace Furniture'
+  },
+  'coffee-table': {
+    id: 'coffee-table',
+    name: 'Marble Top Coffee Table',
+    description: 'Elegant coffee table with natural marble top and modern metal base.',
+    specifications: [
+      'Natural marble top',
+      'Brushed metal legs',
+      'Round design',
+      'Scratch-resistant surface',
+      'Easy to clean',
+      'Modern aesthetic'
+    ],
+    price: '$649',
+    brand: 'TechSpace Furniture'
+  },
+  'chair': {
+    id: 'chair',
+    name: 'Executive Suede Chair',
+    description: 'Comfortable executive chair with premium suede upholstery.',
+    specifications: [
+      'Premium suede material',
+      'Ergonomic support',
+      'Adjustable height',
+      'Swivel base',
+      'Comfortable padding',
+      'Professional design'
+    ],
+    price: '$399',
+    brand: 'TechSpace Furniture'
+  }
+}
+
 export function Model(props: JSX.IntrinsicElements['group']) {
   const { nodes, materials } = useGLTF('/VR/tech-transformed.glb') as unknown as GLTFResult
+  
+  // Use Zustand store for all states
+  const { openObjectModal, isObjectClicked, hoveredObject, setHoveredObject } = useAppStore()
+
+  // Create hover effect materials
+  const createHoverMaterial = (originalMaterial: THREE.Material, objectName: string) => {
+    return useMemo(() => {
+      if (!originalMaterial) return originalMaterial
+      
+      const isHovered = hoveredObject === objectName
+      
+      if (originalMaterial instanceof THREE.MeshStandardMaterial) {
+        const clonedMaterial = originalMaterial.clone()
+        
+        if (isHovered) {
+          clonedMaterial.color = new THREE.Color(originalMaterial.color).lerp(new THREE.Color('#4a9eff'), 0.3)
+          clonedMaterial.emissive = new THREE.Color('#4a9eff').multiplyScalar(0.2)
+          clonedMaterial.roughness = Math.max(0, originalMaterial.roughness - 0.2)
+        }
+        
+        return clonedMaterial
+      }
+      
+      return originalMaterial
+    }, [originalMaterial, objectName, hoveredObject])
+  }
+
+  // Hover handlers using Zustand
+  const handlePointerEnter = (objectName: string) => (e: any) => {
+    if (isObjectClicked) return
+    e.stopPropagation()
+    setHoveredObject(objectName)
+    document.body.style.cursor = 'pointer'
+  }
+
+  const handlePointerLeave = (e: any) => {
+    if (isObjectClicked) return
+    e.stopPropagation()
+    setHoveredObject(null)
+    document.body.style.cursor = 'auto'
+  }
+
+  // Click handler using Zustand store
+  const handleClick = (objectName: string) => (e: any) => {
+    e.stopPropagation()
+    
+    const objectInfo = OBJECT_INFO[objectName]
+    if (objectInfo) {
+      openObjectModal(objectInfo)
+    }
+  }
+
   return (
     <group {...props} dispose={null}>
       <mesh geometry={nodes.Plane.geometry} material={materials.PaletteMaterial001} scale={[9.5, 1, 6]} />
@@ -181,36 +352,43 @@ export function Model(props: JSX.IntrinsicElements['group']) {
         <mesh geometry={nodes.Ariada_R700VS_body_base001_6.geometry} material={materials.PaletteMaterial011} />
         <mesh geometry={nodes.Ariada_R700VS_body_base001_7.geometry} material={materials.PaletteMaterial012} />
       </group>
-      <group position={[-4.512, 0.116, 4.443]} scale={[1.458, 1.076, 1.076]}>
-        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_1'].geometry} material={materials.Brushed_steel_base} />
-        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_2'].geometry} material={materials.Brushed_steel_base_ice} />
-        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_3'].geometry} material={materials.Text_water_cubed_crushed} />
-        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_4'].geometry} material={materials.PaletteMaterial014} />
-        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_5'].geometry} material={materials.PaletteMaterial018} />
-        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_6'].geometry} material={materials.PaletteMaterial013} />
-        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_7'].geometry} material={materials.PaletteMaterial015} />
-        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_8'].geometry} material={materials.PaletteMaterial016} />
-        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_9'].geometry} material={materials.PaletteMaterial017} />
+      <group 
+        position={[-4.512, 0.116, 4.443]} 
+        scale={[1.458, 1.076, 1.076]}
+        onPointerEnter={handlePointerEnter('side-by-side-fridge')}
+        onPointerLeave={handlePointerLeave}
+        onClick={handleClick('side-by-side-fridge')}
+      >
+        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_1'].geometry} material={createHoverMaterial(materials.Brushed_steel_base, 'side-by-side-fridge')} />
+        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_2'].geometry} material={createHoverMaterial(materials.Brushed_steel_base_ice, 'side-by-side-fridge')} />
+        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_3'].geometry} material={createHoverMaterial(materials.Text_water_cubed_crushed, 'side-by-side-fridge')} />
+        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_4'].geometry} material={createHoverMaterial(materials.PaletteMaterial014, 'side-by-side-fridge')} />
+        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_5'].geometry} material={createHoverMaterial(materials.PaletteMaterial018, 'side-by-side-fridge')} />
+        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_6'].geometry} material={createHoverMaterial(materials.PaletteMaterial013, 'side-by-side-fridge')} />
+        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_7'].geometry} material={createHoverMaterial(materials.PaletteMaterial015, 'side-by-side-fridge')} />
+        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_8'].geometry} material={createHoverMaterial(materials.PaletteMaterial016, 'side-by-side-fridge')} />
+        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_9'].geometry} material={createHoverMaterial(materials.PaletteMaterial017, 'side-by-side-fridge')} />
       </group>
-      <group position={[-5.657, 0.821, 2.493]} rotation={[Math.PI, 0, Math.PI]} scale={0.135}>
-        <mesh geometry={nodes.samsung_WF50R8500AV_white__1.geometry} material={materials.PaletteMaterial019} />
-        <mesh geometry={nodes.samsung_WF50R8500AV_white__2.geometry} material={materials.PaletteMaterial020} />
-        <mesh geometry={nodes.samsung_WF50R8500AV_white__3.geometry} material={materials.PaletteMaterial021} />
-        <mesh geometry={nodes.samsung_WF50R8500AV_white__4.geometry} material={materials.PaletteMaterial022} />
-        <mesh geometry={nodes.samsung_WF50R8500AV_white__5.geometry} material={materials.PaletteMaterial023} />
-        <mesh geometry={nodes.samsung_WF50R8500AV_white__6.geometry} material={materials.PaletteMaterial024} />
-        <mesh geometry={nodes.samsung_WF50R8500AV_white__7.geometry} material={materials.PaletteMaterial025} />
-        <mesh geometry={nodes.samsung_WF50R8500AV_white__8.geometry} material={materials.PaletteMaterial026} />
+      <group 
+        position={[2.264, 0.114, 4.441]}
+        onPointerEnter={handlePointerEnter('family-hub-fridge')}
+        onPointerLeave={handlePointerLeave}
+        onClick={handleClick('family-hub-fridge')}
+      >
+        <mesh geometry={nodes['Family_Hub_Multi-door_Fridge_Freezer_1'].geometry} material={createHoverMaterial(materials['Base.001'], 'family-hub-fridge')} />
+        <mesh geometry={nodes['Family_Hub_Multi-door_Fridge_Freezer_2'].geometry} material={createHoverMaterial(materials['Display.001'], 'family-hub-fridge')} />
+        <mesh geometry={nodes['Family_Hub_Multi-door_Fridge_Freezer_3'].geometry} material={createHoverMaterial(materials.PaletteMaterial027, 'family-hub-fridge')} />
+        <mesh geometry={nodes['Family_Hub_Multi-door_Fridge_Freezer_4'].geometry} material={createHoverMaterial(materials.PaletteMaterial028, 'family-hub-fridge')} />
       </group>
-      <group position={[2.264, 0.114, 4.441]}>
-        <mesh geometry={nodes['Family_Hub_Multi-door_Fridge_Freezer_1'].geometry} material={materials['Base.001']} />
-        <mesh geometry={nodes['Family_Hub_Multi-door_Fridge_Freezer_2'].geometry} material={materials['Display.001']} />
-        <mesh geometry={nodes['Family_Hub_Multi-door_Fridge_Freezer_3'].geometry} material={materials.PaletteMaterial027} />
-        <mesh geometry={nodes['Family_Hub_Multi-door_Fridge_Freezer_4'].geometry} material={materials.PaletteMaterial028} />
-      </group>
-      <group position={[1.72, 0.116, 3.458]} rotation={[0, -1.571, 0]}>
-        <mesh geometry={nodes['RB8000_Fridge-Freezer_202_cm'].geometry} material={materials['Brushed_steel_base.001']} />
-        <mesh geometry={nodes['RB8000_Fridge-Freezer_202_cm_1'].geometry} material={materials.PaletteMaterial029} />
+      <group 
+        position={[1.72, 0.116, 3.458]} 
+        rotation={[0, -1.571, 0]}
+        onPointerEnter={handlePointerEnter('rb8000-fridge')}
+        onPointerLeave={handlePointerLeave}
+        onClick={handleClick('rb8000-fridge')}
+      >
+        <mesh geometry={nodes['RB8000_Fridge-Freezer_202_cm'].geometry} material={createHoverMaterial(materials['Brushed_steel_base.001'], 'rb8000-fridge')} />
+        <mesh geometry={nodes['RB8000_Fridge-Freezer_202_cm_1'].geometry} material={createHoverMaterial(materials.PaletteMaterial029, 'rb8000-fridge')} />
       </group>
       <group position={[2.748, 0.132, 3.462]} rotation={[0, 1.571, 0]}>
         <mesh geometry={nodes.RB5000_Fridge_Freezer_with_Water_Dispenser_201_cm_1.geometry} material={materials.PaletteMaterial030} />
@@ -222,7 +400,14 @@ export function Model(props: JSX.IntrinsicElements['group']) {
         <mesh geometry={nodes.Cube003.geometry} material={materials.PaletteMaterial035} />
         <mesh geometry={nodes.Cube003_1.geometry} material={materials.PaletteMaterial036} />
       </group>
-      <mesh geometry={nodes.Plane024.geometry} material={materials.Sofa_04_Fabric} position={[4.969, -0.009, -5.239]} />
+      <mesh 
+        geometry={nodes.Plane024.geometry} 
+        material={createHoverMaterial(materials.Sofa_04_Fabric, 'sofa')} 
+        position={[4.969, -0.009, -5.239]}
+        onPointerEnter={handlePointerEnter('sofa')}
+        onPointerLeave={handlePointerLeave}
+        onClick={handleClick('sofa')}
+      />
       <group position={[9.123, 0.698, -2.582]} rotation={[0, -1.571, 0]} scale={0.752}>
         <mesh geometry={nodes.Plane023.geometry} material={materials.Picture_Frame_Main_Material} />
         <mesh geometry={nodes.Plane023_1.geometry} material={materials.Picture_Frame_Picture1} />
@@ -239,16 +424,44 @@ export function Model(props: JSX.IntrinsicElements['group']) {
       <mesh geometry={nodes.Artboard_3.geometry} material={materials['Artboard 3']} position={[6.22, 2.165, -5.752]} rotation={[Math.PI / 2, 0, 0]} scale={2.606} />
       <mesh geometry={nodes.Plane029.geometry} material={materials.Artboard05} position={[-1.216, 0, 3.684]} scale={[1.437, 0.817, 0.817]} />
       <mesh geometry={nodes.Circle001.geometry} material={materials['Material.001']} position={[-9.042, 0.552, 3.468]} rotation={[Math.PI / 2, 0, Math.PI / 2]} scale={[0.556, 0.549, 0.556]} />
-      <group position={[0.668, 0.517, -2.658]} scale={[0.852, 1, 0.852]}>
-        <mesh geometry={nodes.Cylinder006.geometry} material={materials.Coffee_Table_05_Marble} />
-        <mesh geometry={nodes.Cylinder006_1.geometry} material={materials.PaletteMaterial032} />
+      <group 
+        position={[0.668, 0.517, -2.658]} 
+        scale={[0.852, 1, 0.852]}
+        onPointerEnter={handlePointerEnter('coffee-table')}
+        onPointerLeave={handlePointerLeave}
+        onClick={handleClick('coffee-table')}
+      >
+        <mesh geometry={nodes.Cylinder006.geometry} material={createHoverMaterial(materials.Coffee_Table_05_Marble, 'coffee-table')} />
+        <mesh geometry={nodes.Cylinder006_1.geometry} material={createHoverMaterial(materials.PaletteMaterial032, 'coffee-table')} />
       </group>
-      <group position={[0.668, 0.371, -3.716]}>
-        <mesh geometry={nodes.Plane019_1.geometry} material={materials.Chair_11_Suede} />
-        <mesh geometry={nodes.Plane019_2.geometry} material={materials.PaletteMaterial033} />
-        <mesh geometry={nodes.Plane019_3.geometry} material={materials.PaletteMaterial034} />
+      <group 
+        position={[0.668, 0.371, -3.716]}
+        onPointerEnter={handlePointerEnter('chair')}
+        onPointerLeave={handlePointerLeave}
+        onClick={handleClick('chair')}
+      >
+        <mesh geometry={nodes.Plane019_1.geometry} material={createHoverMaterial(materials.Chair_11_Suede, 'chair')} />
+        <mesh geometry={nodes.Plane019_2.geometry} material={createHoverMaterial(materials.PaletteMaterial033, 'chair')} />
+        <mesh geometry={nodes.Plane019_3.geometry} material={createHoverMaterial(materials.PaletteMaterial034, 'chair')} />
       </group>
       <mesh geometry={nodes.Plane019.geometry} material={materials.LCD06} position={[-0.017, 0.229, -7.17]} rotation={[-Math.PI, 0, -Math.PI]} />
+      <group 
+        position={[-5.657, 0.821, 2.493]} 
+        rotation={[Math.PI, 0, Math.PI]} 
+        scale={0.135}
+        onPointerEnter={handlePointerEnter('washing-machine')}
+        onPointerLeave={handlePointerLeave}
+        onClick={handleClick('washing-machine')}
+      >
+        <mesh geometry={nodes.samsung_WF50R8500AV_white__1.geometry} material={createHoverMaterial(materials.PaletteMaterial019, 'washing-machine')} />
+        <mesh geometry={nodes.samsung_WF50R8500AV_white__2.geometry} material={createHoverMaterial(materials.PaletteMaterial020, 'washing-machine')} />
+        <mesh geometry={nodes.samsung_WF50R8500AV_white__3.geometry} material={createHoverMaterial(materials.PaletteMaterial021, 'washing-machine')} />
+        <mesh geometry={nodes.samsung_WF50R8500AV_white__4.geometry} material={createHoverMaterial(materials.PaletteMaterial022, 'washing-machine')} />
+        <mesh geometry={nodes.samsung_WF50R8500AV_white__5.geometry} material={createHoverMaterial(materials.PaletteMaterial023, 'washing-machine')} />
+        <mesh geometry={nodes.samsung_WF50R8500AV_white__6.geometry} material={createHoverMaterial(materials.PaletteMaterial024, 'washing-machine')} />
+        <mesh geometry={nodes.samsung_WF50R8500AV_white__7.geometry} material={createHoverMaterial(materials.PaletteMaterial025, 'washing-machine')} />
+        <mesh geometry={nodes.samsung_WF50R8500AV_white__8.geometry} material={createHoverMaterial(materials.PaletteMaterial026, 'washing-machine')} />
+      </group>
     </group>
   )
 }
