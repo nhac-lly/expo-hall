@@ -123,6 +123,9 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
   disabledRef.current = cameraMovementDisabled;
   hoveredRef.current = hoveredObject;
 
+  // Touch state tracking
+  const lastTouchPosition = useRef<{ x: number, y: number } | null>(null);
+
   // Store initial camera position and rotation
   const initialCameraState = useRef({
     position: new THREE.Vector3(),
@@ -190,14 +193,101 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
       }
     };
 
+    // Touch event handlers
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) { // Single finger only
+        // Don't start dragging if disabled or hovering over an object
+        if (disabledRef.current || hoveredRef.current) {
+          return
+        }
+        
+        const touch = e.touches[0];
+        lastTouchPosition.current = { x: touch.clientX, y: touch.clientY };
+        setIsDragging(true);
+        
+        // Prevent default to avoid scrolling/zooming
+        e.preventDefault();
+      }
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      setIsDragging(false);
+      lastTouchPosition.current = null;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 1 && lastTouchPosition.current) {
+        const touch = e.touches[0];
+        const currentPosition = { x: touch.clientX, y: touch.clientY };
+        
+        // Calculate movement
+        const movementX = currentPosition.x - lastTouchPosition.current.x;
+        const movementY = currentPosition.y - lastTouchPosition.current.y;
+        
+        // If modal is open and camera starts moving, close it
+        if (selectedObject && (Math.abs(movementX) > 1 || Math.abs(movementY) > 1)) {
+          closeObjectModal();
+          return;
+        }
+        
+        // Don't move camera if disabled or hovering over an object
+        if (disabledRef.current || hoveredRef.current) {
+          return;
+        }
+        
+        if (isDragging && type === 'dragFPS') {
+          // Create quaternions for pitch and yaw (same logic as mouse)
+          const pitchQuat = new THREE.Quaternion().setFromAxisAngle(
+            new THREE.Vector3(1, 0, 0),
+            movementY * 0.002
+          );
+          const yawQuat = new THREE.Quaternion().setFromAxisAngle(
+            new THREE.Vector3(0, 1, 0),
+            movementX * 0.002
+          );
+
+          // Apply rotations in order: yaw first, then pitch
+          camera.quaternion.multiply(yawQuat);
+          camera.quaternion.multiply(pitchQuat);
+
+          // Extract the current pitch and keep Z at 0
+          const euler = new THREE.Euler().setFromQuaternion(camera.quaternion);
+          camera.quaternion.setFromEuler(euler);
+          camera.quaternion.x = 0;
+          camera.quaternion.z = 0;
+
+          // Force the up vector to stay vertical
+          camera.up.set(0, 3, 0);
+        }
+        
+        // Update last position for next movement calculation
+        lastTouchPosition.current = currentPosition;
+        
+        // Prevent default to avoid scrolling/zooming
+        e.preventDefault();
+      }
+    };
+
+    // Mouse events
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mouseup', handleMouseUp);
     window.addEventListener('mousemove', handleMouseMove);
+    
+    // Touch events
+    window.addEventListener('touchstart', handleTouchStart, { passive: false });
+    window.addEventListener('touchend', handleTouchEnd);
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
 
     return () => {
+      // Cleanup mouse events
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mouseup', handleMouseUp);
       window.removeEventListener('mousemove', handleMouseMove);
+      
+      // Cleanup touch events
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('touchmove', handleTouchMove);
     };
   }, [isDragging, camera, type]); // Remove cameraMovementDisabled from dependencies
 

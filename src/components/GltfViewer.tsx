@@ -476,10 +476,16 @@ const CameraManager = ({
       label: 'Environment Radius'
     },
     environmentMode: {
-      value: 'background',
+      value: 'dome',
       options: ['background', 'dome'],
       label: 'Environment Mode'
     }
+  });
+
+  // Monitor camera position with Leva
+  useControls({
+    'Camera Position': monitor(() => `x: ${camera.position.x.toFixed(2)}, y: ${camera.position.y.toFixed(2)}, z: ${camera.position.z.toFixed(2)}`),
+    'Camera Rotation': monitor(() => `x: ${camera.rotation.x.toFixed(2)}, y: ${camera.rotation.y.toFixed(2)}, z: ${camera.rotation.z.toFixed(2)}`)
   });
 
   // Pass the radius change to parent component
@@ -674,7 +680,7 @@ export default function GltfViewer() {
   const [controlType, setControlType] = useState<ControlType>('dragFPS');
   const [curModel, setCurModel] = useState<string>('home');
   const [cameraPositions, setCameraPositions] = useState<Array<{ position: [number, number, number], label: string }>>(DEFAULT_CAMERA_POSITIONS);
-  const [cameraPosition, setCameraPosition] = useState(new THREE.Vector3(2.8, 3.4, 46));
+  const [cameraPosition, setCameraPosition] = useState(new THREE.Vector3(-47.39, 1.70, -2.30));
   const [environmentRadius, setEnvironmentRadius] = useState(90);
   const [environmentMode, setEnvironmentMode] = useState('dome');
   
