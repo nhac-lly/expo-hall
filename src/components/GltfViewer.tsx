@@ -150,17 +150,17 @@ const Model = React.memo(({ curModel, rotation }: { curModel: string, rotation: 
         <Suspense fallback={<LoadingPlaceholder position={[-12, 0.1, 15]} />}>
           <SingleModel modelName="tech" position={[-12, 0.1, 15]} rotation={[0, -4.7, 0]} isRigidBody />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[-11, 0.1, 40]} />}>
-          <SingleModel modelName="wood" position={[-11, 0.1, 40]} rotation={[0, 0, 0]} isRigidBody />
+        <Suspense fallback={<LoadingPlaceholder position={[-13, 0.1, 40]} />}>  
+          <SingleModel modelName="wood" position={[-12, 0.1, 40]} rotation={[0, 0, 0]} isRigidBody />
         </Suspense>
         <Suspense fallback={<LoadingPlaceholder position={[11, 0.1, -10]} />}>
-          <SingleModel modelName="booth_thuysan" position={[11, 0.1, -10]} rotation={[0, 4.7, 0]} isRigidBody />
+          <SingleModel modelName="booth_thuysan" position={[11, 0.1, -10]} rotation={[0, 4.7, 0]} isRigidBody />s
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[10, 0.1, 13]} />}>
-          <SingleModel modelName="thucong" position={[10, 0.1, 13]} rotation={[0, 4.7, 0]} isRigidBody />
+        <Suspense fallback={<LoadingPlaceholder position={[12, 0.1, 13]} />}>
+          <SingleModel modelName="thucong" position={[12, 0.1, 13]} rotation={[0, 4.7, 0]} isRigidBody />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[12, 0.1, 40]} />}>
-          <SingleModel modelName="food" position={[12, 0.1, 40]} rotation={[0, 9.41, 0]} isRigidBody />
+        <Suspense fallback={<LoadingPlaceholder position={[13, 0.1, 40]} />}>
+          <SingleModel modelName="food" position={[14, 0.1, 40]} rotation={[0, 9.41, 0]} isRigidBody />
         </Suspense>
         {/* <Suspense fallback={<LoadingPlaceholder position={[0, 0.1, -5]} />}>
           <SingleModel modelName="way" position={[0, 0.1, -5]} rotation={[0, 0, 0]} />
@@ -355,10 +355,14 @@ const GroundClickEffect = ({ position, onComplete }: { position: THREE.Vector3, 
 // Camera manager component that runs inside Canvas
 const CameraManager = ({
   onAddCameraPosition,
-  cameraPositions
+  cameraPositions,
+  onEnvironmentRadiusChange,
+  onEnvironmentModeChange
 }: {
   onAddCameraPosition: (position: [number, number, number], label: string) => void;
   cameraPositions: Array<{ position: [number, number, number], label: string }>;
+  onEnvironmentRadiusChange: (radius: number) => void;
+  onEnvironmentModeChange: (mode: string) => void;
 }) => {
   const { camera } = useThree();
   const [targetPositions, setTargetPositions] = useState<Array<{ id: number, position: THREE.Vector3 }>>([]);
@@ -371,15 +375,37 @@ const CameraManager = ({
   const cameraBody = useRef<any>(null);
 
   // Add Leva controls for character height
-  const { characterHeight } = useControls({
+  const { characterHeight, showEnvironmentRadius, environmentRadius, environmentMode } = useControls({
     characterHeight: {
       value: 1.7,
       min: 1,
       max: 2,
       step: 0.1,
       label: 'Character Height'
+    },
+    showEnvironmentRadius: {
+      value: false,
+      label: 'Show Environment Radius'
+    },
+    environmentRadius: {
+      value: 90,
+      min: 20,
+      max: 200,
+      step: 10,
+      label: 'Environment Radius'
+    },
+    environmentMode: {
+      value: 'background',
+      options: ['background', 'dome'],
+      label: 'Environment Mode'
     }
   });
+
+  // Pass the radius change to parent component
+  useEffect(() => {
+    onEnvironmentRadiusChange(environmentRadius);
+    onEnvironmentModeChange(environmentMode);
+  }, [environmentRadius, environmentMode, onEnvironmentRadiusChange, onEnvironmentModeChange]);
 
   // Function to stop camera movement
   const stopCameraMovement = () => {
@@ -502,6 +528,14 @@ const CameraManager = ({
         <CuboidCollider args={[0.5, 0.5, 0.5]} />
       </RigidBody>
 
+      {/* Environment radius visualization */}
+      {showEnvironmentRadius && environmentMode === 'dome' && (
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.1, 0]}>
+          <ringGeometry args={[environmentRadius - 2, environmentRadius, 64]} />
+          <meshBasicMaterial color="#00ff00" transparent opacity={0.3} side={THREE.DoubleSide} />
+        </mesh>
+      )}
+
       {/* Ground plane for clicking */}
       <RigidBody type="fixed" colliders="cuboid">
         <mesh 
@@ -560,6 +594,8 @@ export default function GltfViewer() {
   const [curModel, setCurModel] = useState<string>('home');
   const [cameraPositions, setCameraPositions] = useState<Array<{ position: [number, number, number], label: string }>>(DEFAULT_CAMERA_POSITIONS);
   const [cameraPosition, setCameraPosition] = useState(new THREE.Vector3(2.8, 3.4, 46));
+  const [environmentRadius, setEnvironmentRadius] = useState(90);
+  const [environmentMode, setEnvironmentMode] = useState('dome');
 
   const handleAddCameraPosition = (position: [number, number, number], label: string) => {
     setCameraPositions(prev => [...prev, { position, label }]);
@@ -567,6 +603,14 @@ export default function GltfViewer() {
 
   const handleGoTo = (position: [number, number, number]) => {
     setCameraPosition(new THREE.Vector3(...position));
+  };
+
+  const handleEnvironmentRadiusChange = (radius: number) => {
+    setEnvironmentRadius(radius);
+  };
+
+  const handleEnvironmentModeChange = (mode: string) => {
+    setEnvironmentMode(mode);
   };
 
   const SelectModel = ({ curModel, setCurModel }: { curModel: string, setCurModel: (model: string) => void }) => (
@@ -599,12 +643,21 @@ export default function GltfViewer() {
           <CameraManager
             onAddCameraPosition={handleAddCameraPosition}
             cameraPositions={cameraPositions}
+            onEnvironmentRadiusChange={handleEnvironmentRadiusChange}
+            onEnvironmentModeChange={handleEnvironmentModeChange}
           />
           <Suspense fallback={<LoadingPlaceholder />}>
             <Model curModel={curModel} rotation={[0, 4.7, 0]} />
           </Suspense>
           <CameraControls type={controlType} cameraPositions={cameraPositions} />
-          <Environment files="./VR/hall.hdr" background />
+          <Environment 
+            files="./VR/hall.hdr" 
+            {...(environmentMode === 'background' 
+              ? { background: true } 
+              : { ground: { height: 10, radius: environmentRadius, scale: 100 } }
+            )}
+            environmentIntensity={0.5}
+          />
         </Physics>
       </Canvas>
       {/* <CameraPositionForm 
