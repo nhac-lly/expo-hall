@@ -438,12 +438,14 @@ const CameraManager = ({
   onAddCameraPosition,
   cameraPositions,
   onEnvironmentRadiusChange,
-  onEnvironmentModeChange
+  onEnvironmentModeChange,
+  onCharacterHeightChange
 }: {
   onAddCameraPosition: (position: [number, number, number], label: string) => void;
   cameraPositions: Array<{ position: [number, number, number], label: string }>;
   onEnvironmentRadiusChange: (radius: number) => void;
   onEnvironmentModeChange: (mode: string) => void;
+  onCharacterHeightChange: (height: number) => void;
 }) => {
   const { camera } = useThree();
   const [targetPositions, setTargetPositions] = useState<Array<{ id: number, position: THREE.Vector3 }>>([]);
@@ -484,8 +486,18 @@ const CameraManager = ({
 
   // Monitor camera position with Leva
   useControls({
-    'Camera Position': monitor(() => `x: ${camera.position.x.toFixed(2)}, y: ${camera.position.y.toFixed(2)}, z: ${camera.position.z.toFixed(2)}`),
-    'Camera Rotation': monitor(() => `x: ${camera.rotation.x.toFixed(2)}, y: ${camera.rotation.y.toFixed(2)}, z: ${camera.rotation.z.toFixed(2)}`)
+    'Camera Position': monitor(() => {
+      const x = typeof camera.position.x === 'number' ? camera.position.x.toFixed(2) : '0.00';
+      const y = typeof camera.position.y === 'number' ? camera.position.y.toFixed(2) : '0.00';
+      const z = typeof camera.position.z === 'number' ? camera.position.z.toFixed(2) : '0.00';
+      return `x: ${x}, y: ${y}, z: ${z}`;
+    }),
+    'Camera Rotation': monitor(() => {
+      const x = typeof camera.rotation.x === 'number' ? camera.rotation.x.toFixed(2) : '0.00';
+      const y = typeof camera.rotation.y === 'number' ? camera.rotation.y.toFixed(2) : '0.00';
+      const z = typeof camera.rotation.z === 'number' ? camera.rotation.z.toFixed(2) : '0.00';
+      return `x: ${x}, y: ${y}, z: ${z}`;
+    })
   });
 
   // Pass the radius change to parent component
@@ -683,6 +695,7 @@ export default function GltfViewer() {
   const [cameraPosition, setCameraPosition] = useState(new THREE.Vector3(-47.39, 1.70, -2.30));
   const [environmentRadius, setEnvironmentRadius] = useState(90);
   const [environmentMode, setEnvironmentMode] = useState('dome');
+  const [characterHeight, setCharacterHeight] = useState(1.7);
   
   // Use Zustand store
   const { selectedObject, closeObjectModal } = useAppStore();
@@ -735,6 +748,7 @@ export default function GltfViewer() {
             cameraPositions={cameraPositions}
             onEnvironmentRadiusChange={handleEnvironmentRadiusChange}
             onEnvironmentModeChange={handleEnvironmentModeChange}
+            onCharacterHeightChange={setCharacterHeight}
           />
           <Suspense fallback={<LoadingPlaceholder />}>
             <Model curModel={curModel} rotation={[0, 4.7, 0]} />

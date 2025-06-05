@@ -13,7 +13,7 @@ import {
   Html
 } from '@react-three/drei';
 import { MOUSE } from 'three';
-import { useThree } from '@react-three/fiber';
+import { useThree, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useAppStore } from '../stores/useAppStore';
 
@@ -109,7 +109,7 @@ interface CameraPositionFormProps {
   onSubmit: (position: [number, number, number], label: string) => void;
 }
 
-export function CameraControls({ type, cameraPositions = [] }: { type: ControlType, cameraPositions?: Array<{ position: [number, number, number], label: string }> }) {
+export function CameraControls({ type, cameraPositions = [], characterHeight = 1.7 }: { type: ControlType, cameraPositions?: Array<{ position: [number, number, number], label: string }>, characterHeight?: number }) {
   const [isDragging, setIsDragging] = useState(false);
   const [showTransformControls, setShowTransformControls] = useState(false);
   const { camera } = useThree();
@@ -123,6 +123,10 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
 
   // Touch state tracking
   const lastTouchPosition = useRef<{ x: number, y: number } | null>(null);
+
+  // Gamepad state tracking
+  const gamepadRef = useRef<Gamepad | null>(null);
+  const [gamepadConnected, setGamepadConnected] = useState(false);
 
   // Store initial camera position and rotation
   const initialCameraState = useRef({
@@ -276,6 +280,22 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
     window.addEventListener('touchend', handleTouchEnd);
     window.addEventListener('touchmove', handleTouchMove, { passive: false });
 
+    // Gamepad event listeners
+    const handleGamepadConnected = (e: GamepadEvent) => {
+      console.log('Gamepad connected:', e.gamepad.id);
+      gamepadRef.current = e.gamepad;
+      setGamepadConnected(true);
+    };
+
+    const handleGamepadDisconnected = (e: GamepadEvent) => {
+      console.log('Gamepad disconnected:', e.gamepad.id);
+      gamepadRef.current = null;
+      setGamepadConnected(false);
+    };
+
+    window.addEventListener('gamepadconnected', handleGamepadConnected);
+    window.addEventListener('gamepaddisconnected', handleGamepadDisconnected);
+
     return () => {
       // Cleanup mouse events
       window.removeEventListener('mousedown', handleMouseDown);
@@ -286,8 +306,131 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('touchmove', handleTouchMove);
+
+      // Cleanup gamepad event listeners
+      window.removeEventListener('gamepadconnected', handleGamepadConnected);
+      window.removeEventListener('gamepaddisconnected', handleGamepadDisconnected);
     };
   }, [isDragging, camera, type]); // Remove cameraMovementDisabled from dependencies
+
+  // Additional gamepad detection loop
+  useEffect(() => {
+    if (type === 'dragFPS') {
+      const checkGamepads = () => {
+        const gamepads = navigator.getGamepads();
+        const connectedGamepad = gamepads[0] || gamepads[1] || gamepads[2] || gamepads[3];
+        
+        if (connectedGamepad && !gamepadConnected) {
+          console.log('Gamepad found:', connectedGamepad.id);
+          setGamepadConnected(true);
+          gamepadRef.current = connectedGamepad;
+        } else if (!connectedGamepad && gamepadConnected) {
+          console.log('No gamepad found');
+          setGamepadConnected(false);
+          gamepadRef.current = null;
+        }
+      };
+
+      // Check immediately
+      checkGamepads();
+      
+      // Check periodically
+      const interval = setInterval(checkGamepads, 1000);
+      
+      return () => clearInterval(interval);
+    }
+  }, [type, gamepadConnected]);
+
+  // Gamepad input handling (runs every frame)
+  useFrame(() => {
+    if (type === 'dragFPS') {
+      // Always check for gamepads, not just when gamepadConnected is true
+      const gamepads = navigator.getGamepads();
+      const gamepad = gamepads[0] || gamepads[1] || gamepads[2] || gamepads[3]; // Check all slots
+      
+      if (gamepad && !disabledRef.current) {
+        // Update connection status if not already set
+        if (!gamepadConnected) {
+          console.log('Gamepad detected in frame loop:', gamepad.id);
+          setGamepadConnected(true);
+        }
+        
+        // Right stick for camera rotation (axes 2 and 3)
+        const rightStickX = gamepad.axes[2]; // Horizontal rotation (yaw)
+        const rightStickY = gamepad.axes[3]; // Vertical rotation (pitch)
+        
+        // Apply deadzone to prevent drift
+        const deadzone = 0.1;
+        const sensitivity = 0.03;
+        
+        if (Math.abs(rightStickX) > deadzone || Math.abs(rightStickY) > deadzone) {
+          // Create quaternions for pitch and yaw with proper orientation
+          const pitchQuat = new THREE.Quaternion().setFromAxisAngle(
+            new THREE.Vector3(1, 0, 0),
+            -rightStickY * sensitivity // Invert Y for natural camera control
+          );
+          const yawQuat = new THREE.Quaternion().setFromAxisAngle(
+            new THREE.Vector3(0, 1, 0),
+            -rightStickX * sensitivity // Invert X for natural camera control
+          );
+
+          // Apply rotations in order: yaw first, then pitch
+          camera.quaternion.multiply(yawQuat);
+          camera.quaternion.multiply(pitchQuat);
+
+          // Limit pitch to prevent camera flipping, but don't lock it completely
+          const euler = new THREE.Euler().setFromQuaternion(camera.quaternion, 'YXZ');
+          euler.x = Math.max(-Math.PI/2 + 0.1, Math.min(Math.PI/2 - 0.1, euler.x)); // Limit pitch
+          euler.z = 0; // Keep roll at zero
+          camera.quaternion.setFromEuler(euler);
+
+          // Keep the up vector pointing up
+          camera.up.set(0, 1, 0);
+          
+          // Close modal if camera starts moving
+          if (selectedObject) {
+            closeObjectModal();
+          }
+        }
+        
+        // Left stick for movement (axes 0 and 1)
+        const leftStickX = gamepad.axes[0]; // Strafe left/right
+        const leftStickY = gamepad.axes[1]; // Move forward/backward
+        
+        if (Math.abs(leftStickX) > deadzone || Math.abs(leftStickY) > deadzone) {
+          const moveSpeed = 0.1;
+          
+          // Get camera's forward and right vectors, but only use horizontal components
+          const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+          const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+          
+          // Flatten vectors to horizontal plane only
+          forward.y = 0;
+          right.y = 0;
+          forward.normalize();
+          right.normalize();
+          
+          // Apply movement only in X and Z directions
+          const movement = new THREE.Vector3();
+          movement.addScaledVector(forward, -leftStickY * moveSpeed);
+          movement.addScaledVector(right, leftStickX * moveSpeed);
+          
+          // Add movement but keep Y position at character height
+          const newPosition = camera.position.clone().add(movement);
+          newPosition.y = characterHeight; // Use characterHeight parameter
+          camera.position.copy(newPosition);
+          
+          // Close modal if camera starts moving
+          if (selectedObject) {
+            closeObjectModal();
+          }
+        }
+      } else if (gamepadConnected && !gamepad) {
+        // Gamepad disconnected
+        setGamepadConnected(false);
+      }
+    }
+  });
 
   switch (type) {
     case 'orbit':
@@ -411,6 +554,15 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
             <Html center>
               <div className="text-white bg-black bg-opacity-50 px-4 py-2 rounded-lg pointer-events-none">
                 Camera movement disabled - Modal open
+              </div>
+            </Html>
+          )}
+          {!cameraMovementDisabled && (
+            <Html position={[0, -3, 0]}>
+              <div className="text-white bg-black bg-opacity-70 px-3 py-1 rounded-lg pointer-events-none text-sm">
+                {gamepadConnected 
+                  ? "🎮 Gamepad Active - Left stick: Move | Right stick: Look" 
+                  : "🖱️ Mouse/Touch - Drag to look | Click ground to move"}
               </div>
             </Html>
           )}
