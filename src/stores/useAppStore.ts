@@ -10,10 +10,6 @@ interface AppState {
   selectedObject: ObjectInfo | null
   setSelectedObject: (object: ObjectInfo | null) => void
   
-  // Hover state
-  hoveredObject: string | null
-  setHoveredObject: (objectName: string | null) => void
-  
   // Click interaction state
   isObjectClicked: boolean
   setIsObjectClicked: (clicked: boolean) => void
@@ -32,7 +28,6 @@ export const useAppStore = create<AppState>((set) => ({
   // Initial state
   cameraMovementDisabled: false,
   selectedObject: null,
-  hoveredObject: null,
   isObjectClicked: false,
   cameraMovementDetected: false,
   
@@ -44,9 +39,6 @@ export const useAppStore = create<AppState>((set) => ({
   // Modal state
   setSelectedObject: (object) => set({ selectedObject: object }),
   
-  // Hover state
-  setHoveredObject: (objectName) => set({ hoveredObject: objectName }),
-  
   // Click interaction
   setIsObjectClicked: (clicked) => set({ isObjectClicked: clicked }),
   
@@ -57,7 +49,7 @@ export const useAppStore = create<AppState>((set) => ({
   openObjectModal: (objectInfo) => {
     set({ 
       selectedObject: objectInfo, 
-      cameraMovementDisabled: false,
+      cameraMovementDisabled: true,
       isObjectClicked: true 
     })
   },
@@ -67,8 +59,7 @@ export const useAppStore = create<AppState>((set) => ({
       selectedObject: null, 
       cameraMovementDisabled: false,
       isObjectClicked: false,
-      cameraMovementDetected: false,
-      hoveredObject: null
+      cameraMovementDetected: false
     })
   },
   

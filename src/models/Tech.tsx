@@ -276,45 +276,26 @@ const OBJECT_INFO: Record<string, ObjectInfo> = {
 export function Model(props: JSX.IntrinsicElements['group']) {
   const { nodes, materials } = useGLTF('/VR/tech-transformed.glb') as unknown as GLTFResult
   
-  // Use Zustand store for all states
-  const { openObjectModal, isObjectClicked, hoveredObject, setHoveredObject } = useAppStore()
+  // Use Zustand store for click interactions only
+  const { openObjectModal, isObjectClicked } = useAppStore()
 
-  // Create hover effect materials
-  const createHoverMaterial = (originalMaterial: THREE.Material, objectName: string) => {
+  // Create clickable materials with subtle visual effects
+  const createClickableMaterial = (originalMaterial: THREE.Material) => {
     return useMemo(() => {
       if (!originalMaterial) return originalMaterial
-      
-      const isHovered = hoveredObject === objectName
       
       if (originalMaterial instanceof THREE.MeshStandardMaterial) {
         const clonedMaterial = originalMaterial.clone()
         
-        if (isHovered) {
-          clonedMaterial.color = new THREE.Color(originalMaterial.color).lerp(new THREE.Color('#4a9eff'), 0.3)
-          clonedMaterial.emissive = new THREE.Color('#4a9eff').multiplyScalar(0.2)
-          clonedMaterial.roughness = Math.max(0, originalMaterial.roughness - 0.2)
-        }
+        // Add subtle visual indicators for clickability
+        clonedMaterial.emissive = new THREE.Color('#0066cc').multiplyScalar(0.05) // Very subtle blue glow
+        clonedMaterial.roughness = Math.max(0, originalMaterial.roughness - 0.1) // Slightly more reflective
         
         return clonedMaterial
       }
       
       return originalMaterial
-    }, [originalMaterial, objectName, hoveredObject])
-  }
-
-  // Hover handlers using Zustand
-  const handlePointerEnter = (objectName: string) => (e: any) => {
-    if (isObjectClicked) return
-    e.stopPropagation()
-    setHoveredObject(objectName)
-    document.body.style.cursor = 'pointer'
-  }
-
-  const handlePointerLeave = (e: any) => {
-    if (isObjectClicked) return
-    e.stopPropagation()
-    setHoveredObject(null)
-    document.body.style.cursor = 'auto'
+    }, [originalMaterial])
   }
 
   // Click handler using Zustand store
@@ -355,40 +336,52 @@ export function Model(props: JSX.IntrinsicElements['group']) {
       <group 
         position={[-4.512, 0.116, 4.443]} 
         scale={[1.458, 1.076, 1.076]}
-        onPointerEnter={handlePointerEnter('side-by-side-fridge')}
-        onPointerLeave={handlePointerLeave}
         onClick={handleClick('side-by-side-fridge')}
+        onPointerUp={handleClick('side-by-side-fridge')}
       >
-        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_1'].geometry} material={createHoverMaterial(materials.Brushed_steel_base, 'side-by-side-fridge')} />
-        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_2'].geometry} material={createHoverMaterial(materials.Brushed_steel_base_ice, 'side-by-side-fridge')} />
-        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_3'].geometry} material={createHoverMaterial(materials.Text_water_cubed_crushed, 'side-by-side-fridge')} />
-        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_4'].geometry} material={createHoverMaterial(materials.PaletteMaterial014, 'side-by-side-fridge')} />
-        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_5'].geometry} material={createHoverMaterial(materials.PaletteMaterial018, 'side-by-side-fridge')} />
-        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_6'].geometry} material={createHoverMaterial(materials.PaletteMaterial013, 'side-by-side-fridge')} />
-        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_7'].geometry} material={createHoverMaterial(materials.PaletteMaterial015, 'side-by-side-fridge')} />
-        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_8'].geometry} material={createHoverMaterial(materials.PaletteMaterial016, 'side-by-side-fridge')} />
-        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_9'].geometry} material={createHoverMaterial(materials.PaletteMaterial017, 'side-by-side-fridge')} />
+        {/* Invisible larger touch area */}
+        <mesh>
+          <boxGeometry args={[3, 4, 2]} />
+          <meshBasicMaterial transparent opacity={0} />
+        </mesh>
+        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_1'].geometry} material={createClickableMaterial(materials.Brushed_steel_base)} />
+        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_2'].geometry} material={createClickableMaterial(materials.Brushed_steel_base_ice)} />
+        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_3'].geometry} material={createClickableMaterial(materials.Text_water_cubed_crushed)} />
+        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_4'].geometry} material={createClickableMaterial(materials.PaletteMaterial014)} />
+        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_5'].geometry} material={createClickableMaterial(materials.PaletteMaterial018)} />
+        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_6'].geometry} material={createClickableMaterial(materials.PaletteMaterial013)} />
+        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_7'].geometry} material={createClickableMaterial(materials.PaletteMaterial015)} />
+        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_8'].geometry} material={createClickableMaterial(materials.PaletteMaterial016)} />
+        <mesh geometry={nodes['RS5000_Side-by-side_Fridge_Freezer_RS64R_9'].geometry} material={createClickableMaterial(materials.PaletteMaterial017)} />
       </group>
       <group 
         position={[2.264, 0.114, 4.441]}
-        onPointerEnter={handlePointerEnter('family-hub-fridge')}
-        onPointerLeave={handlePointerLeave}
         onClick={handleClick('family-hub-fridge')}
+        onPointerUp={handleClick('family-hub-fridge')}
       >
-        <mesh geometry={nodes['Family_Hub_Multi-door_Fridge_Freezer_1'].geometry} material={createHoverMaterial(materials['Base.001'], 'family-hub-fridge')} />
-        <mesh geometry={nodes['Family_Hub_Multi-door_Fridge_Freezer_2'].geometry} material={createHoverMaterial(materials['Display.001'], 'family-hub-fridge')} />
-        <mesh geometry={nodes['Family_Hub_Multi-door_Fridge_Freezer_3'].geometry} material={createHoverMaterial(materials.PaletteMaterial027, 'family-hub-fridge')} />
-        <mesh geometry={nodes['Family_Hub_Multi-door_Fridge_Freezer_4'].geometry} material={createHoverMaterial(materials.PaletteMaterial028, 'family-hub-fridge')} />
+        {/* Invisible larger touch area */}
+        <mesh>
+          <boxGeometry args={[2.5, 4, 2]} />
+          <meshBasicMaterial transparent opacity={0} />
+        </mesh>
+        <mesh geometry={nodes['Family_Hub_Multi-door_Fridge_Freezer_1'].geometry} material={createClickableMaterial(materials['Base.001'])} />
+        <mesh geometry={nodes['Family_Hub_Multi-door_Fridge_Freezer_2'].geometry} material={createClickableMaterial(materials['Display.001'])} />
+        <mesh geometry={nodes['Family_Hub_Multi-door_Fridge_Freezer_3'].geometry} material={createClickableMaterial(materials.PaletteMaterial027)} />
+        <mesh geometry={nodes['Family_Hub_Multi-door_Fridge_Freezer_4'].geometry} material={createClickableMaterial(materials.PaletteMaterial028)} />
       </group>
       <group 
         position={[1.72, 0.116, 3.458]} 
         rotation={[0, -1.571, 0]}
-        onPointerEnter={handlePointerEnter('rb8000-fridge')}
-        onPointerLeave={handlePointerLeave}
         onClick={handleClick('rb8000-fridge')}
+        onPointerUp={handleClick('rb8000-fridge')}
       >
-        <mesh geometry={nodes['RB8000_Fridge-Freezer_202_cm'].geometry} material={createHoverMaterial(materials['Brushed_steel_base.001'], 'rb8000-fridge')} />
-        <mesh geometry={nodes['RB8000_Fridge-Freezer_202_cm_1'].geometry} material={createHoverMaterial(materials.PaletteMaterial029, 'rb8000-fridge')} />
+        {/* Invisible larger touch area */}
+        <mesh>
+          <boxGeometry args={[2, 4, 2]} />
+          <meshBasicMaterial transparent opacity={0} />
+        </mesh>
+        <mesh geometry={nodes['RB8000_Fridge-Freezer_202_cm'].geometry} material={createClickableMaterial(materials['Brushed_steel_base.001'])} />
+        <mesh geometry={nodes['RB8000_Fridge-Freezer_202_cm_1'].geometry} material={createClickableMaterial(materials.PaletteMaterial029)} />
       </group>
       <group position={[2.748, 0.132, 3.462]} rotation={[0, 1.571, 0]}>
         <mesh geometry={nodes.RB5000_Fridge_Freezer_with_Water_Dispenser_201_cm_1.geometry} material={materials.PaletteMaterial030} />
@@ -400,14 +393,21 @@ export function Model(props: JSX.IntrinsicElements['group']) {
         <mesh geometry={nodes.Cube003.geometry} material={materials.PaletteMaterial035} />
         <mesh geometry={nodes.Cube003_1.geometry} material={materials.PaletteMaterial036} />
       </group>
-      <mesh 
-        geometry={nodes.Plane024.geometry} 
-        material={createHoverMaterial(materials.Sofa_04_Fabric, 'sofa')} 
+      <group 
         position={[4.969, -0.009, -5.239]}
-        onPointerEnter={handlePointerEnter('sofa')}
-        onPointerLeave={handlePointerLeave}
         onClick={handleClick('sofa')}
-      />
+        onPointerUp={handleClick('sofa')}
+      >
+        {/* Invisible larger touch area */}
+        <mesh>
+          <boxGeometry args={[4, 2, 3]} />
+          <meshBasicMaterial transparent opacity={0} />
+        </mesh>
+        <mesh 
+          geometry={nodes.Plane024.geometry} 
+          material={createClickableMaterial(materials.Sofa_04_Fabric)}
+        />
+      </group>
       <group position={[9.123, 0.698, -2.582]} rotation={[0, -1.571, 0]} scale={0.752}>
         <mesh geometry={nodes.Plane023.geometry} material={materials.Picture_Frame_Main_Material} />
         <mesh geometry={nodes.Plane023_1.geometry} material={materials.Picture_Frame_Picture1} />
@@ -427,40 +427,52 @@ export function Model(props: JSX.IntrinsicElements['group']) {
       <group 
         position={[0.668, 0.517, -2.658]} 
         scale={[0.852, 1, 0.852]}
-        onPointerEnter={handlePointerEnter('coffee-table')}
-        onPointerLeave={handlePointerLeave}
         onClick={handleClick('coffee-table')}
+        onPointerUp={handleClick('coffee-table')}
       >
-        <mesh geometry={nodes.Cylinder006.geometry} material={createHoverMaterial(materials.Coffee_Table_05_Marble, 'coffee-table')} />
-        <mesh geometry={nodes.Cylinder006_1.geometry} material={createHoverMaterial(materials.PaletteMaterial032, 'coffee-table')} />
+        {/* Invisible larger touch area */}
+        <mesh>
+          <cylinderGeometry args={[1.5, 1.5, 1, 32]} />
+          <meshBasicMaterial transparent opacity={0} />
+        </mesh>
+        <mesh geometry={nodes.Cylinder006.geometry} material={createClickableMaterial(materials.Coffee_Table_05_Marble)} />
+        <mesh geometry={nodes.Cylinder006_1.geometry} material={createClickableMaterial(materials.PaletteMaterial032)} />
       </group>
       <group 
         position={[0.668, 0.371, -3.716]}
-        onPointerEnter={handlePointerEnter('chair')}
-        onPointerLeave={handlePointerLeave}
         onClick={handleClick('chair')}
+        onPointerUp={handleClick('chair')}
       >
-        <mesh geometry={nodes.Plane019_1.geometry} material={createHoverMaterial(materials.Chair_11_Suede, 'chair')} />
-        <mesh geometry={nodes.Plane019_2.geometry} material={createHoverMaterial(materials.PaletteMaterial033, 'chair')} />
-        <mesh geometry={nodes.Plane019_3.geometry} material={createHoverMaterial(materials.PaletteMaterial034, 'chair')} />
+        {/* Invisible larger touch area */}
+        <mesh>
+          <boxGeometry args={[2, 3, 2]} />
+          <meshBasicMaterial transparent opacity={0} />
+        </mesh>
+        <mesh geometry={nodes.Plane019_1.geometry} material={createClickableMaterial(materials.Chair_11_Suede)} />
+        <mesh geometry={nodes.Plane019_2.geometry} material={createClickableMaterial(materials.PaletteMaterial033)} />
+        <mesh geometry={nodes.Plane019_3.geometry} material={createClickableMaterial(materials.PaletteMaterial034)} />
       </group>
       <mesh geometry={nodes.Plane019.geometry} material={materials.LCD06} position={[-0.017, 0.229, -7.17]} rotation={[-Math.PI, 0, -Math.PI]} />
       <group 
         position={[-5.657, 0.821, 2.493]} 
         rotation={[Math.PI, 0, Math.PI]} 
         scale={0.135}
-        onPointerEnter={handlePointerEnter('washing-machine')}
-        onPointerLeave={handlePointerLeave}
         onClick={handleClick('washing-machine')}
+        onPointerUp={handleClick('washing-machine')}
       >
-        <mesh geometry={nodes.samsung_WF50R8500AV_white__1.geometry} material={createHoverMaterial(materials.PaletteMaterial019, 'washing-machine')} />
-        <mesh geometry={nodes.samsung_WF50R8500AV_white__2.geometry} material={createHoverMaterial(materials.PaletteMaterial020, 'washing-machine')} />
-        <mesh geometry={nodes.samsung_WF50R8500AV_white__3.geometry} material={createHoverMaterial(materials.PaletteMaterial021, 'washing-machine')} />
-        <mesh geometry={nodes.samsung_WF50R8500AV_white__4.geometry} material={createHoverMaterial(materials.PaletteMaterial022, 'washing-machine')} />
-        <mesh geometry={nodes.samsung_WF50R8500AV_white__5.geometry} material={createHoverMaterial(materials.PaletteMaterial023, 'washing-machine')} />
-        <mesh geometry={nodes.samsung_WF50R8500AV_white__6.geometry} material={createHoverMaterial(materials.PaletteMaterial024, 'washing-machine')} />
-        <mesh geometry={nodes.samsung_WF50R8500AV_white__7.geometry} material={createHoverMaterial(materials.PaletteMaterial025, 'washing-machine')} />
-        <mesh geometry={nodes.samsung_WF50R8500AV_white__8.geometry} material={createHoverMaterial(materials.PaletteMaterial026, 'washing-machine')} />
+        {/* Invisible larger touch area */}
+        <mesh>
+          <boxGeometry args={[15, 20, 15]} />
+          <meshBasicMaterial transparent opacity={0} />
+        </mesh>
+        <mesh geometry={nodes.samsung_WF50R8500AV_white__1.geometry} material={createClickableMaterial(materials.PaletteMaterial019)} />
+        <mesh geometry={nodes.samsung_WF50R8500AV_white__2.geometry} material={createClickableMaterial(materials.PaletteMaterial020)} />
+        <mesh geometry={nodes.samsung_WF50R8500AV_white__3.geometry} material={createClickableMaterial(materials.PaletteMaterial021)} />
+        <mesh geometry={nodes.samsung_WF50R8500AV_white__4.geometry} material={createClickableMaterial(materials.PaletteMaterial022)} />
+        <mesh geometry={nodes.samsung_WF50R8500AV_white__5.geometry} material={createClickableMaterial(materials.PaletteMaterial023)} />
+        <mesh geometry={nodes.samsung_WF50R8500AV_white__6.geometry} material={createClickableMaterial(materials.PaletteMaterial024)} />
+        <mesh geometry={nodes.samsung_WF50R8500AV_white__7.geometry} material={createClickableMaterial(materials.PaletteMaterial025)} />
+        <mesh geometry={nodes.samsung_WF50R8500AV_white__8.geometry} material={createClickableMaterial(materials.PaletteMaterial026)} />
       </group>
     </group>
   )

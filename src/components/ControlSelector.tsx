@@ -115,13 +115,11 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
   const { camera } = useThree();
   
   // Use Zustand store for disabled state
-  const { cameraMovementDisabled, selectedObject, closeObjectModal, hoveredObject } = useAppStore();
+  const { cameraMovementDisabled, selectedObject, closeObjectModal } = useAppStore();
   
   // Use ref to track current disabled state for event handlers
   const disabledRef = useRef(cameraMovementDisabled);
-  const hoveredRef = useRef(hoveredObject);
   disabledRef.current = cameraMovementDisabled;
-  hoveredRef.current = hoveredObject;
 
   // Touch state tracking
   const lastTouchPosition = useRef<{ x: number, y: number } | null>(null);
@@ -146,7 +144,7 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
     const handleMouseDown = (e: MouseEvent) => {
       if (e.button === 0) { // Left click only
         // Don't start dragging if disabled or hovering over an object
-        if (disabledRef.current || hoveredRef.current) {
+        if (disabledRef.current) {
           return
         }
         setIsDragging(true);
@@ -163,7 +161,7 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
       }
       
       // Don't move camera if disabled or hovering over an object
-      if (disabledRef.current || hoveredRef.current) {
+      if (disabledRef.current) {
         return
       }
       
@@ -197,7 +195,7 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
     const handleTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 1) { // Single finger only
         // Don't start dragging if disabled or hovering over an object
-        if (disabledRef.current || hoveredRef.current) {
+        if (disabledRef.current) {
           return
         }
         
@@ -231,7 +229,7 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
         }
         
         // Don't move camera if disabled or hovering over an object
-        if (disabledRef.current || hoveredRef.current) {
+        if (disabledRef.current) {
           return;
         }
         
@@ -299,7 +297,7 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
           rotateSpeed={1}
           enablePan={false}
           enableZoom={true}
-          enabled={!cameraMovementDisabled && !hoveredObject}
+          enabled={!cameraMovementDisabled}
         />
       );
     case 'trackball':
@@ -309,16 +307,16 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
           rotateSpeed={1}
           noPan={true}
           zoomSpeed={1}
-          staticMoving={cameraMovementDisabled || !!hoveredObject}
+          staticMoving={cameraMovementDisabled}
         />
       );
     case 'firstPerson':
       return (
         <FirstPersonControls
-          activeLook={isDragging && !cameraMovementDisabled && !hoveredObject}
-          movementSpeed={(cameraMovementDisabled || hoveredObject) ? 0 : 1.0}
-          lookSpeed={(cameraMovementDisabled || hoveredObject) ? 0 : 0.1}
-          lookVertical={!cameraMovementDisabled && !hoveredObject}
+          activeLook={isDragging && !cameraMovementDisabled}
+          movementSpeed={(cameraMovementDisabled) ? 0 : 1.0}
+          lookSpeed={(cameraMovementDisabled) ? 0 : 0.1}
+          lookVertical={!cameraMovementDisabled}
           autoForward={false}
           heightCoef={1}
           constrainVertical={true}
@@ -329,9 +327,9 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
     case 'fly':
       return (
         <FlyControls
-          dragToLook={!cameraMovementDisabled && !hoveredObject}
-          movementSpeed={(cameraMovementDisabled || hoveredObject) ? 0 : 1.0}
-          rollSpeed={(cameraMovementDisabled || hoveredObject) ? 0 : 0.005}
+          dragToLook={!cameraMovementDisabled}
+          movementSpeed={(cameraMovementDisabled) ? 0 : 1.0}
+          rollSpeed={(cameraMovementDisabled) ? 0 : 0.005}
         />
       );
     case 'map':
@@ -343,7 +341,7 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
           minDistance={1}
           maxDistance={100}
           maxPolarAngle={Math.PI / 2}
-          enabled={!cameraMovementDisabled && !hoveredObject}
+          enabled={!cameraMovementDisabled}
         />
       );
     case 'drag':
@@ -354,7 +352,7 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
             rotateSpeed={1}
             enablePan={false}
             enableZoom={true}
-            enabled={!cameraMovementDisabled && !hoveredObject}
+            enabled={!cameraMovementDisabled}
           />
           <DragControls>
             <mesh>
@@ -379,16 +377,16 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
             rotateSpeed={1}
             enablePan={false}
             enableZoom={true}
-            enabled={!cameraMovementDisabled && !hoveredObject}
+            enabled={!cameraMovementDisabled}
           />
           <mesh 
             position={[0, 0, 0]}
-            onClick={() => !(cameraMovementDisabled || hoveredObject) && setShowTransformControls(!showTransformControls)}
+            onClick={() => !cameraMovementDisabled && setShowTransformControls(!showTransformControls)}
           >
             <boxGeometry args={[1, 1, 1]} />
             <meshStandardMaterial color="hotpink" />
           </mesh>
-          {showTransformControls && !(cameraMovementDisabled || hoveredObject) && (
+          {showTransformControls && !cameraMovementDisabled && (
             <TransformControls>
               <mesh>
                 <boxGeometry args={[1, 1, 1]} />
@@ -403,16 +401,16 @@ export function CameraControls({ type, cameraPositions = [] }: { type: ControlTy
         <ArcballControls
           enablePan={false}
           enableZoom={true}
-          enabled={!cameraMovementDisabled && !hoveredObject}
+          enabled={!cameraMovementDisabled}
         />
       );
     case 'dragFPS':
       return (
         <>
-          {(cameraMovementDisabled || hoveredObject) && (
+          {cameraMovementDisabled && (
             <Html center>
               <div className="text-white bg-black bg-opacity-50 px-4 py-2 rounded-lg pointer-events-none">
-                {hoveredObject ? 'Hovering over object' : 'Camera movement disabled - Modal open'}
+                Camera movement disabled - Modal open
               </div>
             </Html>
           )}
