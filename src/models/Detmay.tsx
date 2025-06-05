@@ -86,7 +86,7 @@ type GLTFResult = GLTF & {
 }
 
 export function Model(props: JSX.IntrinsicElements['group']) {
-  const { nodes, materials } = useGLTF('/VR/detmay-transformed.glb') as unknown as GLTFResult
+  const { nodes, materials } = useGLTF('detmay-transformed.glb') as unknown as GLTFResult
   return (
     <group {...props} dispose={null}>
       <mesh castShadow receiveShadow geometry={nodes.BP_Rack_Clothes_01.geometry} material={materials['Inst_Rack_01.001']} position={[-4.89, -0.037, 1.233]} rotation={[0, 1.571, 0]} />
@@ -135,4 +135,4 @@ export function Model(props: JSX.IntrinsicElements['group']) {
   )
 }
 
-useGLTF.preload('/VR/detmay-transformed.glb')
+useGLTF.preload('detmay-transformed.glb')
