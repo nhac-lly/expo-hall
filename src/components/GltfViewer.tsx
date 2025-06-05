@@ -457,8 +457,24 @@ const CameraManager = ({
   const mouseDownPoint = useRef<THREE.Vector3 | null>(null);
   const cameraBody = useRef<any>(null);
 
+  // Define movement boundaries (same as in CameraControls)
+  const BOUNDARIES = {
+    minX: -60,
+    maxX: 60,
+    minZ: -50,
+    maxZ: 50
+  };
+
+  // Function to check and constrain position within boundaries
+  const constrainToBoundaries = (position: THREE.Vector3): THREE.Vector3 => {
+    const constrainedPosition = position.clone();
+    constrainedPosition.x = Math.max(BOUNDARIES.minX, Math.min(BOUNDARIES.maxX, constrainedPosition.x));
+    constrainedPosition.z = Math.max(BOUNDARIES.minZ, Math.min(BOUNDARIES.maxZ, constrainedPosition.z));
+    return constrainedPosition;
+  };
+
   // Add Leva controls for character height
-  const { characterHeight, showEnvironmentRadius, environmentRadius, environmentMode } = useControls({
+  const { characterHeight, showEnvironmentRadius, environmentRadius, environmentMode, showBoundaries } = useControls({
     characterHeight: {
       value: 1.7,
       min: 1,
@@ -481,6 +497,10 @@ const CameraManager = ({
       value: 'dome',
       options: ['background', 'dome'],
       label: 'Environment Mode'
+    },
+    showBoundaries: {
+      value: true,
+      label: 'Show Movement Boundaries'
     }
   });
 
@@ -551,6 +571,9 @@ const CameraManager = ({
           event.point.z
         );
         
+        // Constrain target position to boundaries
+        const constrainedTargetPos = constrainToBoundaries(targetPos);
+        
         // Add new click effect
         const newEffect = {
           id: effectIdCounter.current++,
@@ -558,7 +581,7 @@ const CameraManager = ({
         };
         setClickEffects(prev => [...prev, newEffect]);
         
-        moveCamera([targetPos.x, targetPos.y, targetPos.z]);
+        moveCamera([constrainedTargetPos.x, constrainedTargetPos.y, constrainedTargetPos.z]);
       }
     }
   };
@@ -633,6 +656,35 @@ const CameraManager = ({
           <ringGeometry args={[environmentRadius - 2, environmentRadius, 64]} />
           <meshBasicMaterial color="#00ff00" transparent opacity={0.3} side={THREE.DoubleSide} />
         </mesh>
+      )}
+
+      {/* Movement boundary visualization */}
+      {showBoundaries && (
+        <group>
+          {/* North boundary (positive Z) */}
+          <mesh position={[0, 2, BOUNDARIES.maxZ]} rotation={[0, 0, 0]}>
+            <planeGeometry args={[BOUNDARIES.maxX - BOUNDARIES.minX, 4]} />
+            <meshBasicMaterial color="#ff0000" transparent opacity={0.2} side={THREE.DoubleSide} wireframe />
+          </mesh>
+          
+          {/* South boundary (negative Z) */}
+          <mesh position={[0, 2, BOUNDARIES.minZ]} rotation={[0, 0, 0]}>
+            <planeGeometry args={[BOUNDARIES.maxX - BOUNDARIES.minX, 4]} />
+            <meshBasicMaterial color="#ff0000" transparent opacity={0.2} side={THREE.DoubleSide} wireframe />
+          </mesh>
+          
+          {/* East boundary (positive X) */}
+          <mesh position={[BOUNDARIES.maxX, 2, 0]} rotation={[0, Math.PI / 2, 0]}>
+            <planeGeometry args={[BOUNDARIES.maxZ - BOUNDARIES.minZ, 4]} />
+            <meshBasicMaterial color="#ff0000" transparent opacity={0.2} side={THREE.DoubleSide} wireframe />
+          </mesh>
+          
+          {/* West boundary (negative X) */}
+          <mesh position={[BOUNDARIES.minX, 2, 0]} rotation={[0, Math.PI / 2, 0]}>
+            <planeGeometry args={[BOUNDARIES.maxZ - BOUNDARIES.minZ, 4]} />
+            <meshBasicMaterial color="#ff0000" transparent opacity={0.2} side={THREE.DoubleSide} wireframe />
+          </mesh>
+        </group>
       )}
 
       {/* Ground plane for clicking */}

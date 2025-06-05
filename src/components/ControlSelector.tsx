@@ -134,6 +134,22 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
     quaternion: new THREE.Quaternion()
   });
 
+  // Define movement boundaries (based on expo hall layout)
+  const BOUNDARIES = {
+    minX: -60,
+    maxX: 60,
+    minZ: -50,
+    maxZ: 50
+  };
+
+  // Function to check and constrain position within boundaries
+  const constrainToBoundaries = (position: THREE.Vector3): THREE.Vector3 => {
+    const constrainedPosition = position.clone();
+    constrainedPosition.x = Math.max(BOUNDARIES.minX, Math.min(BOUNDARIES.maxX, constrainedPosition.x));
+    constrainedPosition.z = Math.max(BOUNDARIES.minZ, Math.min(BOUNDARIES.maxZ, constrainedPosition.z));
+    return constrainedPosition;
+  };
+
   // Save initial camera state when component mounts
   useEffect(() => {
     initialCameraState.current = {
@@ -418,7 +434,10 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
           // Add movement but keep Y position at character height
           const newPosition = camera.position.clone().add(movement);
           newPosition.y = characterHeight; // Use characterHeight parameter
-          camera.position.copy(newPosition);
+          
+          // Constrain position to boundaries
+          const constrainedPosition = constrainToBoundaries(newPosition);
+          camera.position.copy(constrainedPosition);
           
           // Close modal if camera starts moving
           if (selectedObject) {
