@@ -115,7 +115,7 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
   const { camera } = useThree();
   
   // Use Zustand store for disabled state
-  const { cameraMovementDisabled, selectedObject, closeObjectModal } = useAppStore();
+  const { cameraMovementDisabled } = useAppStore();
   
   // Use ref to track current disabled state for event handlers
   const disabledRef = useRef(cameraMovementDisabled);
@@ -175,10 +175,10 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
     };
     const handleMouseMove = (e: MouseEvent) => {
       // If modal is open and camera starts moving, close it
-      if (selectedObject && (Math.abs(e.movementX) > 1 || Math.abs(e.movementY) > 1)) {
-        closeObjectModal()
-        return
-      }
+      // if (selectedObject && (Math.abs(e.movementX) > 1 || Math.abs(e.movementY) > 1)) {
+      //   closeObjectModal()
+      //   return
+      // }
       
       // Don't move camera if disabled or hovering over an object
       if (disabledRef.current) {
@@ -243,10 +243,10 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
         const movementY = currentPosition.y - lastTouchPosition.current.y;
         
         // If modal is open and camera starts moving, close it
-        if (selectedObject && (Math.abs(movementX) > 1 || Math.abs(movementY) > 1)) {
-          closeObjectModal();
-          return;
-        }
+        // if (selectedObject && (Math.abs(movementX) > 1 || Math.abs(movementY) > 1)) {
+        //   closeObjectModal();
+        //   return;
+        // }
         
         // Don't move camera if disabled or hovering over an object
         if (disabledRef.current) {
@@ -404,9 +404,9 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
           camera.up.set(0, 1, 0);
           
           // Close modal if camera starts moving
-          if (selectedObject) {
-            closeObjectModal();
-          }
+          // if (selectedObject) {
+          //   closeObjectModal();
+          // }
         }
         
         // Left stick for movement (axes 0 and 1)
@@ -440,9 +440,9 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
           camera.position.copy(constrainedPosition);
           
           // Close modal if camera starts moving
-          if (selectedObject) {
-            closeObjectModal();
-          }
+          // if (selectedObject) {
+          //   closeObjectModal();
+          // }
         }
       } else if (gamepadConnected && !gamepad) {
         // Gamepad disconnected
