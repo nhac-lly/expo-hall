@@ -10,7 +10,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { Leva, monitor, useControls } from "leva";
 import { Model as HallModel } from "../models/Hall";
 import { Model as FoodModel } from "../models/Food";
-import { Model as TechModel, ObjectInfo } from "../models/Tech";
+import { Model as TechModel } from "../models/Tech";
 import { Model as WoodModel } from "../models/Wood";
 import { Model as DisplayLedModel } from "../models/Display_led";
 import { Model as DetmayModel } from "../models/Detmay";
@@ -23,7 +23,7 @@ import { useRapier } from "@react-three/rapier";
 import { useAppStore } from "../stores/useAppStore";
 
 // Modal component for displaying object information
-const ObjectModal = ({ objectInfo, onClose }: { objectInfo: ObjectInfo | null, onClose: () => void }) => {
+const ObjectModal = ({ objectInfo, onClose }: { objectInfo: any | null, onClose: () => void }) => {
   if (!objectInfo) return null;
 
   return (
@@ -73,12 +73,12 @@ const ObjectModal = ({ objectInfo, onClose }: { objectInfo: ObjectInfo | null, o
               Specifications
             </h3>
             <ul className="space-y-1">
-              {objectInfo.specifications.map((spec, index) => (
+              {/* {objectInfo.specifications.map((spec, index) => (
                 <li key={index} className="flex items-start">
                   <span className="text-blue-500 mr-2 text-xs">•</span>
                   <span className="text-xs text-gray-700 dark:text-gray-300">{spec}</span>
                 </li>
-              ))}
+              ))} */}
             </ul>
           </div>
 
@@ -750,7 +750,7 @@ export default function GltfViewer() {
   const [characterHeight, setCharacterHeight] = useState(1.7);
   
   // Use Zustand store
-  const { selectedObject, closeObjectModal } = useAppStore();
+  // const { selectedObject, closeObjectModal } = useAppStore();
 
   const handleAddCameraPosition = (position: [number, number, number], label: string) => {
     setCameraPositions(prev => [...prev, { position, label }]);
@@ -818,7 +818,7 @@ export default function GltfViewer() {
         </Physics>
       </Canvas>
       <Leva />
-      <ObjectModal objectInfo={selectedObject} onClose={closeObjectModal} />
+      {/* <ObjectModal objectInfo={selectedObject} onClose={closeObjectModal} /> */}
     </div>
   );
 }

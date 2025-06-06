@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { ObjectInfo } from '../models/Tech'
+// import { ObjectInfo } from '../models/Tech'
 
 interface AppState {
   // Camera controls
@@ -7,8 +7,8 @@ interface AppState {
   setCameraMovementDisabled: (disabled: boolean) => void
   
   // Modal state
-  selectedObject: ObjectInfo | null
-  setSelectedObject: (object: ObjectInfo | null) => void
+  // selectedObject: ObjectInfo | null
+  // setSelectedObject: (object: ObjectInfo | null) => void
   
   // Click interaction state
   isObjectClicked: boolean
@@ -19,8 +19,8 @@ interface AppState {
   setCameraMovementDetected: (detected: boolean) => void
   
   // Combined actions
-  openObjectModal: (objectInfo: ObjectInfo) => void
-  closeObjectModal: () => void
+  // openObjectModal: (objectInfo: ObjectInfo) => void
+  // closeObjectModal: () => void
   handleCameraMovement: () => void
 }
 
@@ -46,22 +46,22 @@ export const useAppStore = create<AppState>((set) => ({
   setCameraMovementDetected: (detected) => set({ cameraMovementDetected: detected }),
   
   // Combined actions
-  openObjectModal: (objectInfo) => {
-    set({ 
-      selectedObject: objectInfo, 
-      cameraMovementDisabled: true,
-      isObjectClicked: true 
-    })
-  },
+  // openObjectModal: (objectInfo) => {
+  //   set({ 
+  //     selectedObject: objectInfo, 
+  //     cameraMovementDisabled: true,
+  //     isObjectClicked: true 
+  //   })
+  // },
   
-  closeObjectModal: () => {
-    set({ 
-      selectedObject: null, 
-      cameraMovementDisabled: false,
-      isObjectClicked: false,
-      cameraMovementDetected: false
-    })
-  },
+  // closeObjectModal: () => {
+  //   set({ 
+  //     selectedObject: null, 
+  //     cameraMovementDisabled: false,
+  //     isObjectClicked: false,
+  //     cameraMovementDetected: false
+  //   })
+  // },
   
   handleCameraMovement: () => {
     set({ cameraMovementDetected: true })
