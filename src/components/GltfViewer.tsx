@@ -4,7 +4,6 @@ import { Canvas } from "@react-three/fiber";
 import { Environment, useGLTF, Html } from "@react-three/drei";
 import React, { Suspense, useState, useEffect, useRef, useMemo } from "react";
 import { ControlSelector, CameraControls, ControlType } from "./ControlSelector";
-import { CameraPositionForm } from "./CameraPositionForm";
 import * as THREE from 'three';
 import { useFrame, useThree } from "@react-three/fiber";
 import { Leva, monitor, useControls } from "leva";
@@ -15,89 +14,6 @@ import { Model as DetmayModel } from "../models/Detmay";
 import { Model as ThucongModel } from "../models/Thucong";
 import { Model as BoothThuysanModel } from "../models/Booth_thuysan";
 import { Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
-import { useRapier } from "@react-three/rapier";
-import { useAppStore } from "../stores/useAppStore";
-
-// Modal component for displaying object information
-const ObjectModal = ({ objectInfo, onClose }: { objectInfo: any | null, onClose: () => void }) => {
-  if (!objectInfo) return null;
-
-  return (
-    <div className="fixed bottom-4 right-4 z-50 w-80 max-h-[60vh] overflow-y-auto">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700">
-        <div className="p-4">
-          {/* Header */}
-          <div className="flex justify-between items-start mb-3">
-            <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
-                {objectInfo.name}
-              </h2>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                by {objectInfo.brand}
-              </p>
-            </div>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-lg font-bold ml-2"
-            >
-              ×
-            </button>
-          </div>
-
-          {/* Price */}
-          {objectInfo.price && (
-            <div className="mb-3">
-              <span className="text-xl font-bold text-blue-600 dark:text-blue-400">
-                {objectInfo.price}
-              </span>
-            </div>
-          )}
-
-          {/* Description */}
-          <div className="mb-4">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
-              Description
-            </h3>
-            <p className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
-              {objectInfo.description}
-            </p>
-          </div>
-
-          {/* Specifications */}
-          <div className="mb-4">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
-              Specifications
-            </h3>
-            <ul className="space-y-1">
-              {/* {objectInfo.specifications.map((spec, index) => (
-                <li key={index} className="flex items-start">
-                  <span className="text-blue-500 mr-2 text-xs">•</span>
-                  <span className="text-xs text-gray-700 dark:text-gray-300">{spec}</span>
-                </li>
-              ))} */}
-            </ul>
-          </div>
-
-          {/* Close button */}
-          <div className="flex justify-end">
-            <button
-              onClick={onClose}
-              className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-interface CameraPositionFormProps {
-  onSubmit: (position: [number, number, number], label: string) => void;
-  cameraPosition: THREE.Vector3;
-  onGoTo: (position: [number, number, number]) => void;
-}
 
 // Loading placeholder component
 const LoadingPlaceholder = ({ position = [0, 0, 0] }: { position?: [number, number, number] }) => {
@@ -155,16 +71,6 @@ const SingleModel = ({ modelName, position = [0, 0, 0], rotation = [0, 0, 0], is
   isRigidBody?: boolean
 }) => {
   const modelRef = useRef<THREE.Group>(null);
-  const [modelSize, setModelSize] = useState<[number, number, number]>([2, 2, 2]);
-
-  // Calculate model bounds when it loads
-  useEffect(() => {
-    if (modelRef.current) {
-      const box = new THREE.Box3().setFromObject(modelRef.current);
-      const size = box.getSize(new THREE.Vector3());
-      setModelSize([size.x, size.y, size.z]);
-    }
-  }, []);
 
   const renderModel = () => {
     switch (modelName) {
@@ -302,60 +208,6 @@ function CameraPoint({ position, label, onClick }: { position: [number, number, 
   );
 }
 
-// Target position effect component
-const TargetEffect = ({ position, onComplete }: { position: THREE.Vector3, onComplete: () => void }) => {
-  // const meshRef = useRef<THREE.Mesh>(null);
-  const [opacity, setOpacity] = useState(1);
-  const [shouldComplete, setShouldComplete] = useState(false);
-
-  useEffect(() => {
-    if (shouldComplete) {
-      onComplete();
-    }
-  }, [shouldComplete, onComplete]);
-
-  useEffect(() => {
-    // Fade out effect
-    const fadeOut = () => {
-      setOpacity(prev => {
-        if (prev <= 0) {
-          setShouldComplete(true);
-          return 0;
-        }
-        return prev - 0.02;
-      });
-    };
-
-    const interval = setInterval(fadeOut, 20);
-    return () => clearInterval(interval);
-  }, []);
-
-  // useFrame((state) => {
-  //   if (meshRef.current) {
-  //     // Pulsing effect
-  //     const time = state.clock.getElapsedTime();
-  //     const scale = 1 + Math.sin(time * 5) * 0.1;
-  //     meshRef.current.scale.set(scale, scale, scale);
-  //   }
-  // });
-
-  return (
-    <mesh 
-    // ref={meshRef} 
-    position={position}>
-      {/* Glow effect */}
-      <mesh>
-        {/* <sphereGeometry args={[0.7, 16, 16]} />
-        <meshBasicMaterial
-          color="#4a9eff"
-          transparent
-          opacity={opacity * 0.1}
-        /> */}
-      </mesh>
-    </mesh>
-  );
-};
-
 // Ground click effect component
 const GroundClickEffect = ({ position, onComplete }: { position: THREE.Vector3, onComplete: () => void }) => {
   const meshRef = useRef<THREE.Mesh>(null);
@@ -414,8 +266,6 @@ const GroundClickEffect = ({ position, onComplete }: { position: THREE.Vector3, 
 
 // Camera manager component that runs inside Canvas
 const CameraManager = ({
-  onAddCameraPosition,
-  cameraPositions,
   onEnvironmentRadiusChange,
   onEnvironmentModeChange,
   onCharacterHeightChange
@@ -478,7 +328,7 @@ const CameraManager = ({
       label: 'Environment Mode'
     },
     showBoundaries: {
-      value: true,
+      value: false,
       label: 'Show Movement Boundaries'
     }
   });
@@ -496,6 +346,13 @@ const CameraManager = ({
       const y = typeof camera.rotation.y === 'number' ? camera.rotation.y.toFixed(2) : '0.00';
       const z = typeof camera.rotation.z === 'number' ? camera.rotation.z.toFixed(2) : '0.00';
       return `x: ${x}, y: ${y}, z: ${z}`;
+    }),
+    'Camera Quaternion': monitor(() => {
+      const x = typeof camera.quaternion.x === 'number' ? camera.quaternion.x.toFixed(2) : '0.00';
+      const y = typeof camera.quaternion.y === 'number' ? camera.quaternion.y.toFixed(2) : '0.00';
+      const z = typeof camera.quaternion.z === 'number' ? camera.quaternion.z.toFixed(2) : '0.00';
+      const w = typeof camera.quaternion.w === 'number' ? camera.quaternion.w.toFixed(2) : '0.00';
+      return `x: ${x}, y: ${y}, z: ${z}, w: ${w}`;
     })
   });
 
@@ -691,30 +548,13 @@ const CameraManager = ({
         <GroundClickEffect
           key={effect.id}
           position={effect.position}
-          onComplete={() => removeEffect(effect.id)}
-        />
-      ))}
-
-      {/* Target position effects */}
-      {targetPositions.map(target => (
-        <TargetEffect
-          key={target.id}
-          position={target.position}
-          onComplete={() => removeTargetPosition(target.id)}
-        />
-      ))}
-
-      {/* Camera points */}
-      {/* {cameraPositions.map((point, index) => (
-        <CameraPoint
-          key={`preset-${index}`}
-          position={point.position as [number, number, number]}
-          label={point.label}
-          onClick={() => {
-            moveCamera(point.position as [number, number, number]);
+          onComplete={() => {
+            removeEffect(effect.id)
+            removeTargetPosition(effect.id)
+            return
           }}
         />
-      ))} */}
+      ))}
     </>
   );
 };
@@ -727,16 +567,9 @@ export default function GltfViewer() {
   const [environmentRadius, setEnvironmentRadius] = useState(90);
   const [environmentMode, setEnvironmentMode] = useState('dome');
   const [characterHeight, setCharacterHeight] = useState(1.7);
-  
-  // Use Zustand store
-  // const { selectedObject, closeObjectModal } = useAppStore();
 
   const handleAddCameraPosition = (position: [number, number, number], label: string) => {
     setCameraPositions(prev => [...prev, { position, label }]);
-  };
-
-  const handleGoTo = (position: [number, number, number]) => {
-    setCameraPosition(new THREE.Vector3(...position));
   };
 
   const handleEnvironmentRadiusChange = (radius: number) => {

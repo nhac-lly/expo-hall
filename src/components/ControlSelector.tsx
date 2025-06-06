@@ -3,19 +3,10 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { 
   OrbitControls, 
-  TrackballControls, 
-  FirstPersonControls, 
-  FlyControls, 
-  MapControls, 
-  DragControls,
-  TransformControls,
-  ArcballControls,
-  Html
 } from '@react-three/drei';
 import { MOUSE } from 'three';
 import { useThree, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { useAppStore } from '../stores/useAppStore';
 
 export type ControlType = 
   | 'orbit' 
@@ -44,14 +35,6 @@ export function ControlSelector({ type, onChange }: ControlSelectorProps) {
       >
                 <option value="dragFPS" className="bg-white dark:bg-black text-black dark:text-white">Drag FPS Controls</option>
         <option value="orbit" className="bg-white dark:bg-black text-black dark:text-white">Orbit Controls</option>
-        {/* <option value="trackball" className="bg-white dark:bg-black text-black dark:text-white">Trackball Controls</option>
-        <option value="firstPerson" className="bg-white dark:bg-black text-black dark:text-white">First Person Controls</option>
-        <option value="fly" className="bg-white dark:bg-black text-black dark:text-white">Fly Controls</option>
-        <option value="map" className="bg-white dark:bg-black text-black dark:text-white">Map Controls</option>
-        <option value="drag" className="bg-white dark:bg-black text-black dark:text-white">Drag Controls</option>
-        <option value="pointerLock" className="bg-white dark:bg-black text-black dark:text-white">Pointer Lock Controls</option>
-        <option value="transform" className="bg-white dark:bg-black text-black dark:text-white">Transform Controls</option>
-        <option value="arcball" className="bg-white dark:bg-black text-black dark:text-white">Arcball Controls</option> */}
       </select>
     </div>
   );
@@ -113,13 +96,6 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
   const [isDragging, setIsDragging] = useState(false);
   const [showTransformControls, setShowTransformControls] = useState(false);
   const { camera } = useThree();
-  
-  // Use Zustand store for disabled state
-  const { cameraMovementDisabled } = useAppStore();
-  
-  // Use ref to track current disabled state for event handlers
-  const disabledRef = useRef(cameraMovementDisabled);
-  disabledRef.current = cameraMovementDisabled;
 
   // Touch state tracking
   const lastTouchPosition = useRef<{ x: number, y: number } | null>(null);
@@ -164,9 +140,6 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
     const handleMouseDown = (e: MouseEvent) => {
       if (e.button === 0) { // Left click only
         // Don't start dragging if disabled or hovering over an object
-        if (disabledRef.current) {
-          return
-        }
         setIsDragging(true);
       }
     };
@@ -181,9 +154,6 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
       // }
       
       // Don't move camera if disabled or hovering over an object
-      if (disabledRef.current) {
-        return
-      }
       
       if (isDragging && type === 'dragFPS') {
         // Create quaternions for pitch and yaw
@@ -215,9 +185,6 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
     const handleTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 1) { // Single finger only
         // Don't start dragging if disabled or hovering over an object
-        if (disabledRef.current) {
-          return
-        }
         
         const touch = e.touches[0];
         lastTouchPosition.current = { x: touch.clientX, y: touch.clientY };
@@ -249,10 +216,6 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
         // }
         
         // Don't move camera if disabled or hovering over an object
-        if (disabledRef.current) {
-          return;
-        }
-        
         if (isDragging && type === 'dragFPS') {
           // Create quaternions for pitch and yaw (same logic as mouse)
           const pitchQuat = new THREE.Quaternion().setFromAxisAngle(
@@ -364,7 +327,7 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
       const gamepads = navigator.getGamepads();
       const gamepad = gamepads[0] || gamepads[1] || gamepads[2] || gamepads[3]; // Check all slots
       
-      if (gamepad && !disabledRef.current) {
+      if (gamepad) {
         // Update connection status if not already set
         if (!gamepadConnected) {
           console.log('Gamepad detected in frame loop:', gamepad.id);
@@ -459,134 +422,10 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
           rotateSpeed={1}
           enablePan={false}
           enableZoom={true}
-          enabled={!cameraMovementDisabled}
-        />
-      );
-    case 'trackball':
-      return (
-        <TrackballControls 
-          mouseButtons={{ LEFT: MOUSE.LEFT, MIDDLE: MOUSE.MIDDLE, RIGHT: MOUSE.RIGHT }}
-          rotateSpeed={1}
-          noPan={true}
-          zoomSpeed={1}
-          staticMoving={cameraMovementDisabled}
-        />
-      );
-    case 'firstPerson':
-      return (
-        <FirstPersonControls
-          activeLook={isDragging && !cameraMovementDisabled}
-          movementSpeed={(cameraMovementDisabled) ? 0 : 1.0}
-          lookSpeed={(cameraMovementDisabled) ? 0 : 0.1}
-          lookVertical={!cameraMovementDisabled}
-          autoForward={false}
-          heightCoef={1}
-          constrainVertical={true}
-          verticalMin={0}
-          verticalMax={Math.PI}
-        />
-      );
-    case 'fly':
-      return (
-        <FlyControls
-          dragToLook={!cameraMovementDisabled}
-          movementSpeed={(cameraMovementDisabled) ? 0 : 1.0}
-          rollSpeed={(cameraMovementDisabled) ? 0 : 0.005}
-        />
-      );
-    case 'map':
-      return (
-        <MapControls
-          enableDamping={true}
-          dampingFactor={0.05}
-          screenSpacePanning={false}
-          minDistance={1}
-          maxDistance={100}
-          maxPolarAngle={Math.PI / 2}
-          enabled={!cameraMovementDisabled}
-        />
-      );
-    case 'drag':
-      return (
-        <>
-          <OrbitControls 
-            mouseButtons={{ LEFT: MOUSE.LEFT }}
-            rotateSpeed={1}
-            enablePan={false}
-            enableZoom={true}
-            enabled={!cameraMovementDisabled}
-          />
-          <DragControls>
-            <mesh>
-              <boxGeometry args={[1, 1, 1]} />
-              <meshStandardMaterial color="hotpink" />
-            </mesh>
-          </DragControls>
-        </>
-      );
-    case 'pointerLock':
-      return (
-        <mesh position={[0, 0, -5]}>
-          <boxGeometry args={[1, 1, 1]} />
-          <meshStandardMaterial color="hotpink" />
-        </mesh>
-      );
-    case 'transform':
-      return (
-        <>
-          <OrbitControls 
-            mouseButtons={{ LEFT: MOUSE.LEFT }}
-            rotateSpeed={1}
-            enablePan={false}
-            enableZoom={true}
-            enabled={!cameraMovementDisabled}
-          />
-          <mesh 
-            position={[0, 0, 0]}
-            onClick={() => !cameraMovementDisabled && setShowTransformControls(!showTransformControls)}
-          >
-            <boxGeometry args={[1, 1, 1]} />
-            <meshStandardMaterial color="hotpink" />
-          </mesh>
-          {showTransformControls && !cameraMovementDisabled && (
-            <TransformControls>
-              <mesh>
-                <boxGeometry args={[1, 1, 1]} />
-                <meshStandardMaterial color="hotpink" />
-              </mesh>
-            </TransformControls>
-          )}
-        </>
-      );
-    case 'arcball':
-      return (
-        <ArcballControls
-          enablePan={false}
-          enableZoom={true}
-          enabled={!cameraMovementDisabled}
         />
       );
     case 'dragFPS':
-      return (
-        <>
-          {cameraMovementDisabled && (
-            <Html center>
-              <div className="text-white bg-black bg-opacity-50 px-4 py-2 rounded-lg pointer-events-none">
-                Camera movement disabled - Modal open
-              </div>
-            </Html>
-          )}
-          {!cameraMovementDisabled && (
-            <Html position={[0, -3, 0]}>
-              <div className="text-white bg-black bg-opacity-70 px-3 py-1 rounded-lg pointer-events-none text-sm">
-                {gamepadConnected 
-                  ? "🎮 Gamepad Active - Left stick: Move | Right stick: Look" 
-                  : "🖱️ Mouse/Touch - Drag to look | Click ground to move"}
-              </div>
-            </Html>
-          )}
-        </>
-      );
+      return null
     default:
       return null;
   }
