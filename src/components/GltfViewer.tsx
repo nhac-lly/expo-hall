@@ -588,13 +588,10 @@ export default function GltfViewer() {
         className="bg-transparent border border-gray-300 dark:border-gray-700 rounded-md px-2 py-1 text-black dark:text-white"
       >
         <option value="home" className="bg-white dark:bg-black text-black dark:text-white">Home</option>
-        <option value="hall" className="bg-white dark:bg-black text-black dark:text-white">Hall</option>
         <option value="food" className="bg-white dark:bg-black text-black dark:text-white">Food</option>
         <option value="tech" className="bg-white dark:bg-black text-black dark:text-white">Tech</option>
         <option value="wood" className="bg-white dark:bg-black text-black dark:text-white">Wood</option>
-        <option value="display_led" className="bg-white dark:bg-black text-black dark:text-white">Display LED</option>
         <option value="detmay" className="bg-white dark:bg-black text-black dark:text-white">Detmay</option>
-        <option value="sankhau" className="bg-white dark:bg-black text-black dark:text-white">Sankhau</option>
         <option value="thucong" className="bg-white dark:bg-black text-black dark:text-white">Thucong</option>
         <option value="booth_thuysan" className="bg-white dark:bg-black text-black dark:text-white">Booth Thuysan</option>
       </select>
