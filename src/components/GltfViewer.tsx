@@ -605,7 +605,7 @@ export default function GltfViewer() {
     <div className="w-full h-full">
       <SelectModel curModel={curModel} setCurModel={setCurModel} />
       <ControlSelector type={controlType} onChange={setControlType} />
-      <Canvas camera={{ position: [cameraPosition.x, cameraPosition.y, cameraPosition.z], fov: 50 }}>
+      <Canvas camera={{ position: [cameraPosition.x, cameraPosition.y, cameraPosition.z], fov: 50, near: 0.1, far: 1000 }} gl={{ antialias: false }}>
         <Physics>
           <CameraManager
             onAddCameraPosition={handleAddCameraPosition}
