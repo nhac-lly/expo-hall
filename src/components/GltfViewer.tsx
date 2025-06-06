@@ -8,16 +8,12 @@ import { CameraPositionForm } from "./CameraPositionForm";
 import * as THREE from 'three';
 import { useFrame, useThree } from "@react-three/fiber";
 import { Leva, monitor, useControls } from "leva";
-import { Model as HallModel } from "../models/Hall";
 import { Model as FoodModel } from "../models/Food";
 import { Model as TechModel } from "../models/Tech";
 import { Model as WoodModel } from "../models/Wood";
-import { Model as DisplayLedModel } from "../models/Display_led";
 import { Model as DetmayModel } from "../models/Detmay";
-import { Model as SankhauModel } from "../models/Sankhau";
 import { Model as ThucongModel } from "../models/Thucong";
 import { Model as BoothThuysanModel } from "../models/Booth_thuysan";
-import { Model as WayModel } from "../models/Way";
 import { Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
 import { useRapier } from "@react-three/rapier";
 import { useAppStore } from "../stores/useAppStore";
@@ -172,26 +168,18 @@ const SingleModel = ({ modelName, position = [0, 0, 0], rotation = [0, 0, 0], is
 
   const renderModel = () => {
     switch (modelName) {
-      case 'hall':
-        return <HallModel ref={modelRef} position={position} rotation={rotation} />;
       case 'food':
         return <FoodModel ref={modelRef} position={position} rotation={rotation} />;
       case 'tech':
         return <TechModel ref={modelRef} position={position} rotation={rotation} />;
       case 'wood':
         return <WoodModel ref={modelRef} position={position} rotation={rotation} />;
-      case 'display_led':
-        return <DisplayLedModel ref={modelRef} position={position} rotation={rotation} />;
       case 'detmay':
         return <DetmayModel ref={modelRef} position={position} rotation={rotation} />;
-      case 'sankhau':
-        return <SankhauModel ref={modelRef} position={position} rotation={rotation} />;
       case 'thucong':
         return <ThucongModel ref={modelRef} position={position} rotation={rotation} />;
       case 'booth_thuysan':
         return <BoothThuysanModel ref={modelRef} position={position} rotation={rotation} />;
-      case 'way':
-        return <WayModel ref={modelRef} position={position} rotation={rotation} />;
       default:
         return null;
     }
@@ -219,12 +207,6 @@ const Model = React.memo(({ curModel, rotation }: { curModel: string, rotation: 
   if (curModel === 'home') {
     return (
       <group rotation={rotation}>
-        {/* <Suspense fallback={<LoadingPlaceholder position={[0, 0, 0]} />}>
-          <SingleModel modelName="hall" position={[0, 0, 0]} />
-        </Suspense> */}
-        {/* <Suspense fallback={<LoadingPlaceholder position={[0, 0.1, -45]} />}>
-          <SingleModel modelName="sankhau" position={[0, 0.1, -45]} isRigidBody />
-        </Suspense> */}
         <Suspense fallback={<LoadingPlaceholder position={[-20, 0.1, -10]} />}>
           <SingleModel modelName="detmay" position={[-20, 0.1, -10]} isRigidBody />
         </Suspense>
@@ -243,9 +225,6 @@ const Model = React.memo(({ curModel, rotation }: { curModel: string, rotation: 
         <Suspense fallback={<LoadingPlaceholder position={[20, 0.1, 40]} />}>
           <SingleModel modelName="food" position={[20, 0.1, 40]} rotation={[0, 9.41, 0]} isRigidBody />
         </Suspense>
-        {/* <Suspense fallback={<LoadingPlaceholder position={[0, 0.1, -5]} />}>
-          <SingleModel modelName="way" position={[0, 0.1, -5]} rotation={[0, 0, 0]} />
-        </Suspense> */}
       </group>
     );
   }
