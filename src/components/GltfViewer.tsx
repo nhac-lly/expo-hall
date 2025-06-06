@@ -2,7 +2,7 @@
 
 import { Canvas } from "@react-three/fiber";
 import { Environment, useGLTF, Html } from "@react-three/drei";
-import React, { Suspense, useState, useEffect, useRef, useMemo } from "react";
+import React, { Suspense, useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { ControlSelector, CameraControls, ControlType } from "./ControlSelector";
 import * as THREE from 'three';
 import { useFrame, useThree } from "@react-three/fiber";
@@ -14,6 +14,7 @@ import { Model as DetmayModel } from "../models/Detmay";
 import { Model as ThucongModel } from "../models/Thucong";
 import { Model as BoothThuysanModel } from "../models/Booth_thuysan";
 import { Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
+import { create } from 'zustand';
 
 // Loading placeholder component
 const LoadingPlaceholder = ({ position = [0, 0, 0] }: { position?: [number, number, number] }) => {
@@ -264,17 +265,362 @@ const GroundClickEffect = ({ position, onComplete }: { position: THREE.Vector3, 
   );
 };
 
+// Asset metadata for view-based loading
+interface AssetInfo {
+  modelName: string;
+  position: [number, number, number];
+  rotation?: [number, number, number];
+  boundingRadius: number;
+  loadDistance: number;
+  unloadDistance: number;
+  isLoaded: boolean;
+  isVisible: boolean;
+  component?: React.ComponentType<any>;
+}
+
+// Zustand store for asset management
+interface AssetStore {
+  assets: Map<string, AssetInfo>;
+  camera: THREE.Camera | null;
+  maxLoadedAssets: number;
+  frustum: THREE.Frustum;
+  cameraMatrix: THREE.Matrix4;
+  
+  // Actions
+  addAsset: (id: string, asset: AssetInfo) => void;
+  setCamera: (camera: THREE.Camera) => void;
+  setMaxLoadedAssets: (max: number) => void;
+  updateVisibility: () => { toLoad: string[], toUnload: string[] };
+  getAsset: (id: string) => AssetInfo | undefined;
+  getLoadedCount: () => number;
+  getVisibleCount: () => number;
+}
+
+const useAssetStore = create<AssetStore>((set, get) => ({
+  assets: new Map(),
+  camera: null,
+  maxLoadedAssets: 2,
+  frustum: new THREE.Frustum(),
+  cameraMatrix: new THREE.Matrix4(),
+
+  addAsset: (id: string, asset: AssetInfo) => {
+    set(state => {
+      const newAssets = new Map(state.assets);
+      newAssets.set(id, asset);
+      return { assets: newAssets };
+    });
+  },
+
+  setCamera: (camera: THREE.Camera) => {
+    set({ camera });
+  },
+
+  setMaxLoadedAssets: (max: number) => {
+    set({ maxLoadedAssets: max });
+  },
+
+  updateVisibility: () => {
+    const state = get();
+    if (!state.camera) return { toLoad: [], toUnload: [] };
+
+    state.cameraMatrix.multiplyMatrices(state.camera.projectionMatrix, state.camera.matrixWorldInverse);
+    state.frustum.setFromProjectionMatrix(state.cameraMatrix);
+
+    const visibleAssets: Array<{ id: string, distance: number, asset: AssetInfo }> = [];
+    const cameraPos = state.camera.position;
+    const newAssets = new Map<string, AssetInfo>();
+    
+    // First pass: determine visibility and distance for all assets
+    state.assets.forEach((asset, id) => {
+      const position = new THREE.Vector3(...asset.position);
+      const distance = cameraPos.distanceTo(position);
+      
+      // Create a new asset object with updated visibility
+      const updatedAsset: AssetInfo = {
+        ...asset,
+        isVisible: true // Show all assets for now
+      };
+      
+      // Debug logging for visibility changes
+      if (asset.isVisible !== updatedAsset.isVisible) {
+        console.log(`${id}: visibility ${asset.isVisible} -> ${updatedAsset.isVisible} (dist: ${distance.toFixed(1)})`);
+      }
+      
+      newAssets.set(id, updatedAsset);
+      
+      if (updatedAsset.isVisible) {
+        visibleAssets.push({ id, distance, asset: updatedAsset });
+      }
+    });
+
+    // Sort visible assets by distance (closest first)
+    visibleAssets.sort((a, b) => a.distance - b.distance);
+
+    const toLoad: string[] = [];
+    const toUnload: string[] = [];
+    
+    // Determine which assets should be loaded (max N, prioritize closest)
+    const shouldBeLoaded = new Set(
+      visibleAssets.slice(0, state.maxLoadedAssets).map(item => item.id)
+    );
+
+    // Debug: Log current priority list
+    if (visibleAssets.length > 0) {
+      const priorityList = visibleAssets.slice(0, state.maxLoadedAssets).map(item => 
+        `${item.id}(${item.distance.toFixed(1)})`
+      ).join(', ');
+      console.log(`Priority loading (max ${state.maxLoadedAssets}): ${priorityList}`);
+    }
+
+    // Update loading states - create new asset objects
+    const finalAssets = new Map<string, AssetInfo>();
+    newAssets.forEach((asset, id) => {
+      let updatedAsset = { ...asset };
+      
+      if (shouldBeLoaded.has(id) && !asset.isLoaded) {
+        toLoad.push(id);
+        updatedAsset.isLoaded = true;
+        console.log(`✅ Loading: ${id}`);
+      } else if (!shouldBeLoaded.has(id) && asset.isLoaded) {
+        toUnload.push(id);
+        updatedAsset.isLoaded = false;
+        console.log(`❌ Unloading: ${id}`);
+      }
+      
+      finalAssets.set(id, updatedAsset);
+    });
+
+    // Update state with completely new Map
+    set({ assets: finalAssets });
+
+    return { toLoad, toUnload };
+  },
+
+  getAsset: (id: string) => {
+    return get().assets.get(id);
+  },
+
+  getLoadedCount: () => {
+    return Array.from(get().assets.values()).filter(asset => asset.isLoaded).length;
+  },
+
+  getVisibleCount: () => {
+    return Array.from(get().assets.values()).filter(asset => asset.isVisible).length;
+  }
+}));
+
+// Component that renders real model for nearest asset, placeholder for others
+const SimpleAsset = React.memo(({ assetId }: { assetId: string }) => {
+  const asset = useAssetStore(state => state.assets.get(assetId));
+  const modelRef = useRef<THREE.Group>(null);
+
+  // Don't render if not visible
+  if (!asset?.isVisible) {
+    return null;
+  }
+
+  const { modelName, position, rotation = [0, 0, 0] } = asset;
+
+  // Check if this is the nearest (loaded) asset
+  if (asset.isLoaded) {
+    console.log(`🎯 Rendering REAL model: ${assetId}`);
+    
+    const renderRealModel = () => {
+      switch (modelName) {
+        case 'food':
+          return <FoodModel ref={modelRef} position={position} rotation={rotation} />;
+        case 'tech':
+          return <TechModel ref={modelRef} position={position} rotation={rotation} />;
+        case 'wood':
+          return <WoodModel ref={modelRef} position={position} rotation={rotation} />;
+        case 'detmay':
+          return <DetmayModel ref={modelRef} position={position} rotation={rotation} />;
+        case 'thucong':
+          return <ThucongModel ref={modelRef} position={position} rotation={rotation} />;
+        case 'booth_thuysan':
+          return <BoothThuysanModel ref={modelRef} position={position} rotation={rotation} />;
+        default:
+          return <LoadingPlaceholder position={position} />;
+      }
+    };
+
+    return (
+      <RigidBody type="fixed" colliders="cuboid">
+        <CuboidCollider args={[2, 2, 2]} />
+        <Suspense fallback={<LoadingPlaceholder position={position} />}>
+          {renderRealModel()}
+        </Suspense>
+      </RigidBody>
+    );
+  }
+
+  // Default: render placeholder
+  console.log(`📦 Rendering placeholder: ${assetId}`);
+
+  return (
+    <RigidBody type="fixed" colliders="cuboid">
+      <CuboidCollider args={[2, 2, 2]} />
+      <LoadingPlaceholder position={position} />
+    </RigidBody>
+  );
+});
+
+// View-based Scene Manager
+const ViewBasedSceneManager = ({ onAssetChange, maxLoadedAssets }: { onAssetChange?: (loaded: number, total: number) => void, maxLoadedAssets: number }) => {
+  const { camera } = useThree();
+  const addAsset = useAssetStore(state => state.addAsset);
+  const setCamera = useAssetStore(state => state.setCamera);
+  const setMaxLoadedAssets = useAssetStore(state => state.setMaxLoadedAssets);
+  const updateVisibility = useAssetStore(state => state.updateVisibility);
+  const getLoadedCount = useAssetStore(state => state.getLoadedCount);
+  const getVisibleCount = useAssetStore(state => state.getVisibleCount);
+  const assets = useAssetStore(state => state.assets);
+  const updateCounter = useRef(0);
+
+  // Initialize assets on mount
+  useEffect(() => {
+    // Define all booth assets with their properties
+    const booth_assets: Array<[string, AssetInfo]> = [
+      ['detmay', {
+        modelName: 'detmay',
+        position: [-20, 0.1, -10],
+        rotation: [0, 0, 0],
+        boundingRadius: 8,
+        loadDistance: 50,
+        unloadDistance: 70,
+        isLoaded: false,
+        isVisible: false
+      }],
+      ['tech', {
+        modelName: 'tech',
+        position: [-20, 0.1, 15],
+        rotation: [0, -4.7, 0],
+        boundingRadius: 8,
+        loadDistance: 50,
+        unloadDistance: 70,
+        isLoaded: false,
+        isVisible: false
+      }],
+      ['wood', {
+        modelName: 'wood',
+        position: [-20, 0.1, 40],
+        rotation: [0, 0, 0],
+        boundingRadius: 8,
+        loadDistance: 50,
+        unloadDistance: 70,
+        isLoaded: false,
+        isVisible: false
+      }],
+      ['booth_thuysan', {
+        modelName: 'booth_thuysan',
+        position: [20, 0.1, -10],
+        rotation: [0, 4.7, 0],
+        boundingRadius: 8,
+        loadDistance: 50,
+        unloadDistance: 70,
+        isLoaded: false,
+        isVisible: false
+      }],
+      ['thucong', {
+        modelName: 'thucong',
+        position: [20, 0.1, 13],
+        rotation: [0, 4.7, 0],
+        boundingRadius: 8,
+        loadDistance: 50,
+        unloadDistance: 70,
+        isLoaded: false,
+        isVisible: false
+      }],
+      ['food', {
+        modelName: 'food',
+        position: [20, 0.1, 40],
+        rotation: [0, 9.41, 0],
+        boundingRadius: 8,
+        loadDistance: 50,
+        unloadDistance: 70,
+        isLoaded: false,
+        isVisible: false
+      }]
+    ];
+
+    booth_assets.forEach(([id, asset]) => {
+      addAsset(id, asset);
+    });
+
+    setCamera(camera);
+  }, [camera, addAsset, setCamera]);
+
+  // Update max loaded assets when control changes
+  useEffect(() => {
+    setMaxLoadedAssets(maxLoadedAssets);
+  }, [maxLoadedAssets, setMaxLoadedAssets]);
+
+  // Update visibility every frame
+  useFrame(() => {
+    updateCounter.current++;
+    
+    // Check every 5 frames for better responsiveness
+    if (updateCounter.current % 5 === 0) {
+      const { toLoad, toUnload } = updateVisibility();
+      
+      // Debug logging
+      if (toLoad.length > 0) {
+        console.log('Loading assets:', toLoad);
+      }
+      if (toUnload.length > 0) {
+        console.log('Unloading assets:', toUnload);
+      }
+      
+      if (toLoad.length > 0 || toUnload.length > 0) {
+        // Report asset count changes
+        const totalAssets = assets.size;
+        onAssetChange?.(getLoadedCount(), totalAssets);
+        
+        console.log(`Asset status: ${getLoadedCount()}/${getVisibleCount()} loaded (${totalAssets} total)`);
+      }
+    }
+  });
+
+  const handleAssetLoad = useCallback((assetId: string) => {
+    console.log(`Asset ${assetId} loaded into memory`);
+  }, []);
+
+  const handleAssetUnload = useCallback((assetId: string) => {
+    console.log(`Asset ${assetId} unloaded from memory`);
+    // Force garbage collection if available
+    if (typeof window !== 'undefined' && 'gc' in window && typeof (window as any).gc === 'function') {
+      setTimeout(() => (window as any).gc(), 100);
+    }
+  }, []);
+
+  console.log([assets, getVisibleCount(), getLoadedCount()]);
+
+  return (
+    <group position={[0, 0, 0]} rotation={[0, 4.7, 0]}>
+      {/* Render all visible assets as placeholders */}
+      {Array.from(assets.keys()).map(assetId => (
+        <SimpleAsset
+          key={assetId}
+          assetId={assetId}
+        />
+      ))}
+    </group>
+  );
+};
+
 // Camera manager component that runs inside Canvas
 const CameraManager = ({
   onEnvironmentRadiusChange,
   onEnvironmentModeChange,
-  onCharacterHeightChange
+  onCharacterHeightChange,
+  onMaxLoadedAssetsChange
 }: {
   onAddCameraPosition: (position: [number, number, number], label: string) => void;
   cameraPositions: Array<{ position: [number, number, number], label: string }>;
   onEnvironmentRadiusChange: (radius: number) => void;
   onEnvironmentModeChange: (mode: string) => void;
   onCharacterHeightChange: (height: number) => void;
+  onMaxLoadedAssetsChange: (count: number) => void;
 }) => {
   const { camera } = useThree();
   const [targetPositions, setTargetPositions] = useState<Array<{ id: number, position: THREE.Vector3 }>>([]);
@@ -285,6 +631,11 @@ const CameraManager = ({
   const mouseDownTime = useRef<number>(0);
   const mouseDownPoint = useRef<THREE.Vector3 | null>(null);
   const cameraBody = useRef<any>(null);
+  
+  // Get asset store functions
+  const getLoadedCount = useAssetStore(state => state.getLoadedCount);
+  const getVisibleCount = useAssetStore(state => state.getVisibleCount);
+  const assets = useAssetStore(state => state.assets);
 
   // Define movement boundaries (same as in CameraControls)
   const BOUNDARIES = {
@@ -302,8 +653,8 @@ const CameraManager = ({
     return constrainedPosition;
   };
 
-  // Add Leva controls for character height
-  const { characterHeight, showEnvironmentRadius, environmentRadius, environmentMode, showBoundaries } = useControls({
+  // Add Leva controls for character height and asset streaming
+  const { characterHeight, showEnvironmentRadius, environmentRadius, environmentMode, showBoundaries, performanceMode, maxFPS, loadDistance, showAssetBounds, maxLoadedAssets } = useControls({
     characterHeight: {
       value: 1.7,
       min: 1,
@@ -330,16 +681,61 @@ const CameraManager = ({
     showBoundaries: {
       value: false,
       label: 'Show Movement Boundaries'
+    },
+    performanceMode: {
+      value: 'balanced',
+      options: ['performance', 'balanced', 'quality'],
+      label: 'Performance Mode'
+    },
+    maxFPS: {
+      value: 60,
+      min: 30,
+      max: 120,
+      step: 10,
+      label: 'Max FPS (GC Optimization)'
+    },
+    loadDistance: {
+      value: 50,
+      min: 10,
+      max: 100,
+      step: 5,
+      label: 'Asset Load Distance'
+    },
+    showAssetBounds: {
+      value: false,
+      label: 'Show Asset Boundaries'
+    },
+    maxLoadedAssets: {
+      value: 2,
+      min: 1,
+      max: 6,
+      step: 1,
+      label: 'Max Loaded Models'
     }
   });
 
-  // Monitor camera position with Leva
+  // Monitor camera position and asset status with Leva
   useControls({
     'Camera Position': monitor(() => {
       const x = typeof camera.position.x === 'number' ? camera.position.x.toFixed(2) : '0.00';
       const y = typeof camera.position.y === 'number' ? camera.position.y.toFixed(2) : '0.00';
       const z = typeof camera.position.z === 'number' ? camera.position.z.toFixed(2) : '0.00';
       return `x: ${x}, y: ${y}, z: ${z}`;
+    }),
+    'Loaded Assets': monitor(() => {
+      const loadedCount = getLoadedCount();
+      const visibleCount = getVisibleCount();
+      const totalCount = assets.size;
+      return `${loadedCount}/${visibleCount} loaded (${totalCount} total)`;
+    }),
+    'Memory Usage': monitor(() => {
+      const perf = performance as any;
+      if (perf.memory) {
+        const used = (perf.memory.usedJSHeapSize / 1024 / 1024).toFixed(1);
+        const total = (perf.memory.totalJSHeapSize / 1024 / 1024).toFixed(1);
+        return `${used}/${total} MB`;
+      }
+      return 'N/A';
     }),
     'Camera Rotation': monitor(() => {
       const x = typeof camera.rotation.x === 'number' ? camera.rotation.x.toFixed(2) : '0.00';
@@ -494,6 +890,48 @@ const CameraManager = ({
         </mesh>
       )}
 
+      {/* Asset boundary visualization */}
+      {showAssetBounds && (
+        <>
+          {Array.from(assets.entries()).map(([id, asset]) => (
+            <group key={`bounds-${id}`} position={asset.position}>
+              {/* Load distance sphere */}
+              <mesh>
+                <sphereGeometry args={[asset.loadDistance, 16, 16]} />
+                <meshBasicMaterial 
+                  color={asset.isLoaded ? "#00ff00" : "#ffff00"} 
+                  transparent 
+                  opacity={0.1} 
+                  wireframe 
+                />
+              </mesh>
+              {/* Unload distance sphere */}
+              <mesh>
+                <sphereGeometry args={[asset.unloadDistance, 16, 16]} />
+                <meshBasicMaterial 
+                  color="#ff0000" 
+                  transparent 
+                  opacity={0.05} 
+                  wireframe 
+                />
+              </mesh>
+              {/* Asset label */}
+              <Html position={[0, 10, 0]} center>
+                <div style={{
+                  background: asset.isLoaded ? 'rgba(0,255,0,0.8)' : 'rgba(255,255,0,0.8)',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  fontSize: '12px',
+                  color: 'black'
+                }}>
+                  {id} {asset.isLoaded ? '✓' : '○'}
+                </div>
+              </Html>
+            </group>
+          ))}
+        </>
+      )}
+
       {/* Movement boundary visualization */}
       {showBoundaries && (
         <group>
@@ -567,6 +1005,7 @@ export default function GltfViewer() {
   const [environmentRadius, setEnvironmentRadius] = useState(90);
   const [environmentMode, setEnvironmentMode] = useState('dome');
   const [characterHeight, setCharacterHeight] = useState(1.7);
+  const [maxLoadedAssetsState, setMaxLoadedAssetsState] = useState(2);
 
   const handleAddCameraPosition = (position: [number, number, number], label: string) => {
     setCameraPositions(prev => [...prev, { position, label }]);
@@ -625,10 +1064,14 @@ export default function GltfViewer() {
             onEnvironmentRadiusChange={handleEnvironmentRadiusChange}
             onEnvironmentModeChange={handleEnvironmentModeChange}
             onCharacterHeightChange={setCharacterHeight}
+            onMaxLoadedAssetsChange={setMaxLoadedAssetsState}
           />
-          <Suspense fallback={<LoadingPlaceholder />}>
-            <Model curModel={curModel} rotation={[0, 4.7, 0]} />
-          </Suspense>
+                     <ViewBasedSceneManager 
+             onAssetChange={(loaded, total) => {
+               console.log(`Loaded assets: ${loaded}/${total}`);
+             }} 
+             maxLoadedAssets={maxLoadedAssetsState}
+           />
           <CameraControls type={controlType} cameraPositions={cameraPositions} />
           <Environment 
             files="./VR/hall.jpg" 
@@ -639,6 +1082,7 @@ export default function GltfViewer() {
             )}
             environmentIntensity={0.5}
           />
+          
         </Physics>
       </Canvas>
       <Leva />
