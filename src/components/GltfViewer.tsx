@@ -605,7 +605,22 @@ export default function GltfViewer() {
     <div className="w-full h-full">
       <SelectModel curModel={curModel} setCurModel={setCurModel} />
       <ControlSelector type={controlType} onChange={setControlType} />
-      <Canvas camera={{ position: [cameraPosition.x, cameraPosition.y, cameraPosition.z], fov: 50, near: 0.1, far: 1000 }} gl={{ antialias: false }}>
+      <Canvas 
+        camera={{ position: [cameraPosition.x, cameraPosition.y, cameraPosition.z], fov: 50, near: 0.1, far: 1000 }} 
+        gl={{ 
+          antialias: false,
+          powerPreference: "high-performance",
+          alpha: false,
+          stencil: false,
+          depth: true
+        }}
+        performance={{ min: 0.5 }}
+        onCreated={({ gl, size, set }) => {          
+          // Enable performance optimizations
+          gl.outputColorSpace = THREE.SRGBColorSpace;
+          gl.toneMapping = THREE.ACESFilmicToneMapping;
+          gl.toneMappingExposure = 1.0;
+        }}>
         <Physics>
           <CameraManager
             onAddCameraPosition={handleAddCameraPosition}
