@@ -7,6 +7,7 @@ import {
 import { MOUSE } from 'three';
 import { useThree, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { useControls, monitor } from 'leva';
 
 export type ControlType = 
   | 'orbit' 
@@ -96,9 +97,14 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
   const [isDragging, setIsDragging] = useState(false);
   const [showTransformControls, setShowTransformControls] = useState(false);
   const { camera } = useThree();
+  const perspectiveCamera = camera as THREE.PerspectiveCamera;
 
   // Touch state tracking
   const lastTouchPosition = useRef<{ x: number, y: number } | null>(null);
+  const lastPinchDistance = useRef<number | null>(null);
+  const initialFOV = useRef(50); // Store initial FOV
+  const lastWheelTime = useRef(0);
+  const wheelZoomFactor = useRef(1);
 
   // Gamepad state tracking
   const gamepadRef = useRef<Gamepad | null>(null);
@@ -126,13 +132,14 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
     return constrainedPosition;
   };
 
-  // Save initial camera state when component mounts
+  // Save initial camera state and FOV when component mounts
   useEffect(() => {
     initialCameraState.current = {
       position: camera.position.clone(),
       quaternion: camera.quaternion.clone()
     };
-  }, [camera]);
+    initialFOV.current = perspectiveCamera.fov;
+  }, [camera, perspectiveCamera]);
 
   useEffect(() => {
     // Always add event listeners, but check disabled state inside handlers
@@ -170,34 +177,43 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
         camera.quaternion.multiply(yawQuat);
         camera.quaternion.multiply(pitchQuat);
 
-        // Extract the current pitch and keep Z at 0
-        const euler = new THREE.Euler().setFromQuaternion(camera.quaternion);
+        // Extract the current pitch and limit it to 30 degrees up and down
+        const euler = new THREE.Euler().setFromQuaternion(camera.quaternion, 'YXZ');
+        euler.x = Math.max(-Math.PI/6, Math.min(Math.PI/6, euler.x)); // Limit to 30 degrees
+        euler.z = 0; // Keep roll at zero
         camera.quaternion.setFromEuler(euler);
-        camera.quaternion.x = 0;
-        camera.quaternion.z = 0;
 
         // Force the up vector to stay vertical
-        camera.up.set(0, 3, 0);
+        camera.up.set(0, 1, 0);
       }
     };
 
     // Touch event handlers
     const handleTouchStart = (e: TouchEvent) => {
-      if (e.touches.length === 1) { // Single finger only
-        // Don't start dragging if disabled or hovering over an object
-        
+      if (e.touches.length === 1) { // Single finger
         const touch = e.touches[0];
         lastTouchPosition.current = { x: touch.clientX, y: touch.clientY };
         setIsDragging(true);
-        
-        // Prevent default to avoid scrolling/zooming
+        e.preventDefault();
+      } else if (e.touches.length === 2) { // Two fingers for pinch
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        lastPinchDistance.current = Math.hypot(
+          touch2.clientX - touch1.clientX,
+          touch2.clientY - touch1.clientY
+        );
         e.preventDefault();
       }
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
-      setIsDragging(false);
-      lastTouchPosition.current = null;
+      if (e.touches.length === 0) {
+        setIsDragging(false);
+        lastTouchPosition.current = null;
+        lastPinchDistance.current = null;
+      } else if (e.touches.length === 1) {
+        lastPinchDistance.current = null;
+      }
     };
 
     const handleTouchMove = (e: TouchEvent) => {
@@ -231,20 +247,42 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
           camera.quaternion.multiply(yawQuat);
           camera.quaternion.multiply(pitchQuat);
 
-          // Extract the current pitch and keep Z at 0
-          const euler = new THREE.Euler().setFromQuaternion(camera.quaternion);
+          // Extract the current pitch and limit it to 30 degrees up and down
+          const euler = new THREE.Euler().setFromQuaternion(camera.quaternion, 'YXZ');
+          euler.x = Math.max(-Math.PI/6, Math.min(Math.PI/6, euler.x)); // Limit to 30 degrees
+          euler.z = 0; // Keep roll at zero
           camera.quaternion.setFromEuler(euler);
-          camera.quaternion.x = 0;
-          camera.quaternion.z = 0;
 
           // Force the up vector to stay vertical
-          camera.up.set(0, 3, 0);
+          camera.up.set(0, 1, 0);
         }
         
         // Update last position for next movement calculation
         lastTouchPosition.current = currentPosition;
         
-        // Prevent default to avoid scrolling/zooming
+        e.preventDefault();
+      } else if (e.touches.length === 2 && lastPinchDistance.current !== null) {
+        // Handle pinch-to-zoom
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        const currentDistance = Math.hypot(
+          touch2.clientX - touch1.clientX,
+          touch2.clientY - touch1.clientY
+        );
+        
+        // Calculate zoom factor (pinch in = zoom out, pinch out = zoom in)
+        const zoomFactor = lastPinchDistance.current / currentDistance;
+        
+        // Adjust FOV (smaller FOV = more zoom)
+        const newFOV = perspectiveCamera.fov * zoomFactor;
+        
+        // Limit FOV between 30 and 120 degrees
+        perspectiveCamera.fov = Math.max(30, Math.min(120, newFOV));
+        perspectiveCamera.updateProjectionMatrix();
+        
+        // Update last pinch distance
+        lastPinchDistance.current = currentDistance;
+        
         e.preventDefault();
       }
     };
@@ -275,6 +313,37 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
     window.addEventListener('gamepadconnected', handleGamepadConnected);
     window.addEventListener('gamepaddisconnected', handleGamepadDisconnected);
 
+    // Add wheel event handler for trackpad gestures
+    const handleWheel = (e: WheelEvent) => {
+      if (type === 'dragFPS') {
+        // Check if this is a pinch gesture (ctrlKey is set for MacOS trackpad gestures)
+        if (e.ctrlKey) {
+          e.preventDefault();
+          
+          // Get current time for debouncing
+          const now = Date.now();
+          if (now - lastWheelTime.current < 16) { // ~60fps
+            return;
+          }
+          lastWheelTime.current = now;
+
+          // Calculate zoom factor (deltaY is negative for zoom in, positive for zoom out)
+          const zoomSpeed = 0.1;
+          const zoomDelta = -e.deltaY * zoomSpeed;
+          wheelZoomFactor.current = 1 + zoomDelta;
+
+          // Apply zoom
+          const newFOV = perspectiveCamera.fov * wheelZoomFactor.current;
+          
+          // Limit FOV between 30 and 120 degrees
+          perspectiveCamera.fov = Math.max(30, Math.min(120, newFOV));
+          perspectiveCamera.updateProjectionMatrix();
+        }
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: false });
+
     return () => {
       // Cleanup mouse events
       window.removeEventListener('mousedown', handleMouseDown);
@@ -289,8 +358,11 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
       // Cleanup gamepad event listeners
       window.removeEventListener('gamepadconnected', handleGamepadConnected);
       window.removeEventListener('gamepaddisconnected', handleGamepadDisconnected);
+
+      // Cleanup wheel event handler
+      window.removeEventListener('wheel', handleWheel);
     };
-  }, [isDragging, camera, type]); // Remove cameraMovementDisabled from dependencies
+  }, [isDragging, camera, type, perspectiveCamera]);
 
   // Additional gamepad detection loop
   useEffect(() => {
@@ -412,6 +484,32 @@ export function CameraControls({ type, cameraPositions = [], characterHeight = 1
         setGamepadConnected(false);
       }
     }
+  });
+
+  // Update monitoring controls
+  useControls({
+    'Camera Position': monitor(() => {
+      const x = typeof camera.position.x === 'number' ? camera.position.x.toFixed(2) : '0.00';
+      const y = typeof camera.position.y === 'number' ? camera.position.y.toFixed(2) : '0.00';
+      const z = typeof camera.position.z === 'number' ? camera.position.z.toFixed(2) : '0.00';
+      return `x: ${x}, y: ${y}, z: ${z}`;
+    }),
+    'Camera Rotation': monitor(() => {
+      const x = typeof camera.rotation.x === 'number' ? camera.rotation.x.toFixed(2) : '0.00';
+      const y = typeof camera.rotation.y === 'number' ? camera.rotation.y.toFixed(2) : '0.00';
+      const z = typeof camera.rotation.z === 'number' ? camera.rotation.z.toFixed(2) : '0.00';
+      return `x: ${x}, y: ${y}, z: ${z}`;
+    }),
+    'Camera Quaternion': monitor(() => {
+      const x = typeof camera.quaternion.x === 'number' ? camera.quaternion.x.toFixed(2) : '0.00';
+      const y = typeof camera.quaternion.y === 'number' ? camera.quaternion.y.toFixed(2) : '0.00';
+      const z = typeof camera.quaternion.z === 'number' ? camera.quaternion.z.toFixed(2) : '0.00';
+      const w = typeof camera.quaternion.w === 'number' ? camera.quaternion.w.toFixed(2) : '0.00';
+      return `x: ${x}, y: ${y}, z: ${z}, w: ${w}`;
+    }),
+    'Field of View': monitor(() => {
+      return `${perspectiveCamera.fov.toFixed(1)}°`;
+    })
   });
 
   switch (type) {
