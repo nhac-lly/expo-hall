@@ -115,22 +115,22 @@ const Model = React.memo(({ curModel, rotation }: { curModel: string, rotation: 
   if (curModel === 'home') {
     return (
       <group rotation={rotation}>
-        <Suspense fallback={<LoadingPlaceholder position={[-20, 0.1, -10]} />}>
+        <Suspense fallback={<LoadingPlaceholder position={[-9, 0.1, -20]} />}>
           <SingleModel modelName="detmay" position={[-9, 0.1, -20]} isRigidBody />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[-20, 0.1, 15]} />}>
+        <Suspense fallback={<LoadingPlaceholder position={[-8, 0.1, -1]} />}>
           <SingleModel modelName="tech" position={[-8, 0.1, -1]} rotation={[0, -4.7, 0]} isRigidBody />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[-20, 0.1, 40]} />}>
+        <Suspense fallback={<LoadingPlaceholder position={[-10, 0.1, 15]} />}>
           <SingleModel modelName="wood" position={[-10, 0.1, 15]} rotation={[0, -4.7, 0]} isRigidBody />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[20, 0.1, -10]} />}>
+        <Suspense fallback={<LoadingPlaceholder position={[9, 0.1, -20]} />}>
           <SingleModel modelName="thuysan" position={[9, 0.1, -20]} rotation={[0, 4.7, 0]} isRigidBody />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[20, 0.1, 13]} />}>
+        <Suspense fallback={<LoadingPlaceholder position={[9, 0.1, -4]} />}>
           <SingleModel modelName="thucong" position={[9, 0.1, -4]} rotation={[0, 4.7, 0]} isRigidBody />
         </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[20, 0.1, 40]} />}>
+        <Suspense fallback={<LoadingPlaceholder position={[12, 0.1, 15]} />}>
           <SingleModel modelName="food" position={[12, 0.1, 15]} rotation={[0, 9.41, 0]} isRigidBody />
         </Suspense>
       </group>
