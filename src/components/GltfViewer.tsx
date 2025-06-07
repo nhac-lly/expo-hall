@@ -316,7 +316,7 @@ const CameraManager = ({
       label: 'Show Environment Radius'
     },
     environmentRadius: {
-      value: 90,
+      value: 45,
       min: 20,
       max: 2000,
       step: 10,
