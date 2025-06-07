@@ -558,12 +558,11 @@ const CameraManager = ({
     </>
   );
 };
-
 export default function GltfViewer() {
   const [controlType, setControlType] = useState<ControlType>('dragFPS');
   const [curModel, setCurModel] = useState<string>('home');
   const [cameraPositions, setCameraPositions] = useState<Array<{ position: [number, number, number], label: string }>>(DEFAULT_CAMERA_POSITIONS);
-  const [cameraPosition, setCameraPosition] = useState(new THREE.Vector3(-47.39, 1.70, -2.30));
+  const [cameraPosition, setCameraPosition] = useState(new THREE.Vector3(-31.52, 1.70, -0.55));
   const [environmentRadius, setEnvironmentRadius] = useState(45);
   const [environmentMode, setEnvironmentMode] = useState('dome');
   const [characterHeight, setCharacterHeight] = useState(1.7);
