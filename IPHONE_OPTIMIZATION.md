@@ -53,7 +53,7 @@ const OptimizedModel = ({ curModel, performanceSettings }) => {
     
     // Limit models on iPhone
     const maxModels = performanceSettings.maxModelsLoaded;
-    const allModels = ['detmay', 'tech', 'wood', 'booth_thuysan', 'thucong', 'food'];
+    const allModels = ['detmay', 'tech', 'wood', 'thuysan', 'thucong', 'food'];
     return allModels.slice(0, maxModels);
   }, [curModel, performanceSettings.maxModelsLoaded]);
 

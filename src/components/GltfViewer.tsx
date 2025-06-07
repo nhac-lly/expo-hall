@@ -12,7 +12,7 @@ import { Model as TechModel } from "../models/Tech";
 import { Model as WoodModel } from "../models/Wood";
 import { Model as DetmayModel } from "../models/Detmay";
 import { Model as ThucongModel } from "../models/Thucong";
-import { Model as BoothThuysanModel } from "../models/Booth_thuysan";
+import { Model as ThuysanModel } from "../models/Thuysan";
 import { Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
 import { create } from 'zustand';
 
@@ -85,8 +85,8 @@ const SingleModel = ({ modelName, position = [0, 0, 0], rotation = [0, 0, 0], is
         return <DetmayModel ref={modelRef} position={position} rotation={rotation} />;
       case 'thucong':
         return <ThucongModel ref={modelRef} position={position} rotation={rotation} />;
-      case 'booth_thuysan':
-        return <BoothThuysanModel ref={modelRef} position={position} rotation={rotation} />;
+      case 'thuysan':
+        return <ThuysanModel ref={modelRef} position={position} rotation={rotation} />;
       default:
         return null;
     }
@@ -124,7 +124,7 @@ const Model = React.memo(({ curModel, rotation }: { curModel: string, rotation: 
           <SingleModel modelName="wood" position={[-20, 0.1, 40]} rotation={[0, 0, 0]} isRigidBody />
         </Suspense>
         <Suspense fallback={<LoadingPlaceholder position={[20, 0.1, -10]} />}>
-          <SingleModel modelName="booth_thuysan" position={[20, 0.1, -10]} rotation={[0, 4.7, 0]} isRigidBody />
+          <SingleModel modelName="thuysan" position={[20, 0.1, -10]} rotation={[0, 4.7, 0]} isRigidBody />
         </Suspense>
         <Suspense fallback={<LoadingPlaceholder position={[20, 0.1, 13]} />}>
           <SingleModel modelName="thucong" position={[20, 0.1, 13]} rotation={[0, 4.7, 0]} isRigidBody />
@@ -149,7 +149,7 @@ const DEFAULT_CAMERA_POSITIONS: Array<{ position: [number, number, number], labe
   { position: [-3, 1, -10], label: 'Detmay' },
   { position: [-3, 1, 15], label: 'Tech' },
   { position: [-3, 1, 40], label: 'Wood' },
-  { position: [3, 1, -10], label: 'BoothThuysan' },
+  { position: [3, 1, -10], label: 'Thuysan' },
   { position: [3, 1, 15], label: 'Thucong' },
   { position: [3, 1, 40], label: 'Food' },
 ];
@@ -437,8 +437,8 @@ const SimpleAsset = React.memo(({ assetId }: { assetId: string }) => {
           return <DetmayModel ref={modelRef} position={position} rotation={rotation} />;
         case 'thucong':
           return <ThucongModel ref={modelRef} position={position} rotation={rotation} />;
-        case 'booth_thuysan':
-          return <BoothThuysanModel ref={modelRef} position={position} rotation={rotation} />;
+        case 'thuysan':
+          return <ThuysanModel ref={modelRef} position={position} rotation={rotation} />;
         default:
           return <LoadingPlaceholder position={position} />;
       }
@@ -511,8 +511,8 @@ const ViewBasedSceneManager = ({ onAssetChange, maxLoadedAssets }: { onAssetChan
         isLoaded: false,
         isVisible: false
       }],
-      ['booth_thuysan', {
-        modelName: 'booth_thuysan',
+      ['thuysan', {
+        modelName: 'thuysan',
         position: [20, 0.1, -10],
         rotation: [0, 4.7, 0],
         boundingRadius: 8,
@@ -1032,7 +1032,7 @@ export default function GltfViewer() {
         <option value="wood" className="bg-white dark:bg-black text-black dark:text-white">Wood</option>
         <option value="detmay" className="bg-white dark:bg-black text-black dark:text-white">Detmay</option>
         <option value="thucong" className="bg-white dark:bg-black text-black dark:text-white">Thucong</option>
-        <option value="booth_thuysan" className="bg-white dark:bg-black text-black dark:text-white">Booth Thuysan</option>
+        <option value="thuysan" className="bg-white dark:bg-black text-black dark:text-white">Thuysan</option>
       </select>
     </div>
   );
