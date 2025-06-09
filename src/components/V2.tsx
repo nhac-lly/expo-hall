@@ -552,7 +552,7 @@ function V2({ empty }: { empty?: boolean }) {
           <Model empty={empty} rotation={[0, 4.7, 0]} />
           <CameraControls type={controlType} cameraPositions={cameraPositions} />
           <Environment 
-            files="./VR2/hall.jpeg" 
+            files="./VR2/hall.jpg" 
             {...(environmentMode === 'background' 
               ? { background: true } 
               : { ground: { height: 5, radius: environmentRadius, scale: 150 } }

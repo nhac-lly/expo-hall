@@ -515,7 +515,6 @@ function V2({ empty }: { empty?: boolean }) {
           alpha: true,
           stencil: true,
           depth: true,
-          shadowMap: true,
         }}
         performance={{ min: 0.5 }}
         onCreated={({ gl, size, set, camera }) => {          
@@ -532,7 +531,7 @@ function V2({ empty }: { empty?: boolean }) {
           <Model empty={empty} rotation={[0, 4.7, 0]} cameraPosition={cameraPosition} />
           <CameraControls type={controlType} cameraPositions={cameraPositions} />
           <Environment 
-            files="./VR2/hall.jpeg" 
+            files="./VR2/hall.jpg" 
             {...(environmentMode === 'dome' 
               ? { ground: { height: 5, radius: environmentRadius, scale: 150 } }
               :  {}
