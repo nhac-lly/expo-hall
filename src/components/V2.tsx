@@ -445,25 +445,25 @@ const CameraManager = ({
       {showBoundaries && (
         <group>
           {/* North boundary (positive Z) */}
-          <mesh position={[0, 2, BOUNDARIES.maxZ]} rotation={[0, 0, 0]}>
+          <mesh position={[0, 2, 0]} rotation={[0, 0, 0]}>
             <planeGeometry args={[BOUNDARIES.maxX - BOUNDARIES.minX, 4]} />
             <meshBasicMaterial color="#ff0000" transparent opacity={0.2} side={THREE.DoubleSide} wireframe />
           </mesh>
           
           {/* South boundary (negative Z) */}
-          <mesh position={[0, 2, BOUNDARIES.minZ]} rotation={[0, 0, 0]}>
+          <mesh position={[0, 2, 0]} rotation={[0, 0, 0]}>
             <planeGeometry args={[BOUNDARIES.maxX - BOUNDARIES.minX, 4]} />
             <meshBasicMaterial color="#ff0000" transparent opacity={0.2} side={THREE.DoubleSide} wireframe />
           </mesh>
           
           {/* East boundary (positive X) */}
-          <mesh position={[BOUNDARIES.maxX, 2, 0]} rotation={[0, Math.PI / 2, 0]}>
+          <mesh position={[0, 2, 0]} rotation={[0, Math.PI / 2, 0]}>
             <planeGeometry args={[BOUNDARIES.maxZ - BOUNDARIES.minZ, 4]} />
             <meshBasicMaterial color="#ff0000" transparent opacity={0.2} side={THREE.DoubleSide} wireframe />
           </mesh>
           
           {/* West boundary (negative X) */}
-          <mesh position={[BOUNDARIES.minX, 2, 0]} rotation={[0, Math.PI / 2, 0]}>
+          <mesh position={[0, 2, 0]} rotation={[0, Math.PI / 2, 0]}>
             <planeGeometry args={[BOUNDARIES.maxZ - BOUNDARIES.minZ, 4]} />
             <meshBasicMaterial color="#ff0000" transparent opacity={0.2} side={THREE.DoubleSide} wireframe />
           </mesh>
@@ -479,7 +479,7 @@ const CameraManager = ({
           onPointerDown={handleGroundMouseDown}
           onPointerUp={handleGroundMouseUp}
         >
-          <planeGeometry args={[100, 100]} />
+          <planeGeometry args={[100, 5]} />
           <meshBasicMaterial 
             color="#ffffff" 
             transparent 
