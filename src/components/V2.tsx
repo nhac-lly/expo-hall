@@ -512,6 +512,7 @@ function V2({ empty }: { empty?: boolean }) {
   const [environmentRadius, setEnvironmentRadius] = useState(45);
   const [environmentMode, setEnvironmentMode] = useState('dome');
   const [characterHeight, setCharacterHeight] = useState(1.7);
+  const [selectedModel, setSelectedModel] = useState<{ name: string, cost: number, details: string } | null>(null);
 
   const handleAddCameraPosition = (position: [number, number, number], label: string) => {
     setCameraPositions(prev => [...prev, { position, label }]);
@@ -526,7 +527,7 @@ function V2({ empty }: { empty?: boolean }) {
   };
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full" style={{ position: 'relative' }}>
       <ControlSelector type={controlType} onChange={setControlType} />
       <Canvas 
         camera={{ position: [cameraPosition.x, cameraPosition.y, cameraPosition.z], fov: 50, near: 0.1, far: 1000 }} 
@@ -549,7 +550,26 @@ function V2({ empty }: { empty?: boolean }) {
             onEnvironmentModeChange={handleEnvironmentModeChange}
             onCharacterHeightChange={setCharacterHeight}
           />
-          <Model empty={empty} rotation={[0, 4.7, 0]} />
+          <group rotation={[0, -4.7, 0]}>
+            <Suspense fallback={<LoadingPlaceholder position={[-9, 0.1, -20]} />}>
+              {empty ? <></> : <DetmayModel position={[-9, 0.1, -20]} onSelect={setSelectedModel} />}
+            </Suspense>
+            <Suspense fallback={<LoadingPlaceholder position={[-8, 0.1, -1]} />}>
+              {empty ? <></> : <TechModel position={[-8, 0.1, -1]} rotation={[0, -4.7, 0]} />}
+            </Suspense>
+            <Suspense fallback={<LoadingPlaceholder position={[-10, 0.1, 15]} />}>
+              {empty ? <></> : <WoodModel position={[-10, 0.1, 15]} rotation={[0, -4.7, 0]} />}
+            </Suspense>
+            <Suspense fallback={<LoadingPlaceholder position={[9, 0.1, -20]} />}>
+              {empty ? <></> : <ThuysanModel position={[9, 0.1, -20]} rotation={[0, 4.7, 0]} />}
+            </Suspense>
+            <Suspense fallback={<LoadingPlaceholder position={[9, 0.1, -4]} />}>
+              {empty ? <></> : <ThucongModel position={[9, 0.1, -4]} rotation={[0, 4.7, 0]} />}
+            </Suspense>
+            <Suspense fallback={<LoadingPlaceholder position={[12, 0.1, 15]} />}>
+              {empty ? <></> : <FoodModel position={[12, 0.1, 15]} rotation={[0, 9.41, 0]} />}
+            </Suspense>
+          </group>
           <CameraControls type={controlType} cameraPositions={cameraPositions} />
           <Environment 
             files="./VR2/hall.jpg" 
@@ -562,6 +582,26 @@ function V2({ empty }: { empty?: boolean }) {
         </Physics>
       </Canvas>
       <Leva />
+      {/* 2D Popup Overlay */}
+      {selectedModel && (
+        <div style={{
+          position: 'absolute',
+          bottom: 40,
+          right: 40,
+          background: 'white',
+          border: '1px solid #333',
+          borderRadius: 8,
+          padding: 24,
+          zIndex: 10,
+          minWidth: 250,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+        }}>
+          <h3>{selectedModel.name}</h3>
+          <div>{selectedModel.details}</div>
+          <div style={{ marginTop: 12, fontWeight: 'bold' }}>Cost: ${selectedModel.cost}</div>
+          <button style={{ marginTop: 16 }} onClick={() => setSelectedModel(null)}>Close</button>
+        </div>
+      )}
     </div>
   );
 }

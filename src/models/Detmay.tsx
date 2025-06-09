@@ -5,8 +5,8 @@ Files: .\Detmay\Detmay.gltf [191.05KB] > C:\Users\zatag\assets\Detmay-transforme
 */
 
 import * as THREE from 'three'
-import React, { JSX } from 'react'
-import { useGLTF } from '@react-three/drei'
+import React, { JSX, useState } from 'react'
+import { useGLTF, Html } from '@react-three/drei'
 import { GLTF } from 'three-stdlib'
 
 type GLTFResult = GLTF & {
@@ -85,10 +85,12 @@ type GLTFResult = GLTF & {
   animations: any[]
 }
 
-export function Model(props: JSX.IntrinsicElements['group']) {
+export function Model(props: JSX.IntrinsicElements['group'] & { onSelect?: (info: { name: string, cost: number, details: string }) => void }) {
   const { nodes, materials } = useGLTF('/VR/detmay-transformed.glb') as unknown as GLTFResult
+  const { onSelect, ...rest } = props;
+
   return (
-    <group {...props} dispose={null}>
+    <group {...rest} dispose={null}>
       <mesh castShadow receiveShadow geometry={nodes.BP_Rack_Clothes_01.geometry} material={materials['Inst_Rack_01.001']} position={[-4.89, -0.037, 1.233]} rotation={[0, 1.571, 0]} />
       <mesh castShadow receiveShadow geometry={nodes.BP_Rack_Clothes_13.geometry} material={materials['Inst_Rack_02.002']} position={[-3.366, 0.1, 6.738]} />
       <mesh castShadow receiveShadow geometry={nodes.Circle003.geometry} material={materials['Material.001']} position={[-4.609, 0.346, 1.95]} rotation={[0, 0, -Math.PI / 2]} scale={[0.312, 0.265, 0.386]} />
@@ -127,8 +129,26 @@ export function Model(props: JSX.IntrinsicElements['group']) {
       <mesh castShadow receiveShadow geometry={nodes.SM_Hat_011001.geometry} material={materials['Inst_Hats_03.003']} position={[3.943, 0.961, -5.678]} rotation={[0, -0.979, -Math.PI]} scale={[-0.992, -0.977, -1]} />
       <mesh castShadow receiveShadow geometry={nodes.SM_Hat_013001.geometry} material={materials['Inst_Hats_01.003']} position={[3.962, 0.962, -6.247]} rotation={[0, -1.067, -Math.PI]} scale={[-0.992, -0.977, -1]} />
       <group position={[0.598, 1.292, -0.083]} rotation={[0, 1.469, 0]} scale={1.038}>
-        <mesh castShadow receiveShadow geometry={nodes.SM_Mannequin_03.geometry} material={materials['Inst_Plastic_03.001']} />
-        <mesh castShadow receiveShadow geometry={nodes.SM_Mannequin_03_1.geometry} material={materials['Inst_Clothes_10.001']} />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.SM_Mannequin_03.geometry}
+          material={materials['Inst_Plastic_03.001']}
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect?.({ name: 'Mannequin', cost: 120, details: 'A stylish mannequin for display.' });
+          }}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.SM_Mannequin_03_1.geometry}
+          material={materials['Inst_Clothes_10.001']}
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect?.({ name: 'Mannequin Clothes', cost: 40, details: 'Clothes for the mannequin.' });
+          }}
+        />
       </group>
       <mesh castShadow receiveShadow geometry={nodes.SM_Merged_RackBag.geometry} material={materials.Inst_Hats_04} position={[-2.854, -0.018, -2.205]} rotation={[0, 1.571, 0]} />
     </group>
