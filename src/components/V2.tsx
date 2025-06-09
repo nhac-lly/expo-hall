@@ -597,6 +597,18 @@ function V2({ empty }: { empty?: boolean }) {
           boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
         }}>
           <h3>{selectedModel.name}</h3>
+          {/* Embedded YouTube video */}
+          <div style={{ width: '100%', aspectRatio: '16/9', marginBottom: 16 }}>
+            <iframe
+              width="100%"
+              height="100%"
+              src="https://www.youtube.com/embed/C0DPdy98e4c?autoplay=1&mute=1&modestbranding=1&rel=0"
+              title="YouTube video"
+              allow="autoplay; encrypted-media"
+              allowFullScreen
+              style={{ width: '100%', height: '100%', borderRadius: 8 }}
+            />
+          </div>
           <div>{selectedModel.details}</div>
           <div style={{ marginTop: 12, fontWeight: 'bold' }}>Cost: ${selectedModel.cost}</div>
           <button style={{ marginTop: 16 }} onClick={() => setSelectedModel(null)}>Close</button>
