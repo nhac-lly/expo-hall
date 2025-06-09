@@ -59,11 +59,11 @@ const LoadingPlaceholder = ({ position = [0, 0, 0] }: { position?: [number, numb
 };
 
 // Replace with direct model rendering
-const Model = React.memo(({ empty = false, rotation }: { empty?: boolean, rotation: [number, number, number] }) => {
+const Model = React.memo(({ empty = false, rotation, cameraPosition }: { empty?: boolean, rotation: [number, number, number], cameraPosition: THREE.Vector3 }) => {
     return (
       <group rotation={rotation}>
         <Suspense fallback={<LoadingPlaceholder position={[-9, 0.1, -20]} />}>
-          {empty ? <></> : <DetmayModel position={[-9, 0.1, -20]} />}
+          {empty ? <></> : <DetmayModel position={[-9, 0.1, -20]}/>}
         </Suspense>
       </group>
     );
@@ -510,14 +510,15 @@ function V2({ empty }: { empty?: boolean }) {
       <Canvas 
         camera={{ position: [cameraPosition.x, cameraPosition.y, cameraPosition.z], fov: 50, near: 0.1, far: 1000 }} 
         gl={{ 
-          antialias: false,
+          antialias: true,
           powerPreference: "high-performance",
-          alpha: false,
-          stencil: false,
-          depth: true
+          alpha: true,
+          stencil: true,
+          depth: true,
+          shadowMap: true,
         }}
         performance={{ min: 0.5 }}
-        onCreated={({ gl, size, set }) => {          
+        onCreated={({ gl, size, set, camera }) => {          
           gl.outputColorSpace = THREE.SRGBColorSpace;
           gl.toneMapping = THREE.ACESFilmicToneMapping;
           gl.toneMappingExposure = 1.0;
@@ -528,7 +529,7 @@ function V2({ empty }: { empty?: boolean }) {
             onEnvironmentModeChange={handleEnvironmentModeChange}
             onCharacterHeightChange={setCharacterHeight}
           />
-          <Model empty={empty} rotation={[0, 4.7, 0]} />
+          <Model empty={empty} rotation={[0, 4.7, 0]} cameraPosition={cameraPosition} />
           <CameraControls type={controlType} cameraPositions={cameraPositions} />
           <Environment 
             files="./VR/hall.jpg" 
