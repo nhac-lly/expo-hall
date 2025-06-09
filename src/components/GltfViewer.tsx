@@ -625,7 +625,7 @@ export default function GltfViewer() {
           <Model curModel={curModel} rotation={[0, 4.7, 0]} />
           <CameraControls type={controlType} cameraPositions={cameraPositions} />
           <Environment 
-            files="./VR/hall.jpg" 
+            files="./VR2/hall.jpeg" 
             {...(environmentMode === 'background' 
               ? { background: true } 
               : { ground: { height: 5, radius: environmentRadius, scale: 150 } }

@@ -532,11 +532,12 @@ function V2({ empty }: { empty?: boolean }) {
           <Model empty={empty} rotation={[0, 4.7, 0]} cameraPosition={cameraPosition} />
           <CameraControls type={controlType} cameraPositions={cameraPositions} />
           <Environment 
-            files="./VR/hall.jpg" 
-            {...(environmentMode === 'background' 
-              ? { background: true } 
-              : { ground: { height: 5, radius: environmentRadius, scale: 150 } }
+            files="./VR2/hall.jpeg" 
+            {...(environmentMode === 'dome' 
+              ? { ground: { height: 5, radius: environmentRadius, scale: 150 } }
+              :  {}
             )}
+            background={environmentMode === 'background' ? true : false}
             environmentIntensity={0.5}
           />
         </Physics>
