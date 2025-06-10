@@ -41,6 +41,8 @@ const LoadingPlaceholder = ({ position = [0, 0, 0] }: { position?: [number, numb
         ref={meshRef}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
+        castShadow
+        receiveShadow
       >
         <octahedronGeometry args={[1.5, 0]} />
         <meshStandardMaterial
@@ -52,7 +54,7 @@ const LoadingPlaceholder = ({ position = [0, 0, 0] }: { position?: [number, numb
         />
       </mesh>
       {/* Add a subtle glow effect */}
-      <mesh>
+      <mesh castShadow receiveShadow>
         <sphereGeometry args={[2, 32, 32]} />
         <meshBasicMaterial
           color="#4a9eff"
@@ -69,22 +71,22 @@ const Model = React.memo(({ empty = false, rotation }: { empty?: boolean, rotati
     return (
       <group rotation={rotation}>
         <Suspense fallback={<LoadingPlaceholder position={[-9, 0.1, -20]} />}>
-          {empty ? <></> : <DetmayModel position={[-9, 0.1, -20]} />}
+          {empty ? <></> : <DetmayModel position={[-9, 0.1, -20]} castShadow receiveShadow />}
         </Suspense>
         <Suspense fallback={<LoadingPlaceholder position={[-8, 0.1, -1]} />}>
-          {empty ? <></> : <TechModel position={[-8, 0.1, -1]} rotation={[0, -4.7, 0]} />}
+          {empty ? <></> : <TechModel position={[-8, 0.1, -1]} rotation={[0, -4.7, 0]} castShadow receiveShadow />}
         </Suspense>
         <Suspense fallback={<LoadingPlaceholder position={[-10, 0.1, 15]} />}>
-          {empty ? <></> : <WoodModel position={[-10, 0.1, 15]} rotation={[0, -4.7, 0]} />}
+          {empty ? <></> : <WoodModel position={[-10, 0.1, 15]} rotation={[0, -4.7, 0]} castShadow receiveShadow />}
         </Suspense>
         <Suspense fallback={<LoadingPlaceholder position={[9, 0.1, -20]} />}>
-          {empty ? <></> : <ThuysanModel position={[9, 0.1, -20]} rotation={[0, 4.7, 0]} />}
+          {empty ? <></> : <ThuysanModel position={[9, 0.1, -20]} rotation={[0, 4.7, 0]} castShadow receiveShadow />}
         </Suspense>
         <Suspense fallback={<LoadingPlaceholder position={[9, 0.1, -4]} />}>
-          {empty ? <></> : <ThucongModel position={[9, 0.1, -4]} rotation={[0, 4.7, 0]} />}
+          {empty ? <></> : <ThucongModel position={[9, 0.1, -4]} rotation={[0, 4.7, 0]} castShadow receiveShadow />}
         </Suspense>
         <Suspense fallback={<LoadingPlaceholder position={[12, 0.1, 15]} />}>
-          {empty ? <></> : <FoodModel position={[12, 0.1, 15]} rotation={[0, 9.41, 0]} />}
+          {empty ? <></> : <FoodModel position={[12, 0.1, 15]} rotation={[0, 9.41, 0]} castShadow receiveShadow />}
         </Suspense>
       </group>
     );
@@ -250,7 +252,7 @@ const CameraManager = ({
   };
 
   // Add Leva controls for character height and asset streaming
-  const { characterHeight, showEnvironmentRadius, environmentRadius, environmentMode, showBoundaries } = useControls({
+  const { characterHeight, showEnvironmentRadius, environmentRadius, environmentMode, showBoundaries, showLightIndicator } = useControls({
     characterHeight: {
       value: 1.7,
       min: 1,
@@ -277,6 +279,10 @@ const CameraManager = ({
     showBoundaries: {
       value: false,
       label: 'Show Movement Boundaries'
+    },
+    showLightIndicator: {
+      value: false,
+      label: 'Show Light Indicator'
     }
   });
 
@@ -478,13 +484,16 @@ const CameraManager = ({
           position={[0, 0, 0]}
           onPointerDown={handleGroundMouseDown}
           onPointerUp={handleGroundMouseUp}
+          receiveShadow
         >
           <planeGeometry args={[100, 5]} />
-          <meshBasicMaterial 
+          <meshStandardMaterial 
             color="#ffffff" 
             transparent 
             opacity={0} 
             side={THREE.DoubleSide}
+            roughness={0.8}
+            metalness={0.2}
           />
         </mesh>
         <CuboidCollider args={[50, 0.1, 50]} />
@@ -502,6 +511,35 @@ const CameraManager = ({
           }}
         />
       ))}
+
+      {/* Ceiling light source */}
+      <mesh position={[0, 10, 0]}>
+        <directionalLight
+          intensity={10}
+          color="#ffffff"
+          castShadow
+          shadow-mapSize={[2048, 2048]}
+          shadow-camera-far={50}
+          shadow-camera-left={-25}
+          shadow-camera-right={25}
+          shadow-camera-top={25}
+          shadow-camera-bottom={-25}
+        />
+        {/* Light position indicator */}
+        {showLightIndicator && (
+          <>
+            <mesh castShadow receiveShadow>
+              <boxGeometry args={[1, 1, 1]} />
+              <meshStandardMaterial color="#ffff00" />
+            </mesh>
+            {/* Light direction indicator */}
+            <mesh position={[0, -1, 0]} castShadow receiveShadow>
+              <coneGeometry args={[0.5, 2, 8]} />
+              <meshStandardMaterial color="#ffff00" />
+            </mesh>
+          </>
+        )}
+      </mesh>
     </>
   );
 };
@@ -532,17 +570,23 @@ function V2({ empty }: { empty?: boolean }) {
       <Canvas 
         camera={{ position: [cameraPosition.x, cameraPosition.y, cameraPosition.z], fov: 50, near: 0.1, far: 1000 }} 
         gl={{ 
-          antialias: false,
+          antialias: true,
           powerPreference: "high-performance",
           alpha: false,
           stencil: false,
-          depth: true
+          depth: true,
+          precision: "highp",
+          preserveDrawingBuffer: true
         }}
+        shadows
+        dpr={[1, 2]}
         performance={{ min: 0.5 }}
         onCreated={({ gl, size, set }) => {          
           gl.outputColorSpace = THREE.SRGBColorSpace;
           gl.toneMapping = THREE.ACESFilmicToneMapping;
           gl.toneMappingExposure = 1.0;
+          gl.shadowMap.enabled = true;
+          gl.shadowMap.type = THREE.PCFSoftShadowMap;
         }}>
         <Physics>
           <CameraManager
@@ -552,25 +596,26 @@ function V2({ empty }: { empty?: boolean }) {
           />
           <group rotation={[0, -4.7, 0]}>
             <Suspense fallback={<LoadingPlaceholder position={[-9, 0.1, -20]} />}>
-              {empty ? <></> : <DetmayModel position={[-9, 0.1, -20]} onSelect={setSelectedModel} />}
+              {empty ? <></> : <DetmayModel position={[-9, 0.1, -20]} onSelect={setSelectedModel} castShadow receiveShadow />}
             </Suspense>
             <Suspense fallback={<LoadingPlaceholder position={[-8, 0.1, -1]} />}>
-              {empty ? <></> : <TechModel position={[-8, 0.1, -1]} rotation={[0, -4.7, 0]} />}
+              {empty ? <></> : <TechModel position={[-8, 0.1, -1]} rotation={[0, -4.7, 0]} castShadow receiveShadow />}
             </Suspense>
             <Suspense fallback={<LoadingPlaceholder position={[-10, 0.1, 15]} />}>
-              {empty ? <></> : <WoodModel position={[-10, 0.1, 15]} rotation={[0, -4.7, 0]} />}
+              {empty ? <></> : <WoodModel position={[-10, 0.1, 15]} rotation={[0, -4.7, 0]} castShadow receiveShadow />}
             </Suspense>
             <Suspense fallback={<LoadingPlaceholder position={[9, 0.1, -20]} />}>
-              {empty ? <></> : <ThuysanModel position={[9, 0.1, -20]} rotation={[0, 4.7, 0]} />}
+              {empty ? <></> : <ThuysanModel position={[9, 0.1, -20]} rotation={[0, 4.7, 0]} castShadow receiveShadow />}
             </Suspense>
             <Suspense fallback={<LoadingPlaceholder position={[9, 0.1, -4]} />}>
-              {empty ? <></> : <ThucongModel position={[9, 0.1, -4]} rotation={[0, 4.7, 0]} />}
+              {empty ? <></> : <ThucongModel position={[9, 0.1, -4]} rotation={[0, 4.7, 0]} castShadow receiveShadow />}
             </Suspense>
             <Suspense fallback={<LoadingPlaceholder position={[12, 0.1, 15]} />}>
-              {empty ? <></> : <FoodModel position={[12, 0.1, 15]} rotation={[0, 9.41, 0]} />}
+              {empty ? <></> : <FoodModel position={[12, 0.1, 15]} rotation={[0, 9.41, 0]} castShadow receiveShadow />}
             </Suspense>
           </group>
           <CameraControls type={controlType} cameraPositions={cameraPositions} />
+          <Suspense fallback={<Html>Loading...</Html>}>
           <Environment 
             files="./VR2/hall.jpg" 
             {...(environmentMode === 'background' 
@@ -579,6 +624,7 @@ function V2({ empty }: { empty?: boolean }) {
             )}
             environmentIntensity={0.5}
           />
+          </Suspense>
         </Physics>
       </Canvas>
       <Leva />
