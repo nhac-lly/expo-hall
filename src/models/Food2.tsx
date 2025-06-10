@@ -218,7 +218,10 @@ export function Model(props: JSX.IntrinsicElements['group']) {
   
   return (
     <group {...props} dispose={null}>
-      <group position={[-1.897, 1.298, -3.924]} scale={[0.805, 1.291, 0.003]}>
+<mesh castShadow receiveShadow geometry={nodes._l1_Backdrop_box.geometry} material={materials['LCD06.002']} position={[-0.362, 4.93, -7.465]} scale={[0.738, 0.599, 0.322]} />
+      <mesh castShadow receiveShadow geometry={nodes._l1_Floor.geometry} material={materials['Material.041']} position={[-0.131, 0.147, 0.029]} rotation={[0, -1.571, 0]} scale={[0.932, 0.926, 1]} />
+      <mesh castShadow receiveShadow geometry={nodes._l1_Main_Backdrop.geometry} material={materials['Ash Wood']} position={[-0.104, 5.892, -7.846]} scale={[2, 1.345, 0.414]} />
+      {/* <group position={[-1.897, 1.298, -3.924]} scale={[0.805, 1.291, 0.003]}>
         <mesh castShadow receiveShadow geometry={nodes.Cube003.geometry} material={materials['Material.006']} />
         <mesh castShadow receiveShadow geometry={nodes.Cube003_1.geometry} material={materials['Material.007']} />
       </group>
@@ -323,9 +326,7 @@ export function Model(props: JSX.IntrinsicElements['group']) {
       <mesh castShadow receiveShadow geometry={nodes._l4_Veges_Shelf_Details009.geometry} material={materials['storage red']} position={[-3.311, 0.001, 4.009]} rotation={[0, -1.571, 0]} scale={1.125} />
       <mesh castShadow receiveShadow geometry={nodes._l4_Veges_Shelf_Details010.geometry} material={materials['storage orange']} position={[-3.311, 0.001, 4.009]} rotation={[0, -1.571, 0]} scale={1.125} />
       <mesh castShadow receiveShadow geometry={nodes._l4_Veges_Shelf_Details011.geometry} material={materials['cabbage-soup-diet-1.001']} position={[-3.311, 0.001, 4.009]} rotation={[0, -1.571, 0]} scale={1.125} />
-      <mesh castShadow receiveShadow geometry={nodes._l1_Backdrop_box.geometry} material={materials['LCD06.002']} position={[-0.362, 4.93, -7.465]} scale={[0.738, 0.599, 0.322]} />
-      <mesh castShadow receiveShadow geometry={nodes._l1_Floor.geometry} material={materials['Material.041']} position={[-0.131, 0.147, 0.029]} rotation={[0, -1.571, 0]} scale={[0.932, 0.926, 1]} />
-      <mesh castShadow receiveShadow geometry={nodes._l1_Main_Backdrop.geometry} material={materials['Ash Wood']} position={[-0.104, 5.892, -7.846]} scale={[2, 1.345, 0.414]} />
+      
       <group position={[-9.035, 2.004, 6.446]} rotation={[0, -0.003, 0]} scale={[1.005, 2.005, 0.191]}>
         <mesh castShadow receiveShadow geometry={nodes.Cube010.geometry} material={materials['Material.010']} />
         <mesh castShadow receiveShadow geometry={nodes.Cube010_1.geometry} material={materials['Material.001']} />
@@ -342,7 +343,7 @@ export function Model(props: JSX.IntrinsicElements['group']) {
         <mesh castShadow receiveShadow geometry={nodes.Cube004.geometry} material={materials.Bamboo} />
         <mesh castShadow receiveShadow geometry={nodes.Cube004_1.geometry} material={materials.white} />
         <mesh castShadow receiveShadow geometry={nodes.Cube004_2.geometry} material={materials['Material.042']} />
-      </group>
+      </group> */}
     </group>
   )
 }
