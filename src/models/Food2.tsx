@@ -4,7 +4,7 @@ Command: npx gltfjsx@6.5.3 .\food_lod.gltf --shadows --types
 */
 
 import * as THREE from 'three'
-import React, { JSX, useRef, useState } from 'react'
+import React, { JSX, useRef, useState, useEffect } from 'react'
 import { useGLTF } from '@react-three/drei'
 import { GLTF } from 'three-stdlib'
 import { useThree, useFrame } from '@react-three/fiber'
@@ -201,26 +201,102 @@ type GLTFResult = GLTF & {
 export function Model(props: JSX.IntrinsicElements['group']) {
   const { nodes, materials } = useGLTF('/VR2/food/food_lod.gltf') as unknown as GLTFResult
 
-  
   const { camera } = useThree();
   const [lodLevel, setLodLevel] = useState(0);
   const groupRef = useRef<THREE.Group>(null);
+  const prevLodLevel = useRef(lodLevel);
+
+  // Unload unused geometries and materials
+  useEffect(() => {
+    if (prevLodLevel.current !== lodLevel) {
+      // Unload level 4 if not in use
+      if (lodLevel < 4) {
+        nodes._l4_Veges_Shelf_Details?.geometry?.dispose();
+        nodes._l4_Veges_Shelf_Details001?.geometry?.dispose();
+        nodes._l4_Veges_Shelf_Details002?.geometry?.dispose();
+        nodes._l4_Veges_Shelf_Details003?.geometry?.dispose();
+        nodes._l4_Veges_Shelf_Details004?.geometry?.dispose();
+        nodes._l4_Veges_Shelf_Details005?.geometry?.dispose();
+        nodes._l4_Veges_Shelf_Details006?.geometry?.dispose();
+        nodes._l4_Veges_Shelf_Details007?.geometry?.dispose();
+        nodes._l4_Veges_Shelf_Details008?.geometry?.dispose();
+        nodes._l4_Veges_Shelf_Details009?.geometry?.dispose();
+        nodes._l4_Veges_Shelf_Details010?.geometry?.dispose();
+        nodes._l4_Veges_Shelf_Details011?.geometry?.dispose();
+      }
+
+      // Unload level 3 if not in use
+      if (lodLevel < 3) {
+        nodes._l3_Veges_Details002?.geometry?.dispose();
+        nodes.Cube007?.geometry?.dispose();
+        nodes.Cube007_1?.geometry?.dispose();
+        nodes.Cube011?.geometry?.dispose();
+        nodes.Cube011_1?.geometry?.dispose();
+        nodes.Cube012?.geometry?.dispose();
+        nodes.Cube012_1?.geometry?.dispose();
+        nodes.Cube013?.geometry?.dispose();
+        nodes.Cube013_1?.geometry?.dispose();
+        nodes.Plane012?.geometry?.dispose();
+        nodes.Plane012_1?.geometry?.dispose();
+        nodes.Plane012_2?.geometry?.dispose();
+        nodes.Plane012_3?.geometry?.dispose();
+        nodes.Plane012_4?.geometry?.dispose();
+        nodes.Plane012_5?.geometry?.dispose();
+        nodes.Plane012_6?.geometry?.dispose();
+        nodes.Plane012_7?.geometry?.dispose();
+        nodes.Plane012_8?.geometry?.dispose();
+        nodes.Plane012_9?.geometry?.dispose();
+        nodes.Plane012_10?.geometry?.dispose();
+      }
+
+      // Unload level 2 if not in use
+      if (lodLevel < 2) {
+        nodes._l2_bamboo?.geometry?.dispose();
+        nodes._l2_Circle_Banners?.geometry?.dispose();
+        nodes.Plane015?.geometry?.dispose();
+        nodes.Plane015_1?.geometry?.dispose();
+        nodes.Plane015_2?.geometry?.dispose();
+        nodes.Cube004?.geometry?.dispose();
+        nodes.Cube004_1?.geometry?.dispose();
+        nodes.Cube004_2?.geometry?.dispose();
+      }
+
+      // Unload level 1 if not in use
+      if (lodLevel < 1) {
+        nodes._l1_Backdrop_box?.geometry?.dispose();
+        nodes._l1_Floor?.geometry?.dispose();
+        nodes._l1_Main_Backdrop?.geometry?.dispose();
+        nodes.Cube010?.geometry?.dispose();
+        nodes.Cube010_1?.geometry?.dispose();
+        nodes.Cube010_2?.geometry?.dispose();
+      }
+
+      prevLodLevel.current = lodLevel;
+    }
+  }, [lodLevel, nodes]);
 
   useFrame(() => {
     if (groupRef.current) {
       const worldPos = new THREE.Vector3();
       groupRef.current.getWorldPosition(worldPos);
       const distance = camera.position.distanceTo(worldPos);
-      console.log(distance)
-      setLodLevel(distance <= 10 ? 3 : distance <= 20 ? 2 : distance <= 30 ? 1 : 0);
+      setLodLevel(distance <= 10 ? 4 : distance <= 20 ? 3 : distance <= 30 ? 2 : distance <= 40 ? 1 : 0);
     }
   });
-  
+
   return (
-    <group {...props} dispose={null}>
-<mesh castShadow receiveShadow geometry={nodes._l1_Backdrop_box.geometry} material={materials['LCD06.002']} position={[-0.362, 4.93, -7.465]} scale={[0.738, 0.599, 0.322]} />
+    <group ref={groupRef} {...props} dispose={null}>
+      {/* Base level (always visible) */}
+      <mesh castShadow receiveShadow geometry={nodes._l1_Backdrop_box.geometry} material={materials['LCD06.002']} position={[-0.362, 4.93, -7.465]} scale={[0.738, 0.599, 0.322]} />
       <mesh castShadow receiveShadow geometry={nodes._l1_Floor.geometry} material={materials['Material.041']} position={[-0.131, 0.147, 0.029]} rotation={[0, -1.571, 0]} scale={[0.932, 0.926, 1]} />
       <mesh castShadow receiveShadow geometry={nodes._l1_Main_Backdrop.geometry} material={materials['Ash Wood']} position={[-0.104, 5.892, -7.846]} scale={[2, 1.345, 0.414]} />
+      <group position={[-9.035, 2.004, 6.446]} rotation={[0, -0.003, 0]} scale={[1.005, 2.005, 0.191]}>
+        <mesh castShadow receiveShadow geometry={nodes.Cube010.geometry} material={materials['Material.010']} />
+        <mesh castShadow receiveShadow geometry={nodes.Cube010_1.geometry} material={materials['Material.001']} />
+        <mesh castShadow receiveShadow geometry={nodes.Cube010_2.geometry} material={materials['Color Plastic']} />
+      </group>
+
+      {/* Commented out higher LOD levels for testing */}
       {/* <group position={[-1.897, 1.298, -3.924]} scale={[0.805, 1.291, 0.003]}>
         <mesh castShadow receiveShadow geometry={nodes.Cube003.geometry} material={materials['Material.006']} />
         <mesh castShadow receiveShadow geometry={nodes.Cube003_1.geometry} material={materials['Material.007']} />
@@ -327,11 +403,6 @@ export function Model(props: JSX.IntrinsicElements['group']) {
       <mesh castShadow receiveShadow geometry={nodes._l4_Veges_Shelf_Details010.geometry} material={materials['storage orange']} position={[-3.311, 0.001, 4.009]} rotation={[0, -1.571, 0]} scale={1.125} />
       <mesh castShadow receiveShadow geometry={nodes._l4_Veges_Shelf_Details011.geometry} material={materials['cabbage-soup-diet-1.001']} position={[-3.311, 0.001, 4.009]} rotation={[0, -1.571, 0]} scale={1.125} />
       
-      <group position={[-9.035, 2.004, 6.446]} rotation={[0, -0.003, 0]} scale={[1.005, 2.005, 0.191]}>
-        <mesh castShadow receiveShadow geometry={nodes.Cube010.geometry} material={materials['Material.010']} />
-        <mesh castShadow receiveShadow geometry={nodes.Cube010_1.geometry} material={materials['Material.001']} />
-        <mesh castShadow receiveShadow geometry={nodes.Cube010_2.geometry} material={materials['Color Plastic']} />
-      </group>
       <mesh castShadow receiveShadow geometry={nodes._l2_bamboo.geometry} material={materials.bamboo} position={[-0.131, -0.318, 0.029]} rotation={[0, -1.571, 0]} scale={[1, 1.194, 1]} />
       <mesh castShadow receiveShadow geometry={nodes._l2_Circle_Banners.geometry} material={materials.S1} position={[-0.131, 9.548, 0.029]} rotation={[0, -1.571, 0]} scale={[6.431, 7.696, 6.431]} />
       <group position={[-6.667, 2.187, -4.738]} rotation={[Math.PI / 2, 0, -0.443]} scale={[3.459, 0.978, 2.215]}>
@@ -345,5 +416,7 @@ export function Model(props: JSX.IntrinsicElements['group']) {
         <mesh castShadow receiveShadow geometry={nodes.Cube004_2.geometry} material={materials['Material.042']} />
       </group> */}
     </group>
-  )
+  );
 }
+
+useGLTF.preload('/VR2/food/food_lod.gltf');

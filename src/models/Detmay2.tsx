@@ -4,7 +4,7 @@ Command: npx gltfjsx@6.5.3 .\detmay_lod.gltf --shadows --types
 */
 
 import * as THREE from 'three'
-import React, { JSX, useRef, useState } from 'react'
+import React, { JSX, useRef, useState, useEffect } from 'react'
 import { useGLTF } from '@react-three/drei'
 import { GLTF } from 'three-stdlib'
 import { useThree, useFrame } from '@react-three/fiber'
@@ -131,25 +131,72 @@ export function Model(props: JSX.IntrinsicElements['group']) {
   const { camera } = useThree();
   const [lodLevel, setLodLevel] = useState(0);
   const groupRef = useRef<THREE.Group>(null);
+  const prevLodLevel = useRef(lodLevel);
+
+  // Unload unused geometries and materials
+  useEffect(() => {
+    if (prevLodLevel.current !== lodLevel) {
+      // Unload level 3 if not in use
+      if (lodLevel < 3) {
+        nodes._l3_Men_mannequin?.geometry?.dispose();
+        nodes._l3_Men_mannequin001?.geometry?.dispose();
+        nodes._l3_Men_mannequin002?.geometry?.dispose();
+        nodes._l3_Men_mannequin003?.geometry?.dispose();
+        nodes._l3_Men_mannequin004?.geometry?.dispose();
+        nodes._l3_Men_mannequin005?.geometry?.dispose();
+        nodes._l3_Shoes_box?.geometry?.dispose();
+        nodes.vm_v2_054?.geometry?.dispose();
+        nodes.vm_v2_054_1?.geometry?.dispose();
+        nodes.vm_v2_054_2?.geometry?.dispose();
+        nodes.Box100010?.geometry?.dispose();
+        nodes.Box100010_1?.geometry?.dispose();
+        nodes.Box100012?.geometry?.dispose();
+        nodes.Box100012_1?.geometry?.dispose();
+        nodes.Box100012_2?.geometry?.dispose();
+        nodes._l3_Women_mannequin_box?.geometry?.dispose();
+        nodes._l3_Women_mannequin_box001?.geometry?.dispose();
+        nodes._l3_Women_mannequin_box002?.geometry?.dispose();
+      }
+
+      // Unload level 2 if not in use
+      if (lodLevel < 2) {
+        nodes._l2_Decor_Structure?.geometry?.dispose();
+        nodes.Cube001?.geometry?.dispose();
+        nodes.Cube001_1?.geometry?.dispose();
+        nodes.Cube001_2?.geometry?.dispose();
+      }
+
+      // Unload level 1 if not in use
+      if (lodLevel < 1) {
+        nodes._l1_BP_Banner_left_1?.geometry?.dispose();
+        nodes._l1_BP_Banner_left_2?.geometry?.dispose();
+        nodes._l1_BP_Visual_Banner_left_1?.geometry?.dispose();
+        nodes._l1_BP_Visual_Banner_left_2?.geometry?.dispose();
+        nodes.Box100007?.geometry?.dispose();
+        nodes.Box100007_1?.geometry?.dispose();
+      }
+
+      prevLodLevel.current = lodLevel;
+    }
+  }, [lodLevel, nodes]);
 
   useFrame(() => {
     if (groupRef.current) {
       const worldPos = new THREE.Vector3();
       groupRef.current.getWorldPosition(worldPos);
       const distance = camera.position.distanceTo(worldPos);
-      console.log('Model position:', worldPos);
-      console.log('Camera position:', camera.position);
-      console.log('Distance:', distance);
-      console.log('LOD Level:', distance <= 10 ? 3 : distance <= 20 ? 2 : distance <= 30 ? 1 : 0);
       setLodLevel(distance <= 10 ? 3 : distance <= 20 ? 2 : distance <= 30 ? 1 : 0);
     }
   });
 
   return (
     <group ref={groupRef} {...props} dispose={null}>
+      {/* Base level (always visible) */}
       <mesh castShadow receiveShadow geometry={nodes._l0_Backdrop_box.geometry} material={materials['Material.012']} position={[-0.269, 6.143, -5.377]} scale={[1.429, 1.345, 0.414]} />
       <mesh castShadow receiveShadow geometry={nodes._l0_Floor.geometry} material={materials['Material.008']} rotation={[0, -1.571, 0]} />
       <mesh castShadow receiveShadow geometry={nodes._l0_Main_Backdrop.geometry} material={materials['LCD06.002']} position={[-0.362, 5.169, -4.971]} scale={[0.738, 0.599, 0.322]} />
+
+      {/* Level 1 (visible when distance <= 30) */}
       {lodLevel > 0 && (
         <>
           <mesh castShadow receiveShadow geometry={nodes._l1_BP_Banner_left_1.geometry} material={materials['Inst_Rack_01.001']} position={[-5.118, 0.954, 0.214]} rotation={[0, 0.23, 0]} scale={[1.129, 1.067, 0.934]} />
@@ -162,6 +209,8 @@ export function Model(props: JSX.IntrinsicElements['group']) {
           </group>
         </>
       )}
+
+      {/* Level 2 (visible when distance <= 20) */}
       {lodLevel > 1 && (
         <>
           <mesh castShadow receiveShadow geometry={nodes._l2_Decor_Structure.geometry} material={materials['Material.008']} position={[-5.429, 1.703, -1.07]} rotation={[0, 1.571, 0]} />
@@ -172,6 +221,8 @@ export function Model(props: JSX.IntrinsicElements['group']) {
           </group>
         </>
       )}
+
+      {/* Level 3 (visible when distance <= 10) */}
       {lodLevel > 2 && (
         <>
           <mesh castShadow receiveShadow geometry={nodes._l3_Men_mannequin.geometry} material={materials['Material.006']} position={[2.225, -0.042, 1.234]} rotation={[Math.PI, -0.987, Math.PI]} scale={0.152} />
@@ -201,33 +252,11 @@ export function Model(props: JSX.IntrinsicElements['group']) {
           <group position={[5.886, -0.009, 3.773]} rotation={[0, 0.02, 0]} scale={[1.003, 2.002, 0.19]}>
             <mesh castShadow receiveShadow geometry={nodes.Cube002.geometry} material={materials.Material} />
             <mesh castShadow receiveShadow geometry={nodes.Cube002_1.geometry} material={materials['material23.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_2.geometry} material={materials['Material.010']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_3.geometry} material={materials['material0.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_4.geometry} material={materials['material1.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_5.geometry} material={materials['material2.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_6.geometry} material={materials['material3.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_7.geometry} material={materials['material4.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_8.geometry} material={materials['material5.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_9.geometry} material={materials['material6.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_10.geometry} material={materials['material7.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_11.geometry} material={materials['material8.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_12.geometry} material={materials['material9.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_13.geometry} material={materials['material10.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_14.geometry} material={materials['material11.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_15.geometry} material={materials['material12.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_16.geometry} material={materials['material13.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_17.geometry} material={materials['material14.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_18.geometry} material={materials['material15.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_19.geometry} material={materials['material16.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_20.geometry} material={materials['material17.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_21.geometry} material={materials['material18.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_22.geometry} material={materials['material19.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_23.geometry} material={materials['material20.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_24.geometry} material={materials['material21.001']} />
-            <mesh castShadow receiveShadow geometry={nodes.Cube002_25.geometry} material={materials['material22.001']} />
           </group>
         </>
       )}
     </group>
-  )
+  );
 }
+
+useGLTF.preload('/VR2/detmay/detmay_lod.gltf');
