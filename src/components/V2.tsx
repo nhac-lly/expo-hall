@@ -627,7 +627,7 @@ function V2({ empty }: { empty?: boolean }) {
           </Suspense>
         </Physics>
       </Canvas>
-      <Leva />
+      <Leva collapsed />
       {/* 2D Popup Overlay */}
       {selectedModel && (
         <div style={{
