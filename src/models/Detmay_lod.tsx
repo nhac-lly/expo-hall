@@ -89,7 +89,7 @@ type GLTFResult = GLTF & {
 }
 
 export function Model(props: JSX.IntrinsicElements['group']) {
-  const { nodes, materials } = useGLTF('VR2/detmay/detmay_lod.gltf') as unknown as GLTFResult
+  const { nodes, materials } = useGLTF('VR2/detmay_bk/detmay_lod.gltf') as unknown as GLTFResult
   const { camera } = useThree();
   const [lodLevel, setLodLevel] = useState(0);
   const groupRef = useRef<THREE.Group>(null);

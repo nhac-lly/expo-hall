@@ -88,6 +88,7 @@ type GLTFResult = GLTF & {
 export function Model(props: JSX.IntrinsicElements['group'] & { onSelect?: (info: { name: string, cost: number, details: string }) => void }) {
   const { nodes, materials } = useGLTF('/VR/detmay-transformed.glb') as unknown as GLTFResult
   const { onSelect, ...rest } = props;
+  console.log(nodes)
 
   return (
     <group {...rest} dispose={null}>
