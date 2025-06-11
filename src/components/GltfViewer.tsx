@@ -873,7 +873,7 @@ export default function GltfViewer() {
             cameraPositions={cameraPositions}
           />
           <Environment
-            files="/VR2/hall.jpg"
+            files="/VR2/hall.jpeg"
             {...(environmentMode === "background"
               ? { background: true }
               : {

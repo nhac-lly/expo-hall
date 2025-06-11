@@ -760,21 +760,19 @@ function V3({ empty }: { empty?: boolean }) {
             type={controlType}
             cameraPositions={cameraPositions}
           />
-          <Suspense fallback={<Html>Loading...</Html>}>
-            <Environment
-              files="/VR2/hall.jpg"
-              {...(environmentMode === "background"
-                ? { background: true }
-                : {
-                    ground: {
-                      height: 5,
-                      radius: environmentRadius,
-                      scale: 150,
-                    },
-                  })}
-              environmentIntensity={0.5}
-            />
-          </Suspense>
+          <Environment
+            files="/VR2/hall.jpeg"
+            {...(environmentMode === "background"
+              ? { background: true }
+              : {
+                  ground: {
+                    height: 5,
+                    radius: environmentRadius,
+                    scale: 150,
+                  },
+                })}
+            environmentIntensity={0.5}
+          />
         </Physics>
       </Canvas>
       <Leva collapsed />

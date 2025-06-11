@@ -885,7 +885,7 @@ function V2({ empty }: { empty?: boolean }) {
           />
           <Suspense fallback={<Html>Loading...</Html>}>
             <Environment
-              files="/VR2/hall.jpg"
+              files="/VR2/hall.jpeg"
               {...(environmentMode === "background"
                 ? { background: true }
                 : {

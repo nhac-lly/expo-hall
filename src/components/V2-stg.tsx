@@ -686,7 +686,7 @@ function V2({ empty }: { empty?: boolean }) {
             cameraPositions={cameraPositions}
           />
           <Environment
-            files="/VR2/hall.jpg"
+            files="/VR2/hall.jpeg"
             {...(environmentMode === "dome"
               ? { ground: { height: 5, radius: environmentRadius, scale: 150 } }
               : {})}
