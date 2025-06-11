@@ -783,7 +783,7 @@ function V3({ empty }: { empty?: boolean }) {
             cameraPositions={cameraPositions}
           />
           <Environment
-            files="/VR2/hall.jpeg"
+            files="/VR2/hall.hdr"
             {...(environmentMode === "background"
               ? { background: true }
               : {
