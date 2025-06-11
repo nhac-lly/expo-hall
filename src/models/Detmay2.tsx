@@ -727,5 +727,3 @@ export function Model(
     </group>
   );
 }
-
-useGLTF.preload("/VR2/detmay/detmay_lod.gltf");
