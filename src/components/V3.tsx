@@ -661,6 +661,26 @@ function V3({ empty }: { empty?: boolean }) {
     details: string;
   } | null>(null);
 
+  // Add mobile detection
+  const isMobile = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
+  }, []);
+
+  // Adjust quality settings based on device
+  const qualitySettings = useMemo(
+    () => ({
+      dpr: isMobile ? 0.5 : 1,
+      antialias: !isMobile,
+      shadows: !isMobile,
+      precision: isMobile ? "mediump" : "highp",
+      performance: { min: isMobile ? 0.1 : 0.5 },
+    }),
+    [isMobile]
+  );
+
   const handleAddCameraPosition = (
     position: [number, number, number],
     label: string
@@ -687,23 +707,25 @@ function V3({ empty }: { empty?: boolean }) {
           far: 1000,
         }}
         gl={{
-          antialias: true,
+          antialias: qualitySettings.antialias,
           powerPreference: "high-performance",
           alpha: false,
           stencil: false,
           depth: true,
-          precision: "highp",
+          precision: qualitySettings.precision,
           preserveDrawingBuffer: true,
         }}
-        shadows
-        dpr={[1, 2]}
-        performance={{ min: 0.5 }}
+        shadows={qualitySettings.shadows}
+        dpr={qualitySettings.dpr}
+        performance={qualitySettings.performance}
         onCreated={({ gl, size, set }) => {
           gl.outputColorSpace = THREE.SRGBColorSpace;
           gl.toneMapping = THREE.ACESFilmicToneMapping;
           gl.toneMappingExposure = 1.0;
-          gl.shadowMap.enabled = true;
-          gl.shadowMap.type = THREE.PCFSoftShadowMap;
+          if (qualitySettings.shadows) {
+            gl.shadowMap.enabled = true;
+            gl.shadowMap.type = THREE.PCFSoftShadowMap;
+          }
         }}
       >
         <Physics>
