@@ -4,7 +4,7 @@ Command: npx gltfjsx@6.5.3 .\detmay_lod.gltf --shadows --types
 */
 
 import * as THREE from "three";
-import React, { JSX, useRef, useState, useEffect } from "react";
+import React, { JSX, useRef, useState, useEffect, useMemo } from "react";
 import { useGLTF } from "@react-three/drei";
 import { GLTF } from "three-stdlib";
 import { useThree, useFrame } from "@react-three/fiber";
@@ -147,6 +147,13 @@ export function Model(
   const prevLodLevel = useRef(lodLevel);
   const glowRef = useRef<THREE.Mesh>(null);
   const time = useRef(0);
+  const isMobile = useMemo(
+    () =>
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      ),
+    []
+  );
 
   // Create a blue interactive material
   const interactiveMaterial = new THREE.MeshStandardMaterial({
@@ -213,14 +220,43 @@ export function Model(
     }
   }, [lodLevel, nodes]);
 
+  // Optimize textures for mobile
+  useEffect(() => {
+    if (isMobile) {
+      Object.values(materials).forEach((material) => {
+        if (material.map) {
+          material.map.minFilter = THREE.LinearFilter;
+          material.map.magFilter = THREE.LinearFilter;
+          material.map.anisotropy = 1;
+        }
+      });
+    }
+  }, [materials, isMobile]);
+
   useFrame(() => {
     if (groupRef.current) {
       const worldPos = new THREE.Vector3();
       groupRef.current.getWorldPosition(worldPos);
       const distance = camera.position.distanceTo(worldPos);
-      setLodLevel(
-        distance <= 10 ? 3 : distance <= 20 ? 2 : distance <= 30 ? 1 : 0
-      );
+
+      // More aggressive LOD for mobile
+      const newLodLevel = isMobile
+        ? distance <= 5
+          ? 2
+          : distance <= 15
+          ? 1
+          : 0 // Reduced LOD levels for mobile
+        : distance <= 10
+        ? 3
+        : distance <= 20
+        ? 2
+        : distance <= 30
+        ? 1
+        : 0;
+
+      if (newLodLevel !== prevLodLevel.current) {
+        setLodLevel(newLodLevel);
+      }
     }
   });
 

@@ -4,7 +4,7 @@ Command: npx gltfjsx@6.5.3 .\food_lod.gltf --shadows --types
 */
 
 import * as THREE from "three";
-import React, { JSX, useRef, useState, useEffect } from "react";
+import React, { JSX, useRef, useState, useEffect, useMemo } from "react";
 import { useGLTF } from "@react-three/drei";
 import { GLTF } from "three-stdlib";
 import { useThree, useFrame } from "@react-three/fiber";
@@ -207,6 +207,13 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
   const [lodLevel, setLodLevel] = useState(0);
   const groupRef = useRef<THREE.Group>(null);
   const prevLodLevel = useRef(lodLevel);
+  const isMobile = useMemo(
+    () =>
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      ),
+    []
+  );
 
   // Unload unused geometries and materials
   useEffect(() => {
@@ -249,6 +256,41 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
         nodes.Plane012_8?.geometry?.dispose();
         nodes.Plane012_9?.geometry?.dispose();
         nodes.Plane012_10?.geometry?.dispose();
+        nodes.Plane010?.geometry?.dispose();
+        nodes.Plane010_1?.geometry?.dispose();
+        nodes.Plane010_2?.geometry?.dispose();
+        nodes.Plane010_3?.geometry?.dispose();
+        nodes.Plane010_4?.geometry?.dispose();
+        nodes.Plane010_5?.geometry?.dispose();
+        nodes.Plane010_6?.geometry?.dispose();
+        nodes.Plane010_7?.geometry?.dispose();
+        nodes.Plane010_8?.geometry?.dispose();
+        nodes.Plane010_9?.geometry?.dispose();
+        nodes.Plane010_10?.geometry?.dispose();
+        nodes.Plane005?.geometry?.dispose();
+        nodes.Plane005_1?.geometry?.dispose();
+        nodes.Plane005_2?.geometry?.dispose();
+        nodes.Plane005_3?.geometry?.dispose();
+        nodes.Plane005_4?.geometry?.dispose();
+        nodes.Plane005_5?.geometry?.dispose();
+        nodes.Plane005_6?.geometry?.dispose();
+        nodes.Plane005_7?.geometry?.dispose();
+        nodes.Plane005_8?.geometry?.dispose();
+        nodes.Plane005_9?.geometry?.dispose();
+        nodes.Plane005_10?.geometry?.dispose();
+        nodes.Plane005_11?.geometry?.dispose();
+        nodes.Plane005_12?.geometry?.dispose();
+        nodes.Plane005_13?.geometry?.dispose();
+        nodes.Plane005_14?.geometry?.dispose();
+        nodes.Plane005_15?.geometry?.dispose();
+        nodes.Plane005_16?.geometry?.dispose();
+        nodes.Mesh050?.geometry?.dispose();
+        nodes.Mesh050_1?.geometry?.dispose();
+        nodes.Mesh050_2?.geometry?.dispose();
+        nodes.Mesh050_3?.geometry?.dispose();
+        nodes.Mesh050_4?.geometry?.dispose();
+        nodes.Mesh050_5?.geometry?.dispose();
+        nodes.Mesh050_6?.geometry?.dispose();
       }
 
       // Unload level 2 if not in use
@@ -276,6 +318,19 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
       prevLodLevel.current = lodLevel;
     }
   }, [lodLevel, nodes]);
+
+  // Optimize textures for mobile
+  useEffect(() => {
+    if (isMobile) {
+      Object.values(materials).forEach((material) => {
+        if (material.map) {
+          material.map.minFilter = THREE.LinearFilter;
+          material.map.magFilter = THREE.LinearFilter;
+          material.map.anisotropy = 1;
+        }
+      });
+    }
+  }, [materials, isMobile]);
 
   useFrame(() => {
     if (groupRef.current) {
