@@ -142,7 +142,7 @@ type GLTFResult = GLTF & {
 
 export function DetmayModel(props: JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF(
-    "/V4/DETMAY_LOD/detmay2.gltf"
+    "V4/DETMAY_LOD/detmay.gltf"
   ) as unknown as GLTFResult;
   return (
     <group {...props} dispose={null}>
