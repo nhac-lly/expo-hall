@@ -7,6 +7,7 @@ import * as THREE from "three";
 import React, { JSX, useRef, useState, useEffect } from "react";
 import { useLoader } from "@react-three/fiber";
 import { GLTFLoader } from "three-stdlib";
+import { DRACOLoader } from "three-stdlib";
 import { GLTF } from "three-stdlib";
 import { useThree, useFrame } from "@react-three/fiber";
 
@@ -23,7 +24,18 @@ type GLTFResult = GLTF & {
 export function WoodModel(props: JSX.IntrinsicElements["group"]) {
   const gltf = useLoader(
     GLTFLoader,
-    "/V4/WOOD_LOD/Wood.gltf"
+    "/V4/WOOD_LOD/wood.gltf",
+    (loader) => {
+      const dracoLoader = new DRACOLoader();
+      dracoLoader.setDecoderPath(
+        "https://www.gstatic.com/draco/versioned/decoders/1.5.6/"
+      );
+      dracoLoader.setDecoderConfig({ type: "js" });
+      (loader as GLTFLoader).setDRACOLoader(dracoLoader);
+    },
+    (xhr) => {
+      console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+    }
   ) as unknown as GLTFResult;
   const { camera } = useThree();
   const [lodLevel, setLodLevel] = useState(0);
