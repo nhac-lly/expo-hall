@@ -381,7 +381,7 @@ type GLTFResult = GLTF & {
 
 export function ThucongModel(props: JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF(
-    "/V4/thucong.gltf"
+    "/V4/THUCONG_LOD/thucong.gltf"
   ) as unknown as GLTFResult;
   return (
     <group {...props} dispose={null}>

@@ -251,7 +251,7 @@ type GLTFResult = GLTF & {
 
 export function FoodModel(props: JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF(
-    "/V4/food.gltf"
+    "/V4/FOOD_LOD/food.gltf"
   ) as unknown as GLTFResult;
   return (
     <group {...props} dispose={null}>

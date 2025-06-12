@@ -215,7 +215,7 @@ type GLTFResult = GLTF & {
 
 export function ThuysanModel(props: JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF(
-    "/V4/thuysan.gltf"
+    "/V4/THUYSAN_LOD/thuysan.gltf"
   ) as unknown as GLTFResult;
   return (
     <group {...props} dispose={null}>
