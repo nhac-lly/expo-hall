@@ -25,7 +25,6 @@ import { TechModel } from "@/models/V4/Tech";
 import { ThucongModel } from "@/models/V4/Thucong";
 import { ThuysanModel } from "@/models/V4/Thuysan";
 import { WoodModel } from "@/models/V4/Wood";
-import { DetmayModel } from "@/models/V4/Detmay";
 
 // Loading placeholder component
 const LoadingPlaceholder = ({
@@ -739,7 +738,7 @@ function V4({ empty }: { empty?: boolean }) {
             onEnvironmentModeChange={handleEnvironmentModeChange}
             onCharacterHeightChange={setCharacterHeight}
           />
-          <group rotation={[0, -4.7, 0]}>
+          <group rotation={[0, -Math.PI / 2, 0]}>
             <Suspense
               fallback={<LoadingPlaceholder position={[-10, 0, -25]} />}
             >

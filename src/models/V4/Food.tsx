@@ -4,9 +4,10 @@ Command: npx gltfjsx@6.5.3 .\food.gltf --shadows --types
 */
 
 import * as THREE from "three";
-import React, { JSX } from "react";
+import React, { JSX, useRef, useState } from "react";
 import { useGLTF } from "@react-three/drei";
 import { GLTF } from "three-stdlib";
+import { useThree, useFrame } from "@react-three/fiber";
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -253,563 +254,32 @@ export function FoodModel(props: JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF(
     "/V4/FOOD_LOD/food.gltf"
   ) as unknown as GLTFResult;
+
+  const { camera } = useThree();
+  const [lodLevel, setLodLevel] = useState(0);
+  const groupRef = useRef<THREE.Group>(null);
+
+  useFrame(() => {
+    if (groupRef.current) {
+      const worldPos = new THREE.Vector3();
+      groupRef.current.getWorldPosition(worldPos);
+      const distance = camera.position.distanceTo(worldPos);
+      setLodLevel(
+        distance <= 12
+          ? 4
+          : distance <= 15
+          ? 3
+          : distance <= 20
+          ? 2
+          : distance <= 25
+          ? 1
+          : 0
+      );
+    }
+  });
+
   return (
-    <group {...props} dispose={null}>
-      <group position={[-1.897, 1.298, -3.924]} scale={[0.805, 1.291, 0.003]}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Meat_shelf_background_1.geometry}
-          material={materials["Material.006"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Meat_shelf_background_2.geometry}
-          material={materials["Material.007"]}
-        />
-      </group>
-      <group position={[-3.684, 1.298, -3.924]} scale={[0.805, 1.291, 0.003]}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Meat_shelf_background001_1.geometry}
-          material={materials["Material.005"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Meat_shelf_background001_2.geometry}
-          material={materials.Material}
-        />
-      </group>
-      <group position={[-1.915, 1.298, -2.155]} scale={[0.805, 1.291, 0.003]}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Meat_shelf_background002_1.geometry}
-          material={materials["Material.013"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Meat_shelf_background002_2.geometry}
-          material={materials["Material.014"]}
-        />
-      </group>
-      <group position={[-3.688, 1.298, -1.955]} scale={[0.805, 1.291, 0.003]}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Meat_shelf_background003_1.geometry}
-          material={materials["Material.015"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Meat_shelf_background003_2.geometry}
-          material={materials["Material.016"]}
-        />
-      </group>
-      <group
-        position={[-3.311, 0.001, 4.009]}
-        rotation={[0, -1.571, 0]}
-        scale={1.125}
-      >
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Veges_Details_1.geometry}
-          material={materials.Plywood_C_50cm}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Veges_Details_2.geometry}
-          material={materials["Material.002"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Veges_Details_3.geometry}
-          material={materials.Iron_Blurry_5cm}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Veges_Details_4.geometry}
-          material={materials["MIROR 2"]}
-        />
-      </group>
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes._l3_Veges_Details002.geometry}
-        material={materials["storage basket"]}
-        position={[-3.311, 0.001, 4.009]}
-        rotation={[0, -1.571, 0]}
-        scale={1.125}
-      />
-      <group position={[1.986, 1.298, -2.155]} scale={[1.069, 1.291, 0.003]}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Veges_shelf_background_1.geometry}
-          material={materials["Material.027"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Veges_shelf_background_2.geometry}
-          material={materials["Material.026"]}
-        />
-      </group>
-      <group position={[4.273, 1.298, -2.155]} scale={[1.069, 1.291, 0.003]}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Veges_shelf_background001_1.geometry}
-          material={materials["Material.028"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Veges_shelf_background001_2.geometry}
-          material={materials["Material.029"]}
-        />
-      </group>
-      <group position={[4.273, 1.298, -4.097]} scale={[1.069, 1.291, 0.003]}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Veges_shelf_background002_1.geometry}
-          material={materials["Material.030"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Veges_shelf_background002_2.geometry}
-          material={materials["Material.031"]}
-        />
-      </group>
-      <group position={[1.986, 1.298, -4.097]} scale={[1.069, 1.291, 0.003]}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Veges_shelf_background003_1.geometry}
-          material={materials["Material.032"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Veges_shelf_background003_2.geometry}
-          material={materials["Material.033"]}
-        />
-      </group>
-      <group
-        position={[5.643, 1.662, 0.412]}
-        rotation={[0.681, 0, 0]}
-        scale={[0.451, 1.05, 0.307]}
-      >
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_1_1.geometry}
-          material={materials["Material.038"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_1_2.geometry}
-          material={materials["Black Steel.002"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_1_3.geometry}
-          material={materials["wood.002"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_1_4.geometry}
-          material={materials["Grey.002"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_1_5.geometry}
-          material={materials["Black.002"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_1_6.geometry}
-          material={materials["Material.039"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_1_7.geometry}
-          material={materials["Material.040"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_1_8.geometry}
-          material={materials["Price09.001"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_1_9.geometry}
-          material={materials["Price07.001"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_1_10.geometry}
-          material={materials["Price08.001"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_1_11.geometry}
-          material={materials["black_plastic.002"]}
-        />
-      </group>
-      <group
-        position={[4.516, 1.662, 0.412]}
-        rotation={[0.681, 0, 0]}
-        scale={[0.451, 1.05, 0.307]}
-      >
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_2_1.geometry}
-          material={materials["Material.025"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_2_2.geometry}
-          material={materials["Black Steel"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_2_3.geometry}
-          material={materials.wood}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_2_4.geometry}
-          material={materials.Grey}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_2_5.geometry}
-          material={materials.Black}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_2_6.geometry}
-          material={materials["Material.023"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_2_7.geometry}
-          material={materials["Material.024"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_2_8.geometry}
-          material={materials.Price09}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_2_9.geometry}
-          material={materials.Price07}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_2_10.geometry}
-          material={materials.Price08}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l3_Vegestable_shelf_2_11.geometry}
-          material={materials.black_plastic}
-        />
-      </group>
-      <group
-        position={[3.269, 1.241, 0.903]}
-        rotation={[0.681, 0, 0]}
-        scale={[0.459, 1.07, 0.313]}
-      >
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_3_&_4_1"].geometry}
-          material={materials["Material.020"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_3_&_4_2"].geometry}
-          material={materials["Black Steel"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_3_&_4_3"].geometry}
-          material={materials.wood}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_3_&_4_4"].geometry}
-          material={materials.Grey}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_3_&_4_5"].geometry}
-          material={materials.Black}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_3_&_4_6"].geometry}
-          material={materials.green_plastic}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_3_&_4_7"].geometry}
-          material={materials.Price06}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_3_&_4_8"].geometry}
-          material={materials["Material.017"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_3_&_4_9"].geometry}
-          material={materials["Material.018"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_3_&_4_10"].geometry}
-          material={materials["Material.019"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_3_&_4_11"].geometry}
-          material={materials["Material.021"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_3_&_4_12"].geometry}
-          material={materials["Material.022"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_3_&_4_13"].geometry}
-          material={materials.Price05}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_3_&_4_14"].geometry}
-          material={materials.Price01}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_3_&_4_15"].geometry}
-          material={materials.Price02}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_3_&_4_16"].geometry}
-          material={materials.Price04}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_3_&_4_17"].geometry}
-          material={materials.Price03}
-        />
-      </group>
-      <group position={[-5.27, 0, 4.518]}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_5&6_1"].geometry}
-          material={materials["Mis-vf_black"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_5&6_2"].geometry}
-          material={materials.glass}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_5&6_3"].geometry}
-          material={materials.wood_light}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_5&6_4"].geometry}
-          material={materials.Chrome}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_5&6_5"].geometry}
-          material={materials["Mis-vf_black-2"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_5&6_6"].geometry}
-          material={materials["Material.037"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes["_l3_Vegestable_shelf_5&6_7"].geometry}
-          material={materials["Material.034"]}
-        />
-      </group>
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_Veges_Shelf_Details.geometry}
-        material={materials["photo corn bits"]}
-        position={[-3.311, 0.001, 4.009]}
-        rotation={[0, -1.571, 0]}
-        scale={1.125}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_Veges_Shelf_Details001.geometry}
-        material={materials["pexels-photo-1313267"]}
-        position={[-3.311, 0.001, 4.009]}
-        rotation={[0, -1.571, 0]}
-        scale={1.125}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_Veges_Shelf_Details002.geometry}
-        material={materials.ee14c22e9800997a474536eadc93a1a8}
-        position={[-3.311, 0.001, 4.009]}
-        rotation={[0, -1.571, 0]}
-        scale={1.125}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_Veges_Shelf_Details003.geometry}
-        material={materials["cabbage-soup-diet-1"]}
-        position={[-3.311, 0.001, 4.009]}
-        rotation={[0, -1.571, 0]}
-        scale={1.125}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_Veges_Shelf_Details004.geometry}
-        material={materials["photo tomato skin"]}
-        position={[-3.311, 0.001, 4.009]}
-        rotation={[0, -1.571, 0]}
-        scale={1.125}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_Veges_Shelf_Details005.geometry}
-        material={materials["photo {3d75f229-7087-b44d-b407-5d2c7250592e}"]}
-        position={[-3.311, 0.001, 4.009]}
-        rotation={[0, -1.571, 0]}
-        scale={1.125}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_Veges_Shelf_Details006.geometry}
-        material={materials["storage dark green"]}
-        position={[-3.311, 0.001, 4.009]}
-        rotation={[0, -1.571, 0]}
-        scale={1.125}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_Veges_Shelf_Details007.geometry}
-        material={materials["storage dark red"]}
-        position={[-3.311, 0.001, 4.009]}
-        rotation={[0, -1.571, 0]}
-        scale={1.125}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_Veges_Shelf_Details008.geometry}
-        material={materials["[Color_L22]1"]}
-        position={[-3.311, 0.001, 4.009]}
-        rotation={[0, -1.571, 0]}
-        scale={1.125}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_Veges_Shelf_Details009.geometry}
-        material={materials["storage red"]}
-        position={[-3.311, 0.001, 4.009]}
-        rotation={[0, -1.571, 0]}
-        scale={1.125}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_Veges_Shelf_Details010.geometry}
-        material={materials["storage orange"]}
-        position={[-3.311, 0.001, 4.009]}
-        rotation={[0, -1.571, 0]}
-        scale={1.125}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_Veges_Shelf_Details011.geometry}
-        material={materials["cabbage-soup-diet-1.001"]}
-        position={[-3.311, 0.001, 4.009]}
-        rotation={[0, -1.571, 0]}
-        scale={1.125}
-      />
+    <group ref={groupRef} {...props} dispose={null}>
       <mesh
         castShadow
         receiveShadow
@@ -835,72 +305,6 @@ export function FoodModel(props: JSX.IntrinsicElements["group"]) {
         position={[-0.104, 5.892, -7.846]}
         scale={[2, 1.345, 0.414]}
       />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes._l2_bamboo.geometry}
-        material={materials.bamboo}
-        position={[-0.131, -0.318, 0.029]}
-        rotation={[0, -1.571, 0]}
-        scale={[1, 1.194, 1]}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes._l2_Circle_Banners.geometry}
-        material={materials.S1}
-        position={[-0.131, 9.548, 0.029]}
-        rotation={[0, -1.571, 0]}
-        scale={[6.431, 7.696, 6.431]}
-      />
-      <group
-        position={[-6.667, 2.187, -4.738]}
-        rotation={[Math.PI / 2, 0, -0.443]}
-        scale={[3.459, 0.978, 2.215]}
-      >
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l2_Visual_led_left_1.geometry}
-          material={materials["Material.043"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l2_Visual_led_left_2.geometry}
-          material={materials["Bamboo.002"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l2_Visual_led_left_3.geometry}
-          material={materials["white.001"]}
-        />
-      </group>
-      <group
-        position={[6.249, 3.697, -4.809]}
-        rotation={[0, -0.422, 0]}
-        scale={0.825}
-      >
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l2_Visual_led_right_1.geometry}
-          material={materials.Bamboo}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l2_Visual_led_right_2.geometry}
-          material={materials.white}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l2_Visual_led_right_3.geometry}
-          material={materials["Material.042"]}
-        />
-      </group>
       <group
         position={[8.708, 2.004, 5.835]}
         rotation={[0, 0.611, 0]}
@@ -1081,6 +485,663 @@ export function FoodModel(props: JSX.IntrinsicElements["group"]) {
           material={materials["material26.001"]}
         />
       </group>
+      {lodLevel > 1 && (
+        <>
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes._l2_bamboo.geometry}
+            material={materials.bamboo}
+            position={[-0.131, -0.318, 0.029]}
+            rotation={[0, -1.571, 0]}
+            scale={[1, 1.194, 1]}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes._l2_Circle_Banners.geometry}
+            material={materials.S1}
+            position={[-0.131, 9.548, 0.029]}
+            rotation={[0, -1.571, 0]}
+            scale={[6.431, 7.696, 6.431]}
+          />
+          <group
+            position={[-6.667, 2.187, -4.738]}
+            rotation={[Math.PI / 2, 0, -0.443]}
+            scale={[3.459, 0.978, 2.215]}
+          >
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l2_Visual_led_left_1.geometry}
+              material={materials["Material.043"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l2_Visual_led_left_2.geometry}
+              material={materials["Bamboo.002"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l2_Visual_led_left_3.geometry}
+              material={materials["white.001"]}
+            />
+          </group>
+          <group
+            position={[6.249, 3.697, -4.809]}
+            rotation={[0, -0.422, 0]}
+            scale={0.825}
+          >
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l2_Visual_led_right_1.geometry}
+              material={materials.Bamboo}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l2_Visual_led_right_2.geometry}
+              material={materials.white}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l2_Visual_led_right_3.geometry}
+              material={materials["Material.042"]}
+            />
+          </group>
+        </>
+      )}
+      {lodLevel > 2 && (
+        <>
+          <group
+            position={[-1.897, 1.298, -3.924]}
+            scale={[0.805, 1.291, 0.003]}
+          >
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Meat_shelf_background_1.geometry}
+              material={materials["Material.006"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Meat_shelf_background_2.geometry}
+              material={materials["Material.007"]}
+            />
+          </group>
+          <group
+            position={[-3.684, 1.298, -3.924]}
+            scale={[0.805, 1.291, 0.003]}
+          >
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Meat_shelf_background001_1.geometry}
+              material={materials["Material.005"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Meat_shelf_background001_2.geometry}
+              material={materials.Material}
+            />
+          </group>
+          <group
+            position={[-1.915, 1.298, -2.155]}
+            scale={[0.805, 1.291, 0.003]}
+          >
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Meat_shelf_background002_1.geometry}
+              material={materials["Material.013"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Meat_shelf_background002_2.geometry}
+              material={materials["Material.014"]}
+            />
+          </group>
+          <group
+            position={[-3.688, 1.298, -1.955]}
+            scale={[0.805, 1.291, 0.003]}
+          >
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Meat_shelf_background003_1.geometry}
+              material={materials["Material.015"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Meat_shelf_background003_2.geometry}
+              material={materials["Material.016"]}
+            />
+          </group>
+          <group
+            position={[-3.311, 0.001, 4.009]}
+            rotation={[0, -1.571, 0]}
+            scale={1.125}
+          >
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Veges_Details_1.geometry}
+              material={materials.Plywood_C_50cm}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Veges_Details_2.geometry}
+              material={materials["Material.002"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Veges_Details_3.geometry}
+              material={materials.Iron_Blurry_5cm}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Veges_Details_4.geometry}
+              material={materials["MIROR 2"]}
+            />
+          </group>
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes._l3_Veges_Details002.geometry}
+            material={materials["storage basket"]}
+            position={[-3.311, 0.001, 4.009]}
+            rotation={[0, -1.571, 0]}
+            scale={1.125}
+          />
+          <group
+            position={[1.986, 1.298, -2.155]}
+            scale={[1.069, 1.291, 0.003]}
+          >
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Veges_shelf_background_1.geometry}
+              material={materials["Material.027"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Veges_shelf_background_2.geometry}
+              material={materials["Material.026"]}
+            />
+          </group>
+          <group
+            position={[4.273, 1.298, -2.155]}
+            scale={[1.069, 1.291, 0.003]}
+          >
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Veges_shelf_background001_1.geometry}
+              material={materials["Material.028"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Veges_shelf_background001_2.geometry}
+              material={materials["Material.029"]}
+            />
+          </group>
+          <group
+            position={[4.273, 1.298, -4.097]}
+            scale={[1.069, 1.291, 0.003]}
+          >
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Veges_shelf_background002_1.geometry}
+              material={materials["Material.030"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Veges_shelf_background002_2.geometry}
+              material={materials["Material.031"]}
+            />
+          </group>
+          <group
+            position={[1.986, 1.298, -4.097]}
+            scale={[1.069, 1.291, 0.003]}
+          >
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Veges_shelf_background003_1.geometry}
+              material={materials["Material.032"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Veges_shelf_background003_2.geometry}
+              material={materials["Material.033"]}
+            />
+          </group>
+          <group
+            position={[5.643, 1.662, 0.412]}
+            rotation={[0.681, 0, 0]}
+            scale={[0.451, 1.05, 0.307]}
+          >
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_1_1.geometry}
+              material={materials["Material.038"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_1_2.geometry}
+              material={materials["Black Steel.002"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_1_3.geometry}
+              material={materials["wood.002"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_1_4.geometry}
+              material={materials["Grey.002"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_1_5.geometry}
+              material={materials["Black.002"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_1_6.geometry}
+              material={materials["Material.039"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_1_7.geometry}
+              material={materials["Material.040"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_1_8.geometry}
+              material={materials["Price09.001"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_1_9.geometry}
+              material={materials["Price07.001"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_1_10.geometry}
+              material={materials["Price08.001"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_1_11.geometry}
+              material={materials["black_plastic.002"]}
+            />
+          </group>
+          <group
+            position={[4.516, 1.662, 0.412]}
+            rotation={[0.681, 0, 0]}
+            scale={[0.451, 1.05, 0.307]}
+          >
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_2_1.geometry}
+              material={materials["Material.025"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_2_2.geometry}
+              material={materials["Black Steel"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_2_3.geometry}
+              material={materials.wood}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_2_4.geometry}
+              material={materials.Grey}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_2_5.geometry}
+              material={materials.Black}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_2_6.geometry}
+              material={materials["Material.023"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_2_7.geometry}
+              material={materials["Material.024"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_2_8.geometry}
+              material={materials.Price09}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_2_9.geometry}
+              material={materials.Price07}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_2_10.geometry}
+              material={materials.Price08}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes._l3_Vegestable_shelf_2_11.geometry}
+              material={materials.black_plastic}
+            />
+          </group>
+          <group
+            position={[3.269, 1.241, 0.903]}
+            rotation={[0.681, 0, 0]}
+            scale={[0.459, 1.07, 0.313]}
+          >
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_3_&_4_1"].geometry}
+              material={materials["Material.020"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_3_&_4_2"].geometry}
+              material={materials["Black Steel"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_3_&_4_3"].geometry}
+              material={materials.wood}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_3_&_4_4"].geometry}
+              material={materials.Grey}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_3_&_4_5"].geometry}
+              material={materials.Black}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_3_&_4_6"].geometry}
+              material={materials.green_plastic}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_3_&_4_7"].geometry}
+              material={materials.Price06}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_3_&_4_8"].geometry}
+              material={materials["Material.017"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_3_&_4_9"].geometry}
+              material={materials["Material.018"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_3_&_4_10"].geometry}
+              material={materials["Material.019"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_3_&_4_11"].geometry}
+              material={materials["Material.021"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_3_&_4_12"].geometry}
+              material={materials["Material.022"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_3_&_4_13"].geometry}
+              material={materials.Price05}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_3_&_4_14"].geometry}
+              material={materials.Price01}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_3_&_4_15"].geometry}
+              material={materials.Price02}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_3_&_4_16"].geometry}
+              material={materials.Price04}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_3_&_4_17"].geometry}
+              material={materials.Price03}
+            />
+          </group>
+          <group position={[-5.27, 0, 4.518]}>
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_5&6_1"].geometry}
+              material={materials["Mis-vf_black"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_5&6_2"].geometry}
+              material={materials.glass}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_5&6_3"].geometry}
+              material={materials.wood_light}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_5&6_4"].geometry}
+              material={materials.Chrome}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_5&6_5"].geometry}
+              material={materials["Mis-vf_black-2"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_5&6_6"].geometry}
+              material={materials["Material.037"]}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={nodes["_l3_Vegestable_shelf_5&6_7"].geometry}
+              material={materials["Material.034"]}
+            />
+          </group>
+        </>
+      )}
+      {lodLevel > 3 && (
+        <>
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes._l4_Veges_Shelf_Details.geometry}
+            material={materials["photo corn bits"]}
+            position={[-3.311, 0.001, 4.009]}
+            rotation={[0, -1.571, 0]}
+            scale={1.125}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes._l4_Veges_Shelf_Details001.geometry}
+            material={materials["pexels-photo-1313267"]}
+            position={[-3.311, 0.001, 4.009]}
+            rotation={[0, -1.571, 0]}
+            scale={1.125}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes._l4_Veges_Shelf_Details002.geometry}
+            material={materials.ee14c22e9800997a474536eadc93a1a8}
+            position={[-3.311, 0.001, 4.009]}
+            rotation={[0, -1.571, 0]}
+            scale={1.125}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes._l4_Veges_Shelf_Details003.geometry}
+            material={materials["cabbage-soup-diet-1"]}
+            position={[-3.311, 0.001, 4.009]}
+            rotation={[0, -1.571, 0]}
+            scale={1.125}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes._l4_Veges_Shelf_Details004.geometry}
+            material={materials["photo tomato skin"]}
+            position={[-3.311, 0.001, 4.009]}
+            rotation={[0, -1.571, 0]}
+            scale={1.125}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes._l4_Veges_Shelf_Details005.geometry}
+            material={materials["photo {3d75f229-7087-b44d-b407-5d2c7250592e}"]}
+            position={[-3.311, 0.001, 4.009]}
+            rotation={[0, -1.571, 0]}
+            scale={1.125}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes._l4_Veges_Shelf_Details006.geometry}
+            material={materials["storage dark green"]}
+            position={[-3.311, 0.001, 4.009]}
+            rotation={[0, -1.571, 0]}
+            scale={1.125}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes._l4_Veges_Shelf_Details007.geometry}
+            material={materials["storage dark red"]}
+            position={[-3.311, 0.001, 4.009]}
+            rotation={[0, -1.571, 0]}
+            scale={1.125}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes._l4_Veges_Shelf_Details008.geometry}
+            material={materials["[Color_L22]1"]}
+            position={[-3.311, 0.001, 4.009]}
+            rotation={[0, -1.571, 0]}
+            scale={1.125}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes._l4_Veges_Shelf_Details009.geometry}
+            material={materials["storage red"]}
+            position={[-3.311, 0.001, 4.009]}
+            rotation={[0, -1.571, 0]}
+            scale={1.125}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes._l4_Veges_Shelf_Details010.geometry}
+            material={materials["storage orange"]}
+            position={[-3.311, 0.001, 4.009]}
+            rotation={[0, -1.571, 0]}
+            scale={1.125}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes._l4_Veges_Shelf_Details011.geometry}
+            material={materials["cabbage-soup-diet-1.001"]}
+            position={[-3.311, 0.001, 4.009]}
+            rotation={[0, -1.571, 0]}
+            scale={1.125}
+          />
+        </>
+      )}
     </group>
   );
 }
