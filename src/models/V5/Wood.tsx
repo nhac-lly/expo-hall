@@ -24,7 +24,7 @@ type GLTFResult = GLTF & {
 export function WoodModel(props: JSX.IntrinsicElements["group"]) {
   const gltf = useLoader(
     GLTFLoader,
-    "/V4/WOOD_LOD/wood.gltf",
+    "/V4/WOOD_LOD/Wood.gltf",
     (loader) => {
       const dracoLoader = new DRACOLoader();
       dracoLoader.setDecoderPath(
