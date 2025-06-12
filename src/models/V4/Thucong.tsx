@@ -382,7 +382,7 @@ type GLTFResult = GLTF & {
 
 export function ThucongModel(props: JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF(
-    "/V4/THUCONG_LOD/thucong.gltf"
+    "/V4/THUCONG_LOD/Thucong.gltf"
   ) as unknown as GLTFResult;
 
   const { camera } = useThree();
@@ -394,18 +394,6 @@ export function ThucongModel(props: JSX.IntrinsicElements["group"]) {
       const worldPos = new THREE.Vector3();
       groupRef.current.getWorldPosition(worldPos);
       const distance = camera.position.distanceTo(worldPos);
-      console.log(
-        distance,
-        distance <= 12
-          ? 4
-          : distance <= 15
-          ? 3
-          : distance <= 20
-          ? 2
-          : distance <= 25
-          ? 1
-          : 0
-      );
       setLodLevel(
         distance <= 12
           ? 4

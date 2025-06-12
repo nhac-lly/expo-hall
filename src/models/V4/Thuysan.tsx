@@ -216,7 +216,7 @@ type GLTFResult = GLTF & {
 
 export function ThuysanModel(props: JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF(
-    "/V4/THUYSAN_LOD/thuysan.gltf"
+    "/V4/THUYSAN_LOD/Thuysan.gltf"
   ) as unknown as GLTFResult;
 
   const { camera } = useThree();

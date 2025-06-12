@@ -150,7 +150,7 @@ type GLTFResult = GLTF & {
 
 export function WoodModel(props: JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF(
-    "/V4/WOOD_LOD/wood.gltf"
+    "/V4/WOOD_LOD/Wood.gltf"
   ) as unknown as GLTFResult;
 
   const { camera } = useThree();
