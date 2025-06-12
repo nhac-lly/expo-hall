@@ -23,7 +23,7 @@ type GLTFResult = GLTF & {
 export function TechModel(props: JSX.IntrinsicElements["group"]) {
   const gltf = useLoader(
     GLTFLoader,
-    "/V4/TECH_LOD/Tech.gltf"
+    "/V4/TECH_LOD/tech.gltf"
   ) as unknown as GLTFResult;
   const { camera } = useThree();
   const [lodLevel, setLodLevel] = useState(0);

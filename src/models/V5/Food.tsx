@@ -23,7 +23,7 @@ type GLTFResult = GLTF & {
 export function FoodModel(props: JSX.IntrinsicElements["group"]) {
   const gltf = useLoader(
     GLTFLoader,
-    "/V4/FOOD_LOD/Food.gltf"
+    "/V4/FOOD_LOD/food.gltf"
   ) as unknown as GLTFResult;
   const { camera } = useThree();
   const [lodLevel, setLodLevel] = useState(0);

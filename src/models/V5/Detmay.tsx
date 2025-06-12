@@ -23,7 +23,7 @@ type GLTFResult = GLTF & {
 export function DetmayModel(props: JSX.IntrinsicElements["group"]) {
   const gltf = useLoader(
     GLTFLoader,
-    "/VR2/detmay/Detmay_lod.gltf"
+    "/VR2/detmay/detmay_lod.gltf"
   ) as unknown as GLTFResult;
   const { camera } = useThree();
   const [lodLevel, setLodLevel] = useState(0);
