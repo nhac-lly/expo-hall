@@ -243,7 +243,7 @@ export function ThuysanModel(props: JSX.IntrinsicElements["group"]) {
   });
 
   return (
-    <group {...props} dispose={null} ref={groupRef}>
+    <group {...props} ref={groupRef}>
       {/* LOD Level 1 - Basic Structure */}
       <mesh
         castShadow

@@ -94,7 +94,7 @@ export function DetmayModel(props: JSX.IntrinsicElements["group"]) {
   });
 
   return (
-    <group {...props} dispose={null} ref={groupRef}>
+    <group {...props} ref={groupRef}>
       <primitive object={gltf.scene} />
     </group>
   );

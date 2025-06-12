@@ -279,7 +279,7 @@ export function FoodModel(props: JSX.IntrinsicElements["group"]) {
   });
 
   return (
-    <group ref={groupRef} {...props} dispose={null}>
+    <group ref={groupRef} {...props}>
       <mesh
         castShadow
         receiveShadow

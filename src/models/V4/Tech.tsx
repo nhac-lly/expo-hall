@@ -352,7 +352,7 @@ export function TechModel(props: JSX.IntrinsicElements["group"]) {
   });
 
   return (
-    <group {...props} dispose={null} ref={groupRef}>
+    <group {...props} ref={groupRef}>
       <group position={[0.047, 8.35, -6.543]} scale={1.439}>
         <mesh
           castShadow

@@ -677,7 +677,7 @@ function V4({ empty }: { empty?: boolean }) {
   // Adjust quality settings based on device
   const qualitySettings = useMemo(
     () => ({
-      dpr: isMobile ? 0.5 : 1,
+      dpr: 1,
       antialias: !isMobile,
       shadows: !isMobile,
       precision: isMobile ? "mediump" : "highp",
@@ -711,22 +711,27 @@ function V4({ empty }: { empty?: boolean }) {
           near: 0.1,
           far: 1000,
         }}
-        gl={{
-          antialias: qualitySettings.antialias,
-          powerPreference: "high-performance",
-          alpha: false,
-          stencil: false,
-          depth: true,
-          precision: qualitySettings.precision,
-          preserveDrawingBuffer: true,
+        gl={async (defaults) => {
+          const options = {
+            antialias: qualitySettings.antialias,
+            powerPreference: "high-performance",
+            alpha: true,
+            stencil: true,
+            depth: true,
+            toneMappingExposure: 1.0,
+            precision: qualitySettings.precision,
+          };
+          const renderer = new THREE.WebGLRenderer({
+            ...defaults,
+            ...options,
+          } as any);
+          console.log(renderer.info);
+          return renderer;
         }}
         shadows={qualitySettings.shadows}
         dpr={qualitySettings.dpr}
         performance={qualitySettings.performance}
         onCreated={({ gl, size, set }) => {
-          gl.outputColorSpace = THREE.SRGBColorSpace;
-          gl.toneMapping = THREE.ACESFilmicToneMapping;
-          gl.toneMappingExposure = 1.0;
           if (qualitySettings.shadows) {
             gl.shadowMap.enabled = true;
             gl.shadowMap.type = THREE.PCFSoftShadowMap;

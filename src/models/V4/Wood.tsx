@@ -177,7 +177,7 @@ export function WoodModel(props: JSX.IntrinsicElements["group"]) {
   });
 
   return (
-    <group {...props} dispose={null} ref={groupRef}>
+    <group {...props} ref={groupRef}>
       {/* LOD Level 1 - Basic Structure */}
       <group
         position={[-2.688, 0.819, -5.365]}

@@ -409,7 +409,7 @@ export function ThucongModel(props: JSX.IntrinsicElements["group"]) {
   });
 
   return (
-    <group {...props} dispose={null} ref={groupRef}>
+    <group {...props} ref={groupRef}>
       {/* LOD Level 1 */}
       <mesh
         castShadow
