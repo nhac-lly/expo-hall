@@ -615,7 +615,7 @@ const CameraManager = ({
       {/* Ceiling light source */}
       <mesh position={[0, 10, 0]}>
         <directionalLight
-          intensity={10}
+          intensity={20}
           color="#ffffff"
           castShadow
           shadow-mapSize={[2048, 2048]}
