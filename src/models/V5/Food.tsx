@@ -10,6 +10,17 @@ import { GLTFLoader } from "three-stdlib";
 import { DRACOLoader } from "three-stdlib";
 import { GLTF } from "three-stdlib";
 import { useThree, useFrame } from "@react-three/fiber";
+import { MeshoptDecoder } from "three-stdlib";
+
+// Create a custom loader instance with decoders configured
+const loader = new GLTFLoader();
+loader.setMeshoptDecoder(MeshoptDecoder);
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath(
+  "https://www.gstatic.com/draco/versioned/decoders/1.5.6/"
+);
+dracoLoader.setDecoderConfig({ type: "js" });
+loader.setDRACOLoader(dracoLoader);
 
 type GLTFResult = GLTF & {
   scene: THREE.Scene;
@@ -24,16 +35,9 @@ type GLTFResult = GLTF & {
 export function FoodModel(props: JSX.IntrinsicElements["group"]) {
   const gltf = useLoader(
     GLTFLoader,
-    "/V4/FOOD_LOD/food.gltf",
-    (loader) => {
-      const dracoLoader = new DRACOLoader();
-      dracoLoader.setDecoderPath(
-        "https://www.gstatic.com/draco/versioned/decoders/1.5.6/"
-      );
-      dracoLoader.setDecoderConfig({ type: "js" });
-      (loader as GLTFLoader).setDRACOLoader(dracoLoader);
-    },
-    (xhr) => {
+    "/V4/food-t.glb",
+    undefined,
+    (xhr: ProgressEvent) => {
       console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
     }
   ) as unknown as GLTFResult;
