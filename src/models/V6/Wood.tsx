@@ -33,7 +33,7 @@ export function Instances({
   children,
   ...props
 }: { children: React.ReactNode } & React.ComponentPropsWithoutRef<"group">) {
-  const { nodes } = useGLTF("/wood-t.glb") as GLTFResult;
+  const { nodes } = useGLTF("/V4/wood-t.glb") as GLTFResult;
   const instances = useMemo(
     () => ({
       Mesh: nodes.mesh_0,
@@ -274,4 +274,4 @@ export function Model(props: React.ComponentPropsWithoutRef<"group">) {
   );
 }
 
-useGLTF.preload("/wood-t.glb");
+useGLTF.preload("/V4/wood-t.glb");

@@ -34,7 +34,7 @@ export function Instances({
   children,
   ...props
 }: { children: React.ReactNode } & React.ComponentPropsWithoutRef<"group">) {
-  const { nodes } = useGLTF("/thuysan-t.glb") as GLTFResult;
+  const { nodes } = useGLTF("/V4/thuysan-t.glb") as GLTFResult;
   const instances = useMemo(
     () => ({
       LFLOOR: nodes._l1_FLOOR,
@@ -416,4 +416,4 @@ export function Model(props: React.ComponentPropsWithoutRef<"group">) {
   );
 }
 
-useGLTF.preload("/thuysan-t.glb");
+useGLTF.preload("/V4/thuysan-t.glb");

@@ -33,7 +33,7 @@ export function Instances({
   children,
   ...props
 }: { children: React.ReactNode } & React.ComponentPropsWithoutRef<"group">) {
-  const { nodes } = useGLTF("/detmay-t.glb") as GLTFResult;
+  const { nodes } = useGLTF("/V4/detmay-t.glb") as GLTFResult;
   const instances = useMemo(
     () => ({
       LDecorStructure: nodes._l2_Decor_Structure,
@@ -245,4 +245,4 @@ export function Model(props: React.ComponentPropsWithoutRef<"group">) {
   );
 }
 
-useGLTF.preload("/detmay-t.glb");
+useGLTF.preload("/V4/detmay-t.glb");

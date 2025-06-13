@@ -34,7 +34,7 @@ export function Instances({
   children,
   ...props
 }: { children: React.ReactNode } & React.ComponentPropsWithoutRef<"group">) {
-  const { nodes } = useGLTF("/food-t.glb") as GLTFResult;
+  const { nodes } = useGLTF("/V4/food-t.glb") as GLTFResult;
   const instances = useMemo(
     () => ({
       LMeatshelfbackground: nodes._l3_Meat_shelf_background,
@@ -119,6 +119,7 @@ export function Instances({
 
 export function Model(props: React.ComponentPropsWithoutRef<"group">) {
   const instances = useContext(context);
+  console.log(instances);
   if (!instances) return null;
 
   return (
@@ -383,4 +384,4 @@ export function Model(props: React.ComponentPropsWithoutRef<"group">) {
   );
 }
 
-useGLTF.preload("/food-t.glb");
+useGLTF.preload("/V4/food-t.glb");
