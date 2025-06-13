@@ -145,6 +145,143 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
   ) as unknown as GLTFResult;
   return (
     <group {...props} dispose={null}>
+      {/* Level 1 Components */}
+      <mesh
+        name="_l1_Backdrop_box"
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Backdrop_box.geometry}
+        material={materials["LCD06.002"]}
+        position={[-0.3623, 4.9304, -7.4652]}
+        scale={[0.7375, 0.5994, 0.3217]}
+      />
+      <mesh
+        name="_l1_Floor"
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Floor.geometry}
+        material={materials["Material.041"]}
+        position={[-0.1309, 0.1472, 0.0286]}
+        rotation={[0, -1.5705, 0]}
+        scale={[0.9318, 0.9259, 1]}
+      />
+      <mesh
+        name="_l1_Main_Backdrop"
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Main_Backdrop.geometry}
+        material={materials["Ash Wood"]}
+        position={[-0.1039, 5.8921, -7.8459]}
+        scale={[2, 1.3453, 0.4136]}
+      />
+      <group
+        name="_l1_Sign_Box002"
+        position={[8.7077, 2.0037, 5.8354]}
+        rotation={[0, 0.6109, 0]}
+        scale={[1.0047, 2.0054, 0.1907]}
+      >
+        <mesh
+          name="mesh_32"
+          castShadow
+          receiveShadow
+          geometry={nodes.mesh_32.geometry}
+          material={materials["Material.001"]}
+        />
+        <mesh
+          name="mesh_32_1"
+          castShadow
+          receiveShadow
+          geometry={nodes.mesh_32_1.geometry}
+          material={materials["Material.010"]}
+        />
+        <mesh
+          name="mesh_32_2"
+          castShadow
+          receiveShadow
+          geometry={nodes.mesh_32_2.geometry}
+          material={materials["material0.001"]}
+        />
+      </group>
+
+      {/* Level 2 Components */}
+      <mesh
+        name="_l2_bamboo"
+        castShadow
+        receiveShadow
+        geometry={nodes._l2_bamboo.geometry}
+        material={materials.bamboo}
+        position={[-0.1309, -0.3185, 0.0286]}
+        rotation={[0, -1.5705, 0]}
+        scale={[1, 1.1942, 1]}
+      />
+      <mesh
+        name="_l2_Circle_Banners"
+        castShadow
+        receiveShadow
+        geometry={nodes._l2_Circle_Banners.geometry}
+        material={materials.S1}
+        position={[-0.1309, 9.5476, 0.0286]}
+        rotation={[0, -1.5705, 0]}
+        scale={[6.431, 7.6957, 6.431]}
+      />
+      <group
+        name="_l2_Visual_led_left"
+        position={[-6.6669, 2.1871, -4.7376]}
+        rotation={[Math.PI / 2, 0, -0.4429]}
+        scale={[3.4594, 0.9778, 2.2147]}
+      >
+        <mesh
+          name="mesh_30"
+          castShadow
+          receiveShadow
+          geometry={nodes.mesh_30.geometry}
+          material={materials["Material.043"]}
+        />
+        <mesh
+          name="mesh_30_1"
+          castShadow
+          receiveShadow
+          geometry={nodes.mesh_30_1.geometry}
+          material={materials["Bamboo.002"]}
+        />
+        <mesh
+          name="mesh_30_2"
+          castShadow
+          receiveShadow
+          geometry={nodes.mesh_30_2.geometry}
+          material={materials["white.001"]}
+        />
+      </group>
+      <group
+        name="_l2_Visual_led_right"
+        position={[6.2494, 3.6972, -4.8094]}
+        rotation={[0, -0.4216, 0]}
+        scale={0.8252}
+      >
+        <mesh
+          name="mesh_31"
+          castShadow
+          receiveShadow
+          geometry={nodes.mesh_31.geometry}
+          material={materials["Bamboo.002"]}
+        />
+        <mesh
+          name="mesh_31_1"
+          castShadow
+          receiveShadow
+          geometry={nodes.mesh_31_1.geometry}
+          material={materials.white}
+        />
+        <mesh
+          name="mesh_31_2"
+          castShadow
+          receiveShadow
+          geometry={nodes.mesh_31_2.geometry}
+          material={materials["Material.042"]}
+        />
+      </group>
+
+      {/* Level 3 Components */}
       <mesh
         name="_l3_Meat_shelf_background"
         castShadow
@@ -555,6 +692,8 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
           material={materials["Material.034"]}
         />
       </group>
+
+      {/* Level 4 Components */}
       <mesh
         name="_l4_Veges_Shelf_Details"
         castShadow
@@ -675,138 +814,6 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
         rotation={[0, -1.5705, 0]}
         scale={1.1248}
       />
-      <mesh
-        name="_l1_Backdrop_box"
-        castShadow
-        receiveShadow
-        geometry={nodes._l1_Backdrop_box.geometry}
-        material={materials["LCD06.002"]}
-        position={[-0.3623, 4.9304, -7.4652]}
-        scale={[0.7375, 0.5994, 0.3217]}
-      />
-      <mesh
-        name="_l1_Floor"
-        castShadow
-        receiveShadow
-        geometry={nodes._l1_Floor.geometry}
-        material={materials["Material.041"]}
-        position={[-0.1309, 0.1472, 0.0286]}
-        rotation={[0, -1.5705, 0]}
-        scale={[0.9318, 0.9259, 1]}
-      />
-      <mesh
-        name="_l1_Main_Backdrop"
-        castShadow
-        receiveShadow
-        geometry={nodes._l1_Main_Backdrop.geometry}
-        material={materials["Ash Wood"]}
-        position={[-0.1039, 5.8921, -7.8459]}
-        scale={[2, 1.3453, 0.4136]}
-      />
-      <mesh
-        name="_l2_bamboo"
-        castShadow
-        receiveShadow
-        geometry={nodes._l2_bamboo.geometry}
-        material={materials.bamboo}
-        position={[-0.1309, -0.3185, 0.0286]}
-        rotation={[0, -1.5705, 0]}
-        scale={[1, 1.1942, 1]}
-      />
-      <mesh
-        name="_l2_Circle_Banners"
-        castShadow
-        receiveShadow
-        geometry={nodes._l2_Circle_Banners.geometry}
-        material={materials.S1}
-        position={[-0.1309, 9.5476, 0.0286]}
-        rotation={[0, -1.5705, 0]}
-        scale={[6.431, 7.6957, 6.431]}
-      />
-      <group
-        name="_l2_Visual_led_left"
-        position={[-6.6669, 2.1871, -4.7376]}
-        rotation={[Math.PI / 2, 0, -0.4429]}
-        scale={[3.4594, 0.9778, 2.2147]}
-      >
-        <mesh
-          name="mesh_30"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_30.geometry}
-          material={materials["Material.043"]}
-        />
-        <mesh
-          name="mesh_30_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_30_1.geometry}
-          material={materials["Bamboo.002"]}
-        />
-        <mesh
-          name="mesh_30_2"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_30_2.geometry}
-          material={materials["white.001"]}
-        />
-      </group>
-      <group
-        name="_l2_Visual_led_right"
-        position={[6.2494, 3.6972, -4.8094]}
-        rotation={[0, -0.4216, 0]}
-        scale={0.8252}
-      >
-        <mesh
-          name="mesh_31"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_31.geometry}
-          material={materials["Bamboo.002"]}
-        />
-        <mesh
-          name="mesh_31_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_31_1.geometry}
-          material={materials.white}
-        />
-        <mesh
-          name="mesh_31_2"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_31_2.geometry}
-          material={materials["Material.042"]}
-        />
-      </group>
-      <group
-        name="_l1_Sign_Box002"
-        position={[8.7077, 2.0037, 5.8354]}
-        rotation={[0, 0.6109, 0]}
-        scale={[1.0047, 2.0054, 0.1907]}
-      >
-        <mesh
-          name="mesh_32"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_32.geometry}
-          material={materials["Material.001"]}
-        />
-        <mesh
-          name="mesh_32_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_32_1.geometry}
-          material={materials["Material.010"]}
-        />
-        <mesh
-          name="mesh_32_2"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_32_2.geometry}
-          material={materials["material0.001"]}
-        />
-      </group>
     </group>
   );
 }

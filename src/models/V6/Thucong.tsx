@@ -168,6 +168,7 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
   ) as unknown as GLTFResult;
   return (
     <group {...props} dispose={null}>
+      {/* Layer 1 - Base Elements */}
       <mesh
         name="_l1_FLOOR"
         castShadow
@@ -175,6 +176,51 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
         geometry={nodes._l1_FLOOR.geometry}
         material={materials["Material.004"]}
       />
+      <group name="_l1_panel" position={[0.0278, 0.6526, -6.0945]}>
+        <mesh
+          name="mesh_20"
+          castShadow
+          receiveShadow
+          geometry={nodes.mesh_20.geometry}
+          material={materials.M_Kitchen_Decor_1_Wood}
+        />
+        <mesh
+          name="mesh_20_1"
+          castShadow
+          receiveShadow
+          geometry={nodes.mesh_20_1.geometry}
+          material={materials.LCD05}
+        />
+      </group>
+      <group
+        name="_l1_Sign_Box001"
+        position={[6.557, 0.0005, 3.9286]}
+        rotation={[0, 0.6109, 0]}
+      >
+        <mesh
+          name="mesh_33"
+          castShadow
+          receiveShadow
+          geometry={nodes.mesh_33.geometry}
+          material={materials["Material.001"]}
+        />
+        <mesh
+          name="mesh_33_1"
+          castShadow
+          receiveShadow
+          geometry={nodes.mesh_33_1.geometry}
+          material={materials["Material.002"]}
+        />
+        <mesh
+          name="mesh_33_2"
+          castShadow
+          receiveShadow
+          geometry={nodes.mesh_33_2.geometry}
+          material={materials["material0.002"]}
+        />
+      </group>
+
+      {/* Layer 2 - Floor and Decorations */}
       <mesh
         name="_l2_floor"
         castShadow
@@ -204,150 +250,27 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
         />
       </group>
       <mesh
-        name="_l4_vase"
+        name="_l2_decor"
         castShadow
         receiveShadow
-        geometry={nodes._l4_vase.geometry}
-        material={materials.ceramic1}
-        position={[2.9595, 1.1855, 3.9169]}
-        rotation={[0, -1.5705, 0]}
+        geometry={nodes._l2_decor.geometry}
+        material={materials["Material.071"]}
+        position={[-4.5404, 2.0042, 0.8845]}
+        rotation={[-Math.PI, 0, -Math.PI]}
+        scale={0.8928}
       />
       <mesh
-        name="_l4_vase001"
+        name="_l2_wood_decor"
         castShadow
         receiveShadow
-        geometry={nodes._l4_vase001.geometry}
-        material={materials.ceramic1}
-        position={[2.9484, 1.2292, 3.6413]}
+        geometry={nodes._l2_wood_decor.geometry}
+        material={materials["Material.071"]}
+        position={[6.4234, 2.3802, -1.041]}
         rotation={[0, -1.5705, 0]}
+        scale={[0.7886, 0.9107, 0.9107]}
       />
-      <mesh
-        name="_l4_vase002"
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_vase002.geometry}
-        material={materials.ceramic1}
-        position={[2.9371, 1.1824, 3.3578]}
-        rotation={[0, -1.5705, 0]}
-      />
-      <group
-        name="_l4_vase003"
-        position={[3.4175, 1.1854, 4.2639]}
-        rotation={[0, -1.5705, 0]}
-      >
-        <mesh
-          name="mesh_6"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_6.geometry}
-          material={materials["wood.005"]}
-        />
-        <mesh
-          name="mesh_6_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_6_1.geometry}
-          material={materials.vaselz}
-        />
-      </group>
-      <group
-        name="_l4_vase004"
-        position={[3.7654, 1.1899, 4.2473]}
-        rotation={[0, -1.5705, 0]}
-      >
-        <mesh
-          name="mesh_7"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_7.geometry}
-          material={materials["wood.005"]}
-        />
-        <mesh
-          name="mesh_7_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_7_1.geometry}
-          material={materials.vaselz}
-        />
-      </group>
-      <mesh
-        name="_l4_vase005"
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_vase005.geometry}
-        material={materials.Mall_ceramic18}
-        position={[6.9446, 1.1689, -0.3614]}
-        rotation={[0, -1.5705, 0]}
-      />
-      <mesh
-        name="_l4_tray"
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_tray.geometry}
-        material={materials["wood.005"]}
-        position={[6.9556, 0.9761, -0.3719]}
-        rotation={[0, -1.5705, 0]}
-      />
-      <group
-        name="_l4_vase006"
-        position={[6.9997, 1.0562, 0.758]}
-        rotation={[0, -1.5705, 0]}
-      >
-        <mesh
-          name="mesh_10"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_10.geometry}
-          material={materials["wood.005"]}
-        />
-        <mesh
-          name="mesh_10_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_10_1.geometry}
-          material={materials.vaselz}
-        />
-      </group>
-      <group
-        name="_l4_vase007"
-        position={[6.9776, 1.0599, 1.5745]}
-        rotation={[0, -1.5705, 0]}
-      >
-        <mesh
-          name="mesh_11"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_11.geometry}
-          material={materials.vaseglass5}
-        />
-        <mesh
-          name="mesh_11_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_11_1.geometry}
-          material={materials["gold.001"]}
-        />
-      </group>
-      <group
-        name="_l4_vase008"
-        position={[6.9776, 1.0721, 1.1524]}
-        rotation={[0, -1.5705, 0]}
-      >
-        <mesh
-          name="mesh_12"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_12.geometry}
-          material={materials["wood.005"]}
-        />
-        <mesh
-          name="mesh_12_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_12_1.geometry}
-          material={materials["gold.001"]}
-        />
-      </group>
+
+      {/* Layer 3 - Cases and Shelves */}
       <group name="_l3_ke" position={[-0.4159, 1.1273, -4.8563]}>
         <mesh
           name="mesh_13"
@@ -455,54 +378,8 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
           material={materials["Material.045"]}
         />
       </group>
-      <group
-        name="_l3_sao001"
-        position={[0.4247, 0.6541, 1.9883]}
-        rotation={[0, 1.5637, 0]}
-      >
-        <mesh
-          name="mesh_14"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_14.geometry}
-          material={materials.M_Kitchen_Decor_1_Wood}
-        />
-        <mesh
-          name="mesh_14_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_14_1.geometry}
-          material={materials["Material.040"]}
-        />
-        <mesh
-          name="mesh_14_2"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_14_2.geometry}
-          material={materials["Material.041"]}
-        />
-        <mesh
-          name="mesh_14_3"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_14_3.geometry}
-          material={materials["Material.042"]}
-        />
-        <mesh
-          name="mesh_14_4"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_14_4.geometry}
-          material={materials["Material.018"]}
-        />
-        <mesh
-          name="mesh_14_5"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_14_5.geometry}
-          material={materials["Material.020"]}
-        />
-      </group>
+
+      {/* Layer 3 - Cases */}
       <mesh
         name="_l3_case001"
         castShadow
@@ -546,544 +423,8 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
           material={materials["gold.001"]}
         />
       </group>
-      <group
-        name="_l3_case002"
-        position={[6.9227, 0.0541, 0.9353]}
-        rotation={[0, -1.5705, 0]}
-      >
-        <mesh
-          name="mesh_17"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_17.geometry}
-          material={materials["Material.069"]}
-        />
-        <mesh
-          name="mesh_17_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_17_1.geometry}
-          material={materials["gold.001"]}
-        />
-        <mesh
-          name="mesh_17_2"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_17_2.geometry}
-          material={materials["Material.068"]}
-        />
-        <mesh
-          name="mesh_17_3"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_17_3.geometry}
-          material={materials.stoneA}
-        />
-        <mesh
-          name="mesh_17_4"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_17_4.geometry}
-          material={materials["glassvitrin.002"]}
-        />
-      </group>
-      <group
-        name="_l3_case003"
-        position={[3.2421, 0.0479, 3.9024]}
-        rotation={[0, -1.5705, 0]}
-      >
-        <mesh
-          name="mesh_18"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_18.geometry}
-          material={materials["Material.069"]}
-        />
-        <mesh
-          name="mesh_18_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_18_1.geometry}
-          material={materials["glassvitrin.002"]}
-        />
-        <mesh
-          name="mesh_18_2"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_18_2.geometry}
-          material={materials["Material.068"]}
-        />
-      </group>
-      <mesh
-        name="_l2_decor"
-        castShadow
-        receiveShadow
-        geometry={nodes._l2_decor.geometry}
-        material={materials["Material.071"]}
-        position={[-4.5404, 2.0042, 0.8845]}
-        rotation={[-Math.PI, 0, -Math.PI]}
-        scale={0.8928}
-      />
-      <group name="_l1_panel" position={[0.0278, 0.6526, -6.0945]}>
-        <mesh
-          name="mesh_20"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_20.geometry}
-          material={materials.M_Kitchen_Decor_1_Wood}
-        />
-        <mesh
-          name="mesh_20_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_20_1.geometry}
-          material={materials.LCD05}
-        />
-      </group>
-      <mesh
-        name="_l4_sofa001"
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_sofa001.geometry}
-        material={materials.check}
-        position={[-2.677, 0.6875, -4.5992]}
-        rotation={[-3.1226, 1.5606, 3.1226]}
-        scale={[0.5578, 0.0872, 0.5504]}
-      />
-      <mesh
-        name="_l4_sofa"
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_sofa.geometry}
-        material={materials.check}
-        position={[-4.8898, 0.6875, -4.6115]}
-        rotation={[-3.1265, 1.558, 3.1265]}
-        scale={[0.5119, 0.0848, 0.5403]}
-      />
-      <group
-        name="_l3_product_show"
-        position={[4.7749, 0.6602, -0.548]}
-        rotation={[0, -1.5664, 0]}
-        scale={1.3824}
-      >
-        <mesh
-          name="mesh_23"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_23.geometry}
-          material={materials["glassvitrin.002"]}
-        />
-        <mesh
-          name="mesh_23_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_23_1.geometry}
-          material={materials["Material.068"]}
-        />
-        <mesh
-          name="mesh_23_2"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_23_2.geometry}
-          material={materials["Material.069"]}
-        />
-      </group>
-      <group
-        name="_l4_vase014"
-        position={[4.7749, 0.6602, -0.548]}
-        rotation={[0, -1.5664, 0]}
-        scale={1.3824}
-      >
-        <mesh
-          name="mesh_24"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_24.geometry}
-          material={materials.M_Vase_7_2}
-        />
-        <mesh
-          name="mesh_24_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_24_1.geometry}
-          material={materials.M_Vase_7}
-        />
-      </group>
-      <mesh
-        name="_l4_vase011"
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_vase011.geometry}
-        material={materials.M_Vase_5}
-        position={[4.7749, 0.6602, -0.548]}
-        rotation={[0, -1.5664, 0]}
-        scale={1.3824}
-      />
-      <mesh
-        name="_l4_vase010"
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_vase010.geometry}
-        material={materials.showcaseN2_vasewhite}
-        position={[4.7749, 0.6602, -0.548]}
-        rotation={[0, -1.5664, 0]}
-        scale={1.3824}
-      />
-      <group
-        name="_l4_vase016"
-        position={[4.7749, 0.6602, -0.548]}
-        rotation={[0, -1.5664, 0]}
-        scale={1.3824}
-      >
-        <mesh
-          name="mesh_27"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_27.geometry}
-          material={materials["wood.005"]}
-        />
-        <mesh
-          name="mesh_27_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_27_1.geometry}
-          material={materials["gold.001"]}
-        />
-      </group>
-      <group
-        name="_l4_vase015"
-        position={[4.7749, 0.6602, -0.548]}
-        rotation={[0, -1.5664, 0]}
-        scale={1.3824}
-      >
-        <mesh
-          name="mesh_28"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_28.geometry}
-          material={materials["gold.001"]}
-        />
-        <mesh
-          name="mesh_28_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_28_1.geometry}
-          material={materials.vaseglass5}
-        />
-      </group>
-      <group
-        name="_l4_vase017"
-        position={[4.7749, 0.6602, -0.548]}
-        rotation={[0, -1.5664, 0]}
-        scale={1.3824}
-      >
-        <mesh
-          name="mesh_29"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_29.geometry}
-          material={materials.vaselz}
-        />
-        <mesh
-          name="mesh_29_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_29_1.geometry}
-          material={materials["wood.005"]}
-        />
-      </group>
-      <mesh
-        name="_l4_vase018"
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_vase018.geometry}
-        material={materials["Wave 4"]}
-        position={[4.7749, 0.6602, -0.548]}
-        rotation={[0, -1.5664, 0]}
-        scale={1.3824}
-      />
-      <mesh
-        name="_l4_vase012"
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_vase012.geometry}
-        material={materials.M_Vase_5}
-        position={[4.7749, 0.6602, -0.548]}
-        rotation={[0, -1.5664, 0]}
-        scale={1.3824}
-      />
-      <mesh
-        name="_l4_vase013"
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_vase013.geometry}
-        material={materials.M_Vase_5}
-        position={[4.7749, 0.6602, -0.548]}
-        rotation={[0, -1.5664, 0]}
-        scale={1.3824}
-      />
-      <group
-        name="_l4_vase009"
-        position={[6.9776, 1.0721, 1.1524]}
-        rotation={[0, -1.5705, 0]}
-      >
-        <mesh
-          name="mesh_12"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_12.geometry}
-          material={materials["wood.005"]}
-        />
-        <mesh
-          name="mesh_12_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_12_1.geometry}
-          material={materials["gold.001"]}
-        />
-      </group>
-      <group
-        name="_l1_Sign_Box001"
-        position={[6.557, 0.0005, 3.9286]}
-        rotation={[0, 0.6109, 0]}
-      >
-        <mesh
-          name="mesh_33"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_33.geometry}
-          material={materials["Material.001"]}
-        />
-        <mesh
-          name="mesh_33_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_33_1.geometry}
-          material={materials["Material.002"]}
-        />
-        <mesh
-          name="mesh_33_2"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_33_2.geometry}
-          material={materials["material0.002"]}
-        />
-      </group>
-      <mesh
-        name="_l2_wood_decor"
-        castShadow
-        receiveShadow
-        geometry={nodes._l2_wood_decor.geometry}
-        material={materials["Material.071"]}
-        position={[6.4234, 2.3802, -1.041]}
-        rotation={[0, -1.5705, 0]}
-        scale={[0.7886, 0.9107, 0.9107]}
-      />
-      <mesh
-        name="_l4_vase019"
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_vase019.geometry}
-        material={materials.Mall_ceramic18}
-        position={[4.8521, 1.1689, 4.2372]}
-        rotation={[-Math.PI, 0, -Math.PI]}
-      />
-      <mesh
-        name="_l4_tray001"
-        castShadow
-        receiveShadow
-        geometry={nodes._l4_tray001.geometry}
-        material={materials["wood.005"]}
-        position={[4.8626, 0.9761, 4.2482]}
-        rotation={[-Math.PI, 0, -Math.PI]}
-      />
-      <mesh
-        name="_l3_case004"
-        castShadow
-        receiveShadow
-        geometry={nodes._l3_case004.geometry}
-        material={materials.stoneA}
-        position={[4.8533, 0.5606, 4.2419]}
-        rotation={[-Math.PI, 0, -Math.PI]}
-      />
-      <group
-        name="_l3_case005"
-        position={[4.8534, 0.0503, 4.2419]}
-        rotation={[-Math.PI, 0, -Math.PI]}
-      >
-        <mesh
-          name="mesh_16"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_16.geometry}
-          material={materials["Material.069"]}
-        />
-        <mesh
-          name="mesh_16_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_16_1.geometry}
-          material={materials["Material.068"]}
-        />
-        <mesh
-          name="mesh_16_2"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_16_2.geometry}
-          material={materials["glassvitrin.002"]}
-        />
-        <mesh
-          name="mesh_16_3"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_16_3.geometry}
-          material={materials["gold.001"]}
-        />
-      </group>
-      <group
-        name="_l3_sao002"
-        position={[0.0012, 0.6485, -0.3637]}
-        rotation={[-Math.PI, 1.5579, -Math.PI]}
-      >
-        <mesh
-          name="mesh_35"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_35.geometry}
-          material={materials["Material.045"]}
-        />
-        <mesh
-          name="mesh_35_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_35_1.geometry}
-          material={materials["Material.039"]}
-        />
-        <mesh
-          name="mesh_35_2"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_35_2.geometry}
-          material={materials["Material.042"]}
-        />
-        <mesh
-          name="mesh_35_3"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_35_3.geometry}
-          material={materials["Material.043"]}
-        />
-        <mesh
-          name="mesh_35_4"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_35_4.geometry}
-          material={materials["Material.044"]}
-        />
-        <mesh
-          name="mesh_35_5"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_35_5.geometry}
-          material={materials.M_Kitchen_Decor_1_Wood}
-        />
-      </group>
-      <group
-        name="_l3_sao003"
-        position={[0.0012, 0.6485, 0.9137]}
-        rotation={[0, -1.5579, 0]}
-      >
-        <mesh
-          name="mesh_35"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_35.geometry}
-          material={materials["Material.045"]}
-        />
-        <mesh
-          name="mesh_35_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_35_1.geometry}
-          material={materials["Material.039"]}
-        />
-        <mesh
-          name="mesh_35_2"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_35_2.geometry}
-          material={materials["Material.042"]}
-        />
-        <mesh
-          name="mesh_35_3"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_35_3.geometry}
-          material={materials["Material.043"]}
-        />
-        <mesh
-          name="mesh_35_4"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_35_4.geometry}
-          material={materials["Material.044"]}
-        />
-        <mesh
-          name="mesh_35_5"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_35_5.geometry}
-          material={materials.M_Kitchen_Decor_1_Wood}
-        />
-      </group>
-      <group
-        name="_l3_sao004"
-        position={[0.4247, 0.6541, 3.1914]}
-        rotation={[Math.PI, -1.5637, Math.PI]}
-      >
-        <mesh
-          name="mesh_14"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_14.geometry}
-          material={materials.M_Kitchen_Decor_1_Wood}
-        />
-        <mesh
-          name="mesh_14_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_14_1.geometry}
-          material={materials["Material.040"]}
-        />
-        <mesh
-          name="mesh_14_2"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_14_2.geometry}
-          material={materials["Material.041"]}
-        />
-        <mesh
-          name="mesh_14_3"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_14_3.geometry}
-          material={materials["Material.042"]}
-        />
-        <mesh
-          name="mesh_14_4"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_14_4.geometry}
-          material={materials["Material.018"]}
-        />
-        <mesh
-          name="mesh_14_5"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_14_5.geometry}
-          material={materials["Material.020"]}
-        />
-      </group>
+
+      {/* Layer 3 - Lights */}
       <mesh
         name="_l3_light001"
         castShadow
@@ -1111,214 +452,145 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
         position={[-4.9095, 2.2056, 1.5025]}
         scale={0.8342}
       />
-      <group
-        name="_l3_light005"
-        position={[-2.9184, 1.5983, 0.1507]}
-        rotation={[Math.PI, -0.6915, Math.PI]}
-        scale={0.8186}
-      >
-        <mesh
-          name="mesh_39"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_39.geometry}
-          material={materials["Multi Linen Pumpkin"]}
-        />
-        <mesh
-          name="mesh_39_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_39_1.geometry}
-          material={materials.stoneA}
-        />
-        <mesh
-          name="mesh_40"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_40.geometry}
-          material={materials["Material #3"]}
-        />
-        <mesh
-          name="mesh_41"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_41.geometry}
-          material={materials.qsovili127G3124}
-        />
-        <mesh
-          name="mesh_41_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_41_1.geometry}
-          material={materials.qsovili129G}
-        />
-        <mesh
-          name="mesh_41_2"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_41_2.geometry}
-          material={materials["Material #3"]}
-        />
-        <mesh
-          name="mesh_41_3"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_41_3.geometry}
-          material={materials["07 - Default12"]}
-        />
-        <mesh
-          name="mesh_41_4"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_41_4.geometry}
-          material={materials["04 - Default"]}
-        />
-        <mesh
-          name="mesh_41_5"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_41_5.geometry}
-          material={materials["09 - Default"]}
-        />
-      </group>
-      <group
-        name="_l3_light002"
-        position={[-5.379, 1.2957, 2.8071]}
-        rotation={[Math.PI, -0.6915, Math.PI]}
-      >
-        <mesh
-          name="mesh_39"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_39.geometry}
-          material={materials["Multi Linen Pumpkin"]}
-        />
-        <mesh
-          name="mesh_39_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_39_1.geometry}
-          material={materials.stoneA}
-        />
-        <mesh
-          name="mesh_42"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_42.geometry}
-          material={materials["Material #3"]}
-        />
-        <mesh
-          name="mesh_41"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_41.geometry}
-          material={materials.qsovili127G3124}
-        />
-        <mesh
-          name="mesh_41_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_41_1.geometry}
-          material={materials.qsovili129G}
-        />
-        <mesh
-          name="mesh_41_2"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_41_2.geometry}
-          material={materials["Material #3"]}
-        />
-        <mesh
-          name="mesh_41_3"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_41_3.geometry}
-          material={materials["07 - Default12"]}
-        />
-        <mesh
-          name="mesh_41_4"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_41_4.geometry}
-          material={materials["04 - Default"]}
-        />
-        <mesh
-          name="mesh_41_5"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_41_5.geometry}
-          material={materials["09 - Default"]}
-        />
-      </group>
-      <group
-        name="_l3_light"
-        position={[-3.1334, 1.23, 4.0033]}
-        rotation={[Math.PI, -0.6915, Math.PI]}
-      >
-        <mesh
-          name="mesh_39"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_39.geometry}
-          material={materials["Multi Linen Pumpkin"]}
-        />
-        <mesh
-          name="mesh_39_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_39_1.geometry}
-          material={materials.stoneA}
-        />
-        <mesh
-          name="mesh_43"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_43.geometry}
-          material={materials["Material #3"]}
-        />
-        <mesh
-          name="mesh_41"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_41.geometry}
-          material={materials.qsovili127G3124}
-        />
-        <mesh
-          name="mesh_41_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_41_1.geometry}
-          material={materials.qsovili129G}
-        />
-        <mesh
-          name="mesh_41_2"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_41_2.geometry}
-          material={materials["Material #3"]}
-        />
-        <mesh
-          name="mesh_41_3"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_41_3.geometry}
-          material={materials["07 - Default12"]}
-        />
-        <mesh
-          name="mesh_41_4"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_41_4.geometry}
-          material={materials["04 - Default"]}
-        />
-        <mesh
-          name="mesh_41_5"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_41_5.geometry}
-          material={materials["09 - Default"]}
-        />
-      </group>
+
+      {/* Layer 4 - Vases and Decorative Items */}
+      <mesh
+        name="_l4_vase"
+        castShadow
+        receiveShadow
+        geometry={nodes._l4_vase.geometry}
+        material={materials.ceramic1}
+        position={[2.9595, 1.1855, 3.9169]}
+        rotation={[0, -1.5705, 0]}
+      />
+      <mesh
+        name="_l4_vase001"
+        castShadow
+        receiveShadow
+        geometry={nodes._l4_vase001.geometry}
+        material={materials.ceramic1}
+        position={[2.9484, 1.2292, 3.6413]}
+        rotation={[0, -1.5705, 0]}
+      />
+      <mesh
+        name="_l4_vase002"
+        castShadow
+        receiveShadow
+        geometry={nodes._l4_vase002.geometry}
+        material={materials.ceramic1}
+        position={[2.9371, 1.1824, 3.3578]}
+        rotation={[0, -1.5705, 0]}
+      />
+      <mesh
+        name="_l4_vase005"
+        castShadow
+        receiveShadow
+        geometry={nodes._l4_vase005.geometry}
+        material={materials.Mall_ceramic18}
+        position={[6.9446, 1.1689, -0.3614]}
+        rotation={[0, -1.5705, 0]}
+      />
+      <mesh
+        name="_l4_vase011"
+        castShadow
+        receiveShadow
+        geometry={nodes._l4_vase011.geometry}
+        material={materials.M_Vase_5}
+        position={[4.7749, 0.6602, -0.548]}
+        rotation={[0, -1.5664, 0]}
+        scale={1.3824}
+      />
+      <mesh
+        name="_l4_vase010"
+        castShadow
+        receiveShadow
+        geometry={nodes._l4_vase010.geometry}
+        material={materials.showcaseN2_vasewhite}
+        position={[4.7749, 0.6602, -0.548]}
+        rotation={[0, -1.5664, 0]}
+        scale={1.3824}
+      />
+      <mesh
+        name="_l4_vase012"
+        castShadow
+        receiveShadow
+        geometry={nodes._l4_vase012.geometry}
+        material={materials.M_Vase_5}
+        position={[4.7749, 0.6602, -0.548]}
+        rotation={[0, -1.5664, 0]}
+        scale={1.3824}
+      />
+      <mesh
+        name="_l4_vase013"
+        castShadow
+        receiveShadow
+        geometry={nodes._l4_vase013.geometry}
+        material={materials.M_Vase_5}
+        position={[4.7749, 0.6602, -0.548]}
+        rotation={[0, -1.5664, 0]}
+        scale={1.3824}
+      />
+      <mesh
+        name="_l4_vase018"
+        castShadow
+        receiveShadow
+        geometry={nodes._l4_vase018.geometry}
+        material={materials["Wave 4"]}
+        position={[4.7749, 0.6602, -0.548]}
+        rotation={[0, -1.5664, 0]}
+        scale={1.3824}
+      />
+      <mesh
+        name="_l4_vase019"
+        castShadow
+        receiveShadow
+        geometry={nodes._l4_vase019.geometry}
+        material={materials.Mall_ceramic18}
+        position={[4.8521, 1.1689, 4.2372]}
+        rotation={[-Math.PI, 0, -Math.PI]}
+      />
+
+      {/* Layer 4 - Furniture */}
+      <mesh
+        name="_l4_sofa001"
+        castShadow
+        receiveShadow
+        geometry={nodes._l4_sofa001.geometry}
+        material={materials.check}
+        position={[-2.677, 0.6875, -4.5992]}
+        rotation={[-3.1226, 1.5606, 3.1226]}
+        scale={[0.5578, 0.0872, 0.5504]}
+      />
+      <mesh
+        name="_l4_sofa"
+        castShadow
+        receiveShadow
+        geometry={nodes._l4_sofa.geometry}
+        material={materials.check}
+        position={[-4.8898, 0.6875, -4.6115]}
+        rotation={[-3.1265, 1.558, 3.1265]}
+        scale={[0.5119, 0.0848, 0.5403]}
+      />
+
+      {/* Layer 4 - Trays */}
+      <mesh
+        name="_l4_tray"
+        castShadow
+        receiveShadow
+        geometry={nodes._l4_tray.geometry}
+        material={materials["wood.005"]}
+        position={[6.9556, 0.9761, -0.3719]}
+        rotation={[0, -1.5705, 0]}
+      />
+      <mesh
+        name="_l4_tray001"
+        castShadow
+        receiveShadow
+        geometry={nodes._l4_tray001.geometry}
+        material={materials["wood.005"]}
+        position={[4.8626, 0.9761, 4.2482]}
+        rotation={[-Math.PI, 0, -Math.PI]}
+      />
     </group>
   );
 }

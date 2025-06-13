@@ -76,15 +76,7 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
   ) as unknown as GLTFResult;
   return (
     <group {...props} dispose={null}>
-      <mesh
-        name="_l2_Decor_Structure"
-        castShadow
-        receiveShadow
-        geometry={nodes._l2_Decor_Structure.geometry}
-        material={materials["Material.008"]}
-        position={[-5.4293, 1.7033, -1.0699]}
-        rotation={[0, 1.5705, 0]}
-      />
+      {/* Level 0 Components */}
       <mesh
         name="_l0_Backdrop_box"
         castShadow
@@ -112,32 +104,35 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
         scale={[0.7375, 0.5994, 0.3217]}
       />
       <group
-        name="_l2_Materials_shelf"
-        position={[-0.2036, 1.2245, -2.9577]}
-        scale={[3.3601, 1.2551, 0.0056]}
+        name="_l0_Sign_Box_001"
+        position={[5.8857, -0.0094, 3.7728]}
+        rotation={[0, 0.0198, 0]}
+        scale={[1.0032, 2.0024, 0.1904]}
       >
         <mesh
-          name="mesh_4"
+          name="mesh_22"
           castShadow
           receiveShadow
-          geometry={nodes.mesh_4.geometry}
-          material={materials["Material.004"]}
+          geometry={nodes.mesh_22.geometry}
+          material={materials.Material}
         />
         <mesh
-          name="mesh_4_1"
+          name="mesh_22_1"
           castShadow
           receiveShadow
-          geometry={nodes.mesh_4_1.geometry}
-          material={materials["Inst_Rack_01.002"]}
+          geometry={nodes.mesh_22_1.geometry}
+          material={materials["material23.001"]}
         />
         <mesh
-          name="mesh_4_2"
+          name="mesh_22_2"
           castShadow
           receiveShadow
-          geometry={nodes.mesh_4_2.geometry}
-          material={materials.adskMatPhysicalMaterial_12}
+          geometry={nodes.mesh_22_2.geometry}
+          material={materials["Material.010"]}
         />
       </group>
+
+      {/* Level 1 Components */}
       <mesh
         name="_l1_BP_Banner_left_1"
         castShadow
@@ -178,6 +173,46 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
         rotation={[0, -0.2382, 0]}
         scale={[1.1289, 1.0673, 0.9336]}
       />
+
+      {/* Level 2 Components */}
+      <mesh
+        name="_l2_Decor_Structure"
+        castShadow
+        receiveShadow
+        geometry={nodes._l2_Decor_Structure.geometry}
+        material={materials["Material.008"]}
+        position={[-5.4293, 1.7033, -1.0699]}
+        rotation={[0, 1.5705, 0]}
+      />
+      <group
+        name="_l2_Materials_shelf"
+        position={[-0.2036, 1.2245, -2.9577]}
+        scale={[3.3601, 1.2551, 0.0056]}
+      >
+        <mesh
+          name="mesh_4"
+          castShadow
+          receiveShadow
+          geometry={nodes.mesh_4.geometry}
+          material={materials["Material.004"]}
+        />
+        <mesh
+          name="mesh_4_1"
+          castShadow
+          receiveShadow
+          geometry={nodes.mesh_4_1.geometry}
+          material={materials["Inst_Rack_01.002"]}
+        />
+        <mesh
+          name="mesh_4_2"
+          castShadow
+          receiveShadow
+          geometry={nodes.mesh_4_2.geometry}
+          material={materials.adskMatPhysicalMaterial_12}
+        />
+      </group>
+
+      {/* Level 3 Components */}
       <group
         name="_l3_bagest"
         position={[-4.8231, 1.6009, 2.1154]}
@@ -369,34 +404,6 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
         rotation={[-Math.PI / 2, 0, -0.3488]}
         scale={[0.002, 0.0013, 0.0009]}
       />
-      <group
-        name="_l0_Sign_Box_001"
-        position={[5.8857, -0.0094, 3.7728]}
-        rotation={[0, 0.0198, 0]}
-        scale={[1.0032, 2.0024, 0.1904]}
-      >
-        <mesh
-          name="mesh_22"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_22.geometry}
-          material={materials.Material}
-        />
-        <mesh
-          name="mesh_22_1"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_22_1.geometry}
-          material={materials["material23.001"]}
-        />
-        <mesh
-          name="mesh_22_2"
-          castShadow
-          receiveShadow
-          geometry={nodes.mesh_22_2.geometry}
-          material={materials["Material.010"]}
-        />
-      </group>
     </group>
   );
 }
