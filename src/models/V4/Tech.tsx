@@ -7,6 +7,8 @@ import * as THREE from "three";
 import React, { JSX, useRef, useState } from "react";
 import { Detailed, useGLTF } from "@react-three/drei";
 import { GLTF } from "three-stdlib";
+import { useDispose } from "@/utils/useDispose";
+import { invalidate } from "@react-three/fiber";
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -145,22 +147,6 @@ type GLTFResult = GLTF & {
     _l2_decor001: THREE.Mesh;
     _l2_decor002: THREE.Mesh;
     _l4_Headphone_1: THREE.Mesh;
-    _l4_Headphone_2: THREE.Mesh;
-    _l4_Headphone_3: THREE.Mesh;
-    _l4_Headphone_4: THREE.Mesh;
-    _l4_Headphone_5: THREE.Mesh;
-    _l4_Headphone_6: THREE.Mesh;
-    _l4_Headphone_7: THREE.Mesh;
-    _l3_box018: THREE.Mesh;
-    _l3_box019: THREE.Mesh;
-    _l3_box020: THREE.Mesh;
-    _l3_box021: THREE.Mesh;
-    _l3_KeyboardBaru_1: THREE.Mesh;
-    _l3_KeyboardBaru_2: THREE.Mesh;
-    _l3_KeyboardBaru_3: THREE.Mesh;
-    _l3_KeyboardBaru_4: THREE.Mesh;
-    _l3_KeyboardBaru_5: THREE.Mesh;
-    _l3_KeyboardBaru_6: THREE.Mesh;
     _l4_KeyboardBaru001_1: THREE.Mesh;
     _l4_KeyboardBaru001_2: THREE.Mesh;
     _l4_KeyboardBaru001_3: THREE.Mesh;
@@ -322,262 +308,260 @@ type GLTFResult = GLTF & {
   };
 };
 
-export function TechModel(props: JSX.IntrinsicElements["group"]) {
-  const { nodes, materials } = useGLTF(
-    "/V4/TECH_LOD/tech.gltf"
-  ) as unknown as GLTFResult;
-
-  const LOD0 = () => (
-    <group>
-      <group position={[0.047, 8.35, -6.543]} scale={1.439}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_panel_1.geometry}
-          material={materials["Display.001"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_panel_2.geometry}
-          material={materials["LCD06.001"]}
-        />
-      </group>
+const LOD0 = ({ nodes, materials }: { nodes: any; materials: any }) => (
+  <group>
+    <group position={[0.047, 8.35, -6.543]} scale={1.439}>
       <mesh
         castShadow
         receiveShadow
-        geometry={nodes._l1_floor.geometry}
-        material={materials["Flood.001"]}
-        position={[-0.487, 0.008, -0.165]}
-        scale={[1, 1, 1.15]}
+        geometry={nodes._l1_panel_1.geometry}
+        material={materials["Display.001"]}
       />
-      <group
-        position={[-8.124, 0.104, 4.761]}
-        rotation={[0, -0.611, 0]}
-        scale={1.088}
-      >
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_1.geometry}
-          material={materials["Material.015"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_2.geometry}
-          material={materials["Material.009"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_3.geometry}
-          material={materials["material0.002"]}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_4.geometry}
-          material={materials.material1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_5.geometry}
-          material={materials.material2}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_6.geometry}
-          material={materials.material3}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_7.geometry}
-          material={materials.material4}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_8.geometry}
-          material={materials.material5}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_9.geometry}
-          material={materials.material6}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_10.geometry}
-          material={materials.material7}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_11.geometry}
-          material={materials.material8}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_12.geometry}
-          material={materials.material9}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_13.geometry}
-          material={materials.material10}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_14.geometry}
-          material={materials.material11}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_15.geometry}
-          material={materials.material12}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_16.geometry}
-          material={materials.material13}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_17.geometry}
-          material={materials.material14}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_18.geometry}
-          material={materials.material15}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_19.geometry}
-          material={materials.material16}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_20.geometry}
-          material={materials.material17}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_21.geometry}
-          material={materials.material18}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_22.geometry}
-          material={materials.material19}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_23.geometry}
-          material={materials.material20}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_24.geometry}
-          material={materials.material21}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_25.geometry}
-          material={materials.material22}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_26.geometry}
-          material={materials.material23}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_27.geometry}
-          material={materials.material24}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_28.geometry}
-          material={materials.material25}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_29.geometry}
-          material={materials.material26}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_30.geometry}
-          material={materials.material27}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_31.geometry}
-          material={materials.material28}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_32.geometry}
-          material={materials.material29}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_33.geometry}
-          material={materials.material30}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_34.geometry}
-          material={materials.material31}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_35.geometry}
-          material={materials.material32}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes._l1_Sign_Box002_36.geometry}
-          material={materials.material33}
-        />
-      </group>
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_panel_2.geometry}
+        material={materials["LCD06.001"]}
+      />
     </group>
-  );
+    <mesh
+      castShadow
+      receiveShadow
+      geometry={nodes._l1_floor.geometry}
+      material={materials["Flood.001"]}
+      position={[-0.487, 0.008, -0.165]}
+      scale={[1, 1, 1.15]}
+    />
+    <group
+      position={[-8.124, 0.104, 4.761]}
+      rotation={[0, -0.611, 0]}
+      scale={1.088}
+    >
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_1.geometry}
+        material={materials["Material.015"]}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_2.geometry}
+        material={materials["Material.009"]}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_3.geometry}
+        material={materials["material0.002"]}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_4.geometry}
+        material={materials.material1}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_5.geometry}
+        material={materials.material2}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_6.geometry}
+        material={materials.material3}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_7.geometry}
+        material={materials.material4}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_8.geometry}
+        material={materials.material5}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_9.geometry}
+        material={materials.material6}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_10.geometry}
+        material={materials.material7}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_11.geometry}
+        material={materials.material8}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_12.geometry}
+        material={materials.material9}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_13.geometry}
+        material={materials.material10}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_14.geometry}
+        material={materials.material11}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_15.geometry}
+        material={materials.material12}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_16.geometry}
+        material={materials.material13}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_17.geometry}
+        material={materials.material14}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_18.geometry}
+        material={materials.material15}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_19.geometry}
+        material={materials.material16}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_20.geometry}
+        material={materials.material17}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_21.geometry}
+        material={materials.material18}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_22.geometry}
+        material={materials.material19}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_23.geometry}
+        material={materials.material20}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_24.geometry}
+        material={materials.material21}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_25.geometry}
+        material={materials.material22}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_26.geometry}
+        material={materials.material23}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_27.geometry}
+        material={materials.material24}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_28.geometry}
+        material={materials.material25}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_29.geometry}
+        material={materials.material26}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_30.geometry}
+        material={materials.material27}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_31.geometry}
+        material={materials.material28}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_32.geometry}
+        material={materials.material29}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_33.geometry}
+        material={materials.material30}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_34.geometry}
+        material={materials.material31}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_35.geometry}
+        material={materials.material32}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l1_Sign_Box002_36.geometry}
+        material={materials.material33}
+      />
+    </group>
+  </group>
+);
 
-  const LOD1 = () => (
-    <group>
+const LOD1 = ({ nodes, materials }: { nodes: any; materials: any }) => {
+  const lodRef = useDispose();
+
+  return (
+    <group ref={lodRef}>
       <group position={[6.298, 0.393, 0.368]}>
         <mesh
           castShadow
@@ -684,9 +668,13 @@ export function TechModel(props: JSX.IntrinsicElements["group"]) {
       />
     </group>
   );
+};
 
-  const LOD2 = () => (
-    <group>
+const LOD2 = ({ nodes, materials }: { nodes: any; materials: any }) => {
+  const lodRef = useDispose();
+
+  return (
+    <group ref={lodRef}>
       <group
         position={[-1.111, 1.027, 2.595]}
         rotation={[0.038, 1.162, -0.012]}
@@ -1148,9 +1136,13 @@ export function TechModel(props: JSX.IntrinsicElements["group"]) {
       </group>
     </group>
   );
+};
 
-  const LOD3 = () => (
-    <group>
+const LOD3 = ({ nodes, materials }: { nodes: any; materials: any }) => {
+  const lodRef = useDispose();
+
+  return (
+    <group ref={lodRef}>
       <group position={[-1.266, 1.751, 0.629]} rotation={[0, -1.571, 0]}>
         <mesh
           castShadow
@@ -1433,27 +1425,42 @@ export function TechModel(props: JSX.IntrinsicElements["group"]) {
       </group>
     </group>
   );
+};
+
+export function TechModel(props: JSX.IntrinsicElements["group"]) {
+  const { nodes, materials } = useGLTF(
+    "/V4/TECH_LOD/tech.gltf"
+  ) as unknown as GLTFResult;
 
   return (
     <group {...props}>
-      <Detailed distances={[12, 15, 20, 25]}>
+      <Detailed
+        onUpdate={() => {
+          invalidate();
+        }}
+        distances={[0, 11, 15, 25, 30]}
+      >
         <group>
-          <LOD0 />
-          <LOD1 />
-          <LOD2 />
-          <LOD3 />
+          <LOD0 nodes={nodes} materials={materials} />
+          <LOD1 nodes={nodes} materials={materials} />
+          <LOD2 nodes={nodes} materials={materials} />
+          <LOD3 nodes={nodes} materials={materials} />
         </group>
         <group>
-          <LOD0 />
-          <LOD1 />
-          <LOD2 />
+          <LOD0 nodes={nodes} materials={materials} />
+          ss
+          <LOD1 nodes={nodes} materials={materials} />
+          <LOD2 nodes={nodes} materials={materials} />
         </group>
         <group>
-          <LOD0 />
-          <LOD1 />
+          <LOD0 nodes={nodes} materials={materials} />
+          <LOD1 nodes={nodes} materials={materials} />
         </group>
-        <LOD0 />
+        <LOD0 nodes={nodes} materials={materials} />
+        <group></group>
       </Detailed>
     </group>
   );
 }
+
+useGLTF.preload("/V4/TECH_LOD/tech.gltf");

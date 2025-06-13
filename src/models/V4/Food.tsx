@@ -4,10 +4,12 @@ Command: npx gltfjsx@6.5.3 .\food.gltf --shadows --types
 */
 
 import * as THREE from "three";
-import React, { JSX, useRef, useState } from "react";
+import React, { JSX, useEffect, useRef, useState } from "react";
 import { Detailed, useGLTF } from "@react-three/drei";
 import { GLTF } from "three-stdlib";
-import { useThree, useFrame } from "@react-three/fiber";
+import { useThree, useFrame, invalidate } from "@react-three/fiber";
+import { LOD } from "three";
+import { useDispose } from "@/utils/useDispose";
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -250,13 +252,10 @@ type GLTFResult = GLTF & {
   };
 };
 
-export function FoodModel(props: JSX.IntrinsicElements["group"]) {
-  const { nodes, materials } = useGLTF(
-    "/V4/FOOD_LOD/food.gltf"
-  ) as unknown as GLTFResult;
-
-  const LOD0 = () => (
-    <group>
+const LOD0 = ({ nodes, materials }: { nodes: any; materials: any }) => {
+  const lodRef = useDispose();
+  return (
+    <group ref={lodRef}>
       <mesh
         castShadow
         receiveShadow
@@ -464,9 +463,12 @@ export function FoodModel(props: JSX.IntrinsicElements["group"]) {
       </group>
     </group>
   );
+};
 
-  const LOD1 = () => (
-    <group>
+const LOD1 = ({ nodes, materials }: { nodes: any; materials: any }) => {
+  const lodRef = useDispose();
+  return (
+    <group ref={lodRef}>
       <mesh
         castShadow
         receiveShadow
@@ -535,9 +537,12 @@ export function FoodModel(props: JSX.IntrinsicElements["group"]) {
       </group>
     </group>
   );
+};
 
-  const LOD2 = () => (
-    <group>
+const LOD2 = ({ nodes, materials }: { nodes: any; materials: any }) => {
+  const lodRef = useDispose();
+  return (
+    <group ref={lodRef}>
       <group position={[-1.897, 1.298, -3.924]} scale={[0.805, 1.291, 0.003]}>
         <mesh
           castShadow
@@ -987,9 +992,12 @@ export function FoodModel(props: JSX.IntrinsicElements["group"]) {
       </group>
     </group>
   );
+};
 
-  const LOD3 = () => (
-    <group>
+const LOD3 = ({ nodes, materials }: { nodes: any; materials: any }) => {
+  const lodRef = useDispose();
+  return (
+    <group ref={lodRef}>
       <mesh
         castShadow
         receiveShadow
@@ -1100,27 +1108,41 @@ export function FoodModel(props: JSX.IntrinsicElements["group"]) {
       />
     </group>
   );
+};
+
+export function FoodModel(props: JSX.IntrinsicElements["group"]) {
+  const { nodes, materials } = useGLTF(
+    "/V4/FOOD_LOD/food.gltf"
+  ) as unknown as GLTFResult;
 
   return (
     <group {...props} dispose={null}>
-      <Detailed distances={[12, 15, 20, 25]}>
+      <Detailed
+        onUpdate={() => {
+          invalidate();
+        }}
+        distances={[0, 11, 15, 25, 30]}
+      >
         <group>
-          <LOD0 />
-          <LOD1 />
-          <LOD2 />
-          <LOD3 />
+          <LOD0 nodes={nodes} materials={materials} />
+          <LOD1 nodes={nodes} materials={materials} />
+          <LOD2 nodes={nodes} materials={materials} />
+          <LOD3 nodes={nodes} materials={materials} />
         </group>
         <group>
-          <LOD0 />
-          <LOD1 />
-          <LOD2 />
+          <LOD0 nodes={nodes} materials={materials} />
+          <LOD1 nodes={nodes} materials={materials} />
+          <LOD2 nodes={nodes} materials={materials} />
         </group>
         <group>
-          <LOD0 />
-          <LOD1 />
+          <LOD0 nodes={nodes} materials={materials} />
+          <LOD1 nodes={nodes} materials={materials} />
         </group>
-        <LOD0 />
+        <LOD0 nodes={nodes} materials={materials} />
+        <group></group>
       </Detailed>
     </group>
   );
 }
+
+useGLTF.preload("/V4/FOOD_LOD/food.gltf");
