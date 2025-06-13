@@ -644,6 +644,7 @@ const CameraManager = ({
     </>
   );
 };
+
 function V4({ empty }: { empty?: boolean }) {
   const [controlType, setControlType] = useState<ControlType>("dragFPS");
   const [cameraPositions, setCameraPositions] = useState<
@@ -720,11 +721,29 @@ function V4({ empty }: { empty?: boolean }) {
             depth: true,
             toneMappingExposure: 1.0,
             precision: qualitySettings.precision,
+            // Add VRAM management settings
+            maxMorphTargets: 8,
+            maxMorphNormals: 4,
+            maxTextureSize: 2048,
+            maxCubemapSize: 2048,
+            maxAnisotropy: 4,
+            maxPrecision: "mediump",
+            maxMemoryUsage: 1024 * 1024 * 1024, // 1GB in bytes
           };
           const renderer = new THREE.WebGLRenderer({
             ...defaults,
             ...options,
           } as any);
+
+          // Set texture memory limits
+          renderer.info.autoReset = false;
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+
+          // Enable texture compression if available
+          if (renderer.capabilities.isWebGL2) {
+            renderer.extensions.get("WEBGL_compressed_texture_s3tc");
+          }
+
           console.log(renderer.info);
           return renderer;
         }}
@@ -736,6 +755,24 @@ function V4({ empty }: { empty?: boolean }) {
             gl.shadowMap.enabled = true;
             gl.shadowMap.type = THREE.PCFSoftShadowMap;
           }
+
+          // Monitor VRAM usage
+          const checkMemoryUsage = () => {
+            const info = gl.info;
+            const memoryUsage = info.memory.geometries + info.memory.textures;
+            if (memoryUsage > 1024 * 1024 * 1024) {
+              // 1GB
+              console.warn("VRAM usage exceeded 1GB limit:", memoryUsage);
+              // Force garbage collection of unused resources
+              gl.dispose();
+            }
+          };
+
+          // Check memory usage every 5 seconds
+          const memoryCheckInterval = setInterval(checkMemoryUsage, 5000);
+
+          // Cleanup interval on unmount
+          return () => clearInterval(memoryCheckInterval);
         }}
       >
         <Physics>
@@ -744,60 +781,54 @@ function V4({ empty }: { empty?: boolean }) {
             onEnvironmentModeChange={handleEnvironmentModeChange}
             onCharacterHeightChange={setCharacterHeight}
           />
-          <group rotation={[0, -Math.PI / 2, 0]}>
-            <Suspense
-              fallback={<LoadingPlaceholder position={[-10, 0, -25]} />}
-            >
-              <DetmayModel
-                castShadow
-                receiveShadow
-                position={[-10, 0.1, -25]}
-                rotation={[0, -4.7, 0]}
-              />
-            </Suspense>
-            <Suspense fallback={<LoadingPlaceholder position={[-11, 0, -1]} />}>
-              <TechModel
-                position={[-11, 0, -1]}
-                rotation={[0, -4.7, 0]}
-                castShadow
-                receiveShadow
-              />
-            </Suspense>
-            <Suspense
-              fallback={<LoadingPlaceholder position={[-11.5, 0, 20]} />}
-            >
-              <WoodModel
-                position={[-11.5, 0, 20]}
-                rotation={[0, -4.7, 0]}
-                castShadow
-                receiveShadow
-              />
-            </Suspense>
-            <Suspense fallback={<LoadingPlaceholder position={[12, 0, -25]} />}>
-              <ThuysanModel
-                position={[12, 0, -25]}
-                rotation={[0, 4.7, 0]}
-                castShadow
-                receiveShadow
-              />
-            </Suspense>
-            <Suspense fallback={<LoadingPlaceholder position={[10, 0, -4]} />}>
-              <ThucongModel
-                position={[10, 0, -4]}
-                rotation={[0, 4.7, 0]}
-                castShadow
-                receiveShadow
-              />
-            </Suspense>
-            <Suspense fallback={<LoadingPlaceholder position={[12, 0, 15]} />}>
-              <FoodModel
-                position={[12, 0, 20]}
-                rotation={[0, 4.7, 0]}
-                castShadow
-                receiveShadow
-              />
-            </Suspense>
-          </group>
+          <Suspense fallback={<LoadingPlaceholder position={[-10, 0, -25]} />}>
+            <DetmayModel
+              castShadow
+              receiveShadow
+              position={[20, 0, -10]}
+              rotation={[0, 0, 0]}
+            />
+          </Suspense>
+          <Suspense fallback={<LoadingPlaceholder position={[-11, 0, -1]} />}>
+            <TechModel
+              position={[0, 0, -11]}
+              rotation={[0, 0, 0]}
+              castShadow
+              receiveShadow
+            />
+          </Suspense>
+          <Suspense fallback={<LoadingPlaceholder position={[-11.5, 0, 20]} />}>
+            <WoodModel
+              position={[-20, 0, -11]}
+              rotation={[0, 0, 0]}
+              castShadow
+              receiveShadow
+            />
+          </Suspense>
+          <Suspense fallback={<LoadingPlaceholder position={[12, 0, -25]} />}>
+            <ThuysanModel
+              position={[20, 0, 12]}
+              rotation={[0, Math.PI, 0]}
+              castShadow
+              receiveShadow
+            />
+          </Suspense>
+          <Suspense fallback={<LoadingPlaceholder position={[10, 0, -4]} />}>
+            <ThucongModel
+              position={[0, 0, 10]}
+              rotation={[0, Math.PI, 0]}
+              castShadow
+              receiveShadow
+            />
+          </Suspense>
+          <Suspense fallback={<LoadingPlaceholder position={[12, 0, 15]} />}>
+            <FoodModel
+              position={[-20, 0, 12]}
+              rotation={[0, Math.PI, 0]}
+              castShadow
+              receiveShadow
+            />
+          </Suspense>
           <CameraControls
             type={controlType}
             cameraPositions={cameraPositions}
@@ -890,4 +921,4 @@ function V4({ empty }: { empty?: boolean }) {
     </div>
   );
 }
-export const V4V = React.memo(V4);
+export const V4V = V4;

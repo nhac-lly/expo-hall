@@ -5,7 +5,7 @@ Command: npx gltfjsx@6.5.3 .\detmay_lod.gltf -t
 
 import * as THREE from "three";
 import React, { JSX, useState, useRef } from "react";
-import { useGLTF } from "@react-three/drei";
+import { Detailed, useGLTF } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
 import { GLTF } from "three-stdlib";
 
@@ -92,24 +92,9 @@ export function DetmayModel(props: JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF(
     "VR2/detmay_bk/detmay_lod.gltf"
   ) as unknown as GLTFResult;
-  const { camera } = useThree();
-  const [lodLevel, setLodLevel] = useState(0);
-  const groupRef = useRef<THREE.Group>(null);
 
-  useFrame(() => {
-    if (groupRef.current) {
-      const worldPos = new THREE.Vector3();
-      groupRef.current.getWorldPosition(worldPos);
-      const distance = camera.position.distanceTo(worldPos);
-      console.log(distance);
-      setLodLevel(
-        distance <= 10 ? 3 : distance <= 20 ? 2 : distance <= 30 ? 1 : 0
-      );
-    }
-  });
-
-  return (
-    <group ref={groupRef} {...props} dispose={null}>
+  const LOD0 = () => (
+    <group>
       <mesh
         geometry={nodes._l0_BP_Rack_Clothes_01002.geometry}
         material={materials["Inst_Rack_01.001"]}
@@ -161,246 +146,267 @@ export function DetmayModel(props: JSX.IntrinsicElements["group"]) {
         position={[-5.024, 1.703, -1.323]}
         rotation={[0, 1.571, 0]}
       />
+    </group>
+  );
 
-      {lodLevel > 0 && (
-        <>
-          {" "}
-          <mesh
-            geometry={nodes._l1_Box100001.geometry}
-            material={materials["adskMatPhysicalMaterial_1.003"]}
-            position={[-4.178, 0.554, 3.464]}
-            rotation={[-Math.PI / 2, 0, 0.847]}
-            scale={[0.002, 0.001, 0.001]}
-          />
-          <mesh
-            geometry={nodes._l1_Box100002.geometry}
-            material={materials["adskMatPhysicalMaterial_1.001"]}
-            position={[-2.614, 0.169, 1.321]}
-            rotation={[-Math.PI / 2, 0, 0.847]}
-            scale={[0.002, 0.001, 0.001]}
-          />
-          <mesh
-            geometry={nodes._l1_Box100487.geometry}
-            material={materials.adskMatPhysicalMaterial_1}
-            position={[-2.473, 0.169, 1.321]}
-            rotation={[-Math.PI / 2, 0, 0.847]}
-            scale={[0.002, 0.001, 0.001]}
-          />
-          <mesh
-            geometry={nodes._l1_Box1001384.geometry}
-            material={materials.adskMatPhysicalMaterial_1}
-            position={[-2.614, 0.169, 1.321]}
-            rotation={[-Math.PI / 2, 0, 0.847]}
-            scale={[0.002, 0.001, 0.001]}
-          />
-          <mesh
-            geometry={nodes._l1_BP_Rack_Clothes_01014.geometry}
-            material={materials["Inst_Rack_01.002"]}
-            position={[-0.214, -0.142, -3.708]}
-            rotation={[0, -0.003, 0]}
-            scale={[1.867, 1.164, 1.111]}
-          />
-          <mesh
-            geometry={nodes._l1_Cube.geometry}
-            material={materials.adskMatPhysicalMaterial_12}
-            position={[-0.204, 1.224, -3.902]}
-            scale={[3.36, 1.255, 0.131]}
-          />
-          <mesh
-            geometry={nodes._l1_Cube001.geometry}
-            material={materials["Material.004"]}
-            position={[-0.204, 1.224, -3.768]}
-            scale={[3.36, 1.255, 0.006]}
-          />
-        </>
-      )}
+  const LOD1 = () => (
+    <group>
+      <mesh
+        geometry={nodes._l1_Box100001.geometry}
+        material={materials["adskMatPhysicalMaterial_1.003"]}
+        position={[-4.178, 0.554, 3.464]}
+        rotation={[-Math.PI / 2, 0, 0.847]}
+        scale={[0.002, 0.001, 0.001]}
+      />
+      <mesh
+        geometry={nodes._l1_Box100002.geometry}
+        material={materials["adskMatPhysicalMaterial_1.001"]}
+        position={[-2.614, 0.169, 1.321]}
+        rotation={[-Math.PI / 2, 0, 0.847]}
+        scale={[0.002, 0.001, 0.001]}
+      />
+      <mesh
+        geometry={nodes._l1_Box100487.geometry}
+        material={materials.adskMatPhysicalMaterial_1}
+        position={[-2.473, 0.169, 1.321]}
+        rotation={[-Math.PI / 2, 0, 0.847]}
+        scale={[0.002, 0.001, 0.001]}
+      />
+      <mesh
+        geometry={nodes._l1_Box1001384.geometry}
+        material={materials.adskMatPhysicalMaterial_1}
+        position={[-2.614, 0.169, 1.321]}
+        rotation={[-Math.PI / 2, 0, 0.847]}
+        scale={[0.002, 0.001, 0.001]}
+      />
+      <mesh
+        geometry={nodes._l1_BP_Rack_Clothes_01014.geometry}
+        material={materials["Inst_Rack_01.002"]}
+        position={[-0.214, -0.142, -3.708]}
+        rotation={[0, -0.003, 0]}
+        scale={[1.867, 1.164, 1.111]}
+      />
+      <mesh
+        geometry={nodes._l1_Cube.geometry}
+        material={materials.adskMatPhysicalMaterial_12}
+        position={[-0.204, 1.224, -3.902]}
+        scale={[3.36, 1.255, 0.131]}
+      />
+      <mesh
+        geometry={nodes._l1_Cube001.geometry}
+        material={materials["Material.004"]}
+        position={[-0.204, 1.224, -3.768]}
+        scale={[3.36, 1.255, 0.006]}
+      />
+    </group>
+  );
 
-      {lodLevel > 1 && (
-        <>
-          {" "}
-          <mesh
-            geometry={nodes._l2_body100.geometry}
-            material={materials["Material.006"]}
-            position={[3.33, -0.042, 1.963]}
-            rotation={[Math.PI, -0.987, Math.PI]}
-            scale={0.152}
-          />
-          <mesh
-            geometry={nodes._l2_body100001.geometry}
-            material={nodes._l2_body100001.material}
-            position={[3.33, -0.042, 1.963]}
-            rotation={[Math.PI, -0.987, Math.PI]}
-            scale={0.152}
-          />
-          <mesh
-            geometry={nodes._l2_body100002.geometry}
-            material={materials["Material.009"]}
-            position={[3.33, -0.042, 1.963]}
-            rotation={[Math.PI, -0.987, Math.PI]}
-            scale={0.152}
-          />
-          <mesh
-            geometry={nodes._l2_body100004.geometry}
-            material={nodes._l2_body100004.material}
-            position={[3.33, -0.042, 1.963]}
-            rotation={[Math.PI, -0.987, Math.PI]}
-            scale={0.152}
-          />
-          <mesh
-            geometry={nodes._l2_body100006.geometry}
-            material={materials["Material.011"]}
-            position={[3.33, -0.042, 1.963]}
-            rotation={[Math.PI, -0.987, Math.PI]}
-            scale={0.152}
-          />
-          <mesh
-            geometry={nodes._l2_Box100003.geometry}
-            material={materials.adskMatPhysicalMaterial_10}
-            position={[-2.614, 0.169, 1.321]}
-            rotation={[-Math.PI / 2, 0, 0.847]}
-            scale={[0.002, 0.001, 0.001]}
-          />
-          <mesh
-            geometry={nodes._l2_Box100005.geometry}
-            material={materials.adskMatPhysicalMaterial_9}
-            position={[-2.614, 0.169, 1.321]}
-            rotation={[-Math.PI / 2, 0, 0.847]}
-            scale={[0.002, 0.001, 0.001]}
-          />
-          <group
-            position={[-4.77, 1.681, 2.801]}
-            rotation={[-Math.PI / 2, 0, 0.847]}
-            scale={[0.002, 0.001, 0.001]}
-          >
-            <mesh
-              geometry={nodes._l2_Box100010_1.geometry}
-              material={materials.adskMatPhysicalMaterial_14}
-            />
-            <mesh
-              geometry={nodes._l2_Box100010_2.geometry}
-              material={materials.adskMatPhysicalMaterial_12}
-            />
-          </group>
-          <group
-            position={[-2.8, 1.067, 2.597]}
-            rotation={[-Math.PI / 2, 0, 1.214]}
-            scale={[0.002, 0.001, 0.001]}
-          >
-            <mesh
-              geometry={nodes._l2_Box100012_1.geometry}
-              material={materials.adskMatPhysicalMaterial_7}
-            />
-            <mesh
-              geometry={nodes._l2_Box100012_2.geometry}
-              material={materials["adskMatPhysicalMaterial_10.001"]}
-            />
-            <mesh
-              geometry={nodes._l2_Box100012_3.geometry}
-              material={materials.adskMatPhysicalMaterial_6}
-            />
-          </group>
-        </>
-      )}
+  const LOD2 = () => (
+    <group>
+      <mesh
+        geometry={nodes._l2_body100.geometry}
+        material={materials["Material.006"]}
+        position={[3.33, -0.042, 1.963]}
+        rotation={[Math.PI, -0.987, Math.PI]}
+        scale={0.152}
+      />
+      <mesh
+        geometry={nodes._l2_body100001.geometry}
+        material={nodes._l2_body100001.material}
+        position={[3.33, -0.042, 1.963]}
+        rotation={[Math.PI, -0.987, Math.PI]}
+        scale={0.152}
+      />
+      <mesh
+        geometry={nodes._l2_body100002.geometry}
+        material={materials["Material.009"]}
+        position={[3.33, -0.042, 1.963]}
+        rotation={[Math.PI, -0.987, Math.PI]}
+        scale={0.152}
+      />
+      <mesh
+        geometry={nodes._l2_body100004.geometry}
+        material={nodes._l2_body100004.material}
+        position={[3.33, -0.042, 1.963]}
+        rotation={[Math.PI, -0.987, Math.PI]}
+        scale={0.152}
+      />
+      <mesh
+        geometry={nodes._l2_body100006.geometry}
+        material={materials["Material.011"]}
+        position={[3.33, -0.042, 1.963]}
+        rotation={[Math.PI, -0.987, Math.PI]}
+        scale={0.152}
+      />
+      <mesh
+        geometry={nodes._l2_Box100003.geometry}
+        material={materials.adskMatPhysicalMaterial_10}
+        position={[-2.614, 0.169, 1.321]}
+        rotation={[-Math.PI / 2, 0, 0.847]}
+        scale={[0.002, 0.001, 0.001]}
+      />
+      <mesh
+        geometry={nodes._l2_Box100005.geometry}
+        material={materials.adskMatPhysicalMaterial_9}
+        position={[-2.614, 0.169, 1.321]}
+        rotation={[-Math.PI / 2, 0, 0.847]}
+        scale={[0.002, 0.001, 0.001]}
+      />
+      <group
+        position={[-4.77, 1.681, 2.801]}
+        rotation={[-Math.PI / 2, 0, 0.847]}
+        scale={[0.002, 0.001, 0.001]}
+      >
+        <mesh
+          geometry={nodes._l2_Box100010_1.geometry}
+          material={materials.adskMatPhysicalMaterial_14}
+        />
+        <mesh
+          geometry={nodes._l2_Box100010_2.geometry}
+          material={materials.adskMatPhysicalMaterial_12}
+        />
+      </group>
+      <group
+        position={[-2.8, 1.067, 2.597]}
+        rotation={[-Math.PI / 2, 0, 1.214]}
+        scale={[0.002, 0.001, 0.001]}
+      >
+        <mesh
+          geometry={nodes._l2_Box100012_1.geometry}
+          material={materials.adskMatPhysicalMaterial_7}
+        />
+        <mesh
+          geometry={nodes._l2_Box100012_2.geometry}
+          material={materials["adskMatPhysicalMaterial_10.001"]}
+        />
+        <mesh
+          geometry={nodes._l2_Box100012_3.geometry}
+          material={materials.adskMatPhysicalMaterial_6}
+        />
+      </group>
+    </group>
+  );
 
-      {lodLevel > 2 && (
-        <>
-          <mesh
-            geometry={nodes._l3_body100003.geometry}
-            material={nodes._l3_body100003.material}
-            position={[3.33, -0.042, 1.963]}
-            rotation={[Math.PI, -0.987, Math.PI]}
-            scale={0.152}
-          />
-          <mesh
-            geometry={nodes._l3_body100005.geometry}
-            material={materials["Material.005"]}
-            position={[3.33, -0.042, 1.963]}
-            rotation={[Math.PI, -0.987, Math.PI]}
-            scale={0.152}
-          />
-          <mesh
-            geometry={nodes._l3_body100007.geometry}
-            material={nodes._l3_body100007.material}
-            position={[3.33, -0.042, 1.963]}
-            rotation={[Math.PI, -0.987, Math.PI]}
-            scale={0.152}
-          />
-          <mesh
-            geometry={nodes._l3_body103.geometry}
-            material={materials.Plastic_black_matte123123123123}
-            position={[3.33, -0.042, 1.963]}
-            rotation={[Math.PI, -0.987, Math.PI]}
-            scale={0.152}
-          />
-          <mesh
-            geometry={nodes._l3_body109.geometry}
-            material={materials.Aluminum}
-            position={[3.33, -0.042, 1.963]}
-            rotation={[Math.PI, -0.987, Math.PI]}
-            scale={0.152}
-          />
-          <mesh
-            geometry={nodes._l3_Box100004.geometry}
-            material={materials.adskMatPhysicalMaterial_11}
-            position={[-2.614, 0.169, 1.321]}
-            rotation={[-Math.PI / 2, 0, 0.847]}
-            scale={[0.002, 0.001, 0.001]}
-          />
-          <group
-            position={[-2.473, 0.169, 1.321]}
-            rotation={[-Math.PI / 2, 0, 0.847]}
-            scale={[0.002, 0.001, 0.001]}
-          >
-            <mesh
-              geometry={nodes._l3_Box100007_1.geometry}
-              material={materials["Green Lizerd"]}
-            />
-            <mesh
-              geometry={nodes._l3_Box100007_2.geometry}
-              material={materials["Fast Gold"]}
-            />
-          </group>
-          <mesh
-            geometry={nodes._l3_Box100017.geometry}
-            material={materials.adskMatPhysicalMaterial_1}
-            position={[-2.614, 0.169, 1.321]}
-            rotation={[-Math.PI / 2, 0, 0.847]}
-            scale={[0.002, 0.001, 0.001]}
-          />
-          <mesh
-            geometry={nodes._l3_Box100065.geometry}
-            material={materials.adskMatPhysicalMaterial_1}
-            position={[-2.614, 0.169, 1.321]}
-            rotation={[-Math.PI / 2, 0, 0.847]}
-            scale={[0.002, 0.001, 0.001]}
-          />
-          <mesh
-            geometry={nodes._l3_Box100074.geometry}
-            material={materials.adskMatPhysicalMaterial_1}
-            position={[-2.614, 0.169, 1.321]}
-            rotation={[-Math.PI / 2, 0, 0.847]}
-            scale={[0.002, 0.001, 0.001]}
-          />
-          <group
-            position={[-4.194, 1.147, 3.455]}
-            rotation={[-1.436, 0.132, -0.449]}
-            scale={[0.043, 0.043, 0.052]}
-          >
-            <mesh
-              geometry={nodes._l3_vm_v2_054_1.geometry}
-              material={materials["adskMatPhysicalMaterial_10.002"]}
-            />
-            <mesh
-              geometry={nodes._l3_vm_v2_054_2.geometry}
-              material={materials["adskMatPhysicalMaterial_6.001"]}
-            />
-            <mesh
-              geometry={nodes._l3_vm_v2_054_3.geometry}
-              material={materials["adskMatPhysicalMaterial_9.001"]}
-            />
-          </group>
-        </>
-      )}
+  const LOD3 = () => (
+    <group>
+      <mesh
+        geometry={nodes._l3_body100003.geometry}
+        material={nodes._l3_body100003.material}
+        position={[3.33, -0.042, 1.963]}
+        rotation={[Math.PI, -0.987, Math.PI]}
+        scale={0.152}
+      />
+      <mesh
+        geometry={nodes._l3_body100005.geometry}
+        material={materials["Material.005"]}
+        position={[3.33, -0.042, 1.963]}
+        rotation={[Math.PI, -0.987, Math.PI]}
+        scale={0.152}
+      />
+      <mesh
+        geometry={nodes._l3_body100007.geometry}
+        material={nodes._l3_body100007.material}
+        position={[3.33, -0.042, 1.963]}
+        rotation={[Math.PI, -0.987, Math.PI]}
+        scale={0.152}
+      />
+      <mesh
+        geometry={nodes._l3_body103.geometry}
+        material={materials.Plastic_black_matte123123123123}
+        position={[3.33, -0.042, 1.963]}
+        rotation={[Math.PI, -0.987, Math.PI]}
+        scale={0.152}
+      />
+      <mesh
+        geometry={nodes._l3_body109.geometry}
+        material={materials.Aluminum}
+        position={[3.33, -0.042, 1.963]}
+        rotation={[Math.PI, -0.987, Math.PI]}
+        scale={0.152}
+      />
+      <mesh
+        geometry={nodes._l3_Box100004.geometry}
+        material={materials.adskMatPhysicalMaterial_11}
+        position={[-2.614, 0.169, 1.321]}
+        rotation={[-Math.PI / 2, 0, 0.847]}
+        scale={[0.002, 0.001, 0.001]}
+      />
+      <group
+        position={[-2.473, 0.169, 1.321]}
+        rotation={[-Math.PI / 2, 0, 0.847]}
+        scale={[0.002, 0.001, 0.001]}
+      >
+        <mesh
+          geometry={nodes._l3_Box100007_1.geometry}
+          material={materials["Green Lizerd"]}
+        />
+        <mesh
+          geometry={nodes._l3_Box100007_2.geometry}
+          material={materials["Fast Gold"]}
+        />
+      </group>
+      <mesh
+        geometry={nodes._l3_Box100017.geometry}
+        material={materials.adskMatPhysicalMaterial_1}
+        position={[-2.614, 0.169, 1.321]}
+        rotation={[-Math.PI / 2, 0, 0.847]}
+        scale={[0.002, 0.001, 0.001]}
+      />
+      <mesh
+        geometry={nodes._l3_Box100065.geometry}
+        material={materials.adskMatPhysicalMaterial_1}
+        position={[-2.614, 0.169, 1.321]}
+        rotation={[-Math.PI / 2, 0, 0.847]}
+        scale={[0.002, 0.001, 0.001]}
+      />
+      <mesh
+        geometry={nodes._l3_Box100074.geometry}
+        material={materials.adskMatPhysicalMaterial_1}
+        position={[-2.614, 0.169, 1.321]}
+        rotation={[-Math.PI / 2, 0, 0.847]}
+        scale={[0.002, 0.001, 0.001]}
+      />
+      <group
+        position={[-4.194, 1.147, 3.455]}
+        rotation={[-1.436, 0.132, -0.449]}
+        scale={[0.043, 0.043, 0.052]}
+      >
+        <mesh
+          geometry={nodes._l3_vm_v2_054_1.geometry}
+          material={materials["adskMatPhysicalMaterial_10.002"]}
+        />
+        <mesh
+          geometry={nodes._l3_vm_v2_054_2.geometry}
+          material={materials["adskMatPhysicalMaterial_6.001"]}
+        />
+        <mesh
+          geometry={nodes._l3_vm_v2_054_3.geometry}
+          material={materials["adskMatPhysicalMaterial_9.001"]}
+        />
+      </group>
+    </group>
+  );
+
+  return (
+    <group {...props} dispose={null}>
+      <Detailed distances={[12, 15, 20, 25]}>
+        <group>
+          <LOD0 />
+          <LOD1 />
+          <LOD2 />
+          <LOD3 />
+        </group>
+        <group>
+          <LOD0 />
+          <LOD1 />
+          <LOD2 />
+        </group>
+        <group>
+          <LOD0 />
+          <LOD1 />
+        </group>
+        <LOD0 />
+      </Detailed>
     </group>
   );
 }
