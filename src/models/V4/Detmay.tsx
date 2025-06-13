@@ -88,7 +88,7 @@ type GLTFResult = GLTF & {
   };
 };
 
-export function Model(props: JSX.IntrinsicElements["group"]) {
+export function DetmayModel(props: JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF(
     "VR2/detmay_bk/detmay_lod.gltf"
   ) as unknown as GLTFResult;
