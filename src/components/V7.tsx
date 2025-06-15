@@ -685,7 +685,7 @@ function V4({ empty }: { empty?: boolean }) {
     () => ({
       // dpr:dpr,
       antialias:true,
-      shadows:true,
+      shadows:isMobile ? false:true,
       precision: "mediump" ,
       performance: {  min: 0.2, max: 2,  debounce: 200, current : 0.5 } satisfies Partial<Omit<Performance, "regress">>,
     }),
@@ -845,7 +845,7 @@ function V4({ empty }: { empty?: boolean }) {
             environmentIntensity={0.5}
           />}>
        <Environment
-            files="/VR2/hall.hdr"
+            files={isMobile ? "/VR2/hall-min.jpeg" : "/VR2/hall.hdr"}
             {...(environmentMode === "background"
               ? { background: true }
               : {
