@@ -835,7 +835,7 @@ function V4({ empty }: { empty?: boolean }) {
             cameraPositions={cameraPositions}
           />
           <Environment
-            files="/VR2/hall.hdr"
+            files="/VR2/hall-min.jpeg"
             {...(environmentMode === "background"
               ? { background: true }
               : {
