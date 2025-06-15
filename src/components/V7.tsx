@@ -675,7 +675,7 @@ function V4({ empty }: { empty?: boolean }) {
   } | null>(null);
   // Add mobile detection
   const isMobile = useMemo(() => {
-    if (typeof window === "undefined") return false;
+    if (typeof window === "undefined") return true;
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
       navigator.userAgent
     );
@@ -684,10 +684,10 @@ function V4({ empty }: { empty?: boolean }) {
   const qualitySettings = useMemo(
     () => ({
       // dpr:dpr,
-      antialias:true,
+      antialias:isMobile ? false:true,
       shadows:isMobile ? false:true,
       precision: "mediump" ,
-      performance: {  min: 0.2, max: 2,  debounce: 200, current : 0.5 } satisfies Partial<Omit<Performance, "regress">>,
+      performance: isMobile ?undefined: {  min: 0.2, max: 2,  debounce: 200, current : 0.5 } satisfies Partial<Omit<Performance, "regress">>,
     }),
     [isMobile]
   );
