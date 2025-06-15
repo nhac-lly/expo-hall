@@ -787,3 +787,5 @@ export default function Thuysan(props) {
 
 useGLTF.preload('/V7/THUYSAN_LOD/thuysan_L1.glb')
 useGLTF.preload('/V7/THUYSAN_LOD/thuysan_L2.glb')
+useGLTF.preload('/V7/THUYSAN_LOD/thuysan_L3.glb')
+useGLTF.preload('/V7/THUYSAN_LOD/thuysan_L4.glb')

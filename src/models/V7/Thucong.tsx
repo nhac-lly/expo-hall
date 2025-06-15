@@ -1320,3 +1320,5 @@ export default function ThuCong(props) {
 
 useGLTF.preload('/V7/THUCONG_LOD/thucong_L1.glb')
 useGLTF.preload('/V7/THUCONG_LOD/thucong_L2.glb')
+useGLTF.preload('/V7/THUCONG_LOD/thucong_L3.glb')
+useGLTF.preload('/V7/THUCONG_LOD/thucong_L4.glb')

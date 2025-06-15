@@ -624,3 +624,5 @@ export default function DetmayModel(props) {
 
 useGLTF.preload('/V7/FOOD_LOD/food_L1.glb')
 useGLTF.preload('/V7/FOOD_LOD/food_L2.glb')
+useGLTF.preload('/V7/FOOD_LOD/food_L3.glb')
+useGLTF.preload('/V7/FOOD_LOD/food_L4.glb')

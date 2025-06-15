@@ -422,3 +422,5 @@ export default function DetmayModel(props) {
 
 useGLTF.preload('/V7/DETMAY_LOD/detmay_L1.glb ')
 useGLTF.preload('/V7/DETMAY_LOD/detmay_L2.glb ')
+useGLTF.preload('/V7/DETMAY_LOD/detmay_L3.glb ')
+

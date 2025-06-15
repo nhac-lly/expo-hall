@@ -1131,3 +1131,5 @@ export default function Tech(props) {
 
 useGLTF.preload('/V7/TECH_LOD/tech_l1.glb')
 useGLTF.preload('/V7/TECH_LOD/tech_l2.glb')
+useGLTF.preload('/V7/TECH_LOD/tech_l3.glb')
+useGLTF.preload('/V7/TECH_LOD/tech_l4.glb')

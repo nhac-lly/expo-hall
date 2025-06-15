@@ -521,3 +521,5 @@ export default function WoodModel(props) {
 
 useGLTF.preload('/V7/WOOD_LOD/wood_L1.glb')
 useGLTF.preload('/V7/WOOD_LOD/wood_L2.glb')
+useGLTF.preload('/V7/WOOD_LOD/wood_L3.glb')
+useGLTF.preload('/V7/WOOD_LOD/wood_L4.glb')
