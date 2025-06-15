@@ -600,7 +600,7 @@ export default function DetmayModel(props) {
 
   return <group {...props}>
     <Detailed
-         distances={[0, 11, 15, 25 ]}>
+         distances={[10, 35, 40]}>
      <group>
           <LOD1 {...level1} />
           <LOD2 {...level2} />
@@ -616,10 +616,11 @@ export default function DetmayModel(props) {
           <LOD1 {...level1} />
           <LOD2 {...level2} />
         </group>
-        <LOD1 {...level1} />
+        {/* <LOD1 {...level1} /> */}
         {/* <group></group> */}
     </Detailed>
   </group>
 }
 
 useGLTF.preload('/V7/FOOD_LOD/food_L1.glb')
+useGLTF.preload('/V7/FOOD_LOD/food_L2.glb')

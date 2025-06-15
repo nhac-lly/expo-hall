@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, Dpr, Performance } from "@react-three/fiber";
-import { Environment, useGLTF, Html, PerformanceMonitor } from "@react-three/drei";
+import { Environment, useGLTF, Html, PerformanceMonitor, Loader } from "@react-three/drei";
 import React, {
   Suspense,
   useState,
@@ -26,7 +26,7 @@ import ThucongModel from "@/models/V7/Thucong";
 import ThuysanModel from "@/models/V7/Thuysan";
 import WoodModel from "@/models/V7/Wood";
 import  DetmayModel  from "@/models/V7/Detmay";
-import { DefaultGLProps } from "@react-three/fiber/dist/declarations/src/core/renderer";
+import { round } from "lodash-es";
 
 // Loading placeholder component
 const LoadingPlaceholder = ({
@@ -588,7 +588,9 @@ const CameraManager = ({
           onPointerUp={handleGroundMouseUp}
           receiveShadow
         >
-          <planeGeometry args={[100, 5]} />
+        
+          <planeGeometry
+          args={[70, 5]}  />
           <meshStandardMaterial
             color="#ffffff"
             transparent
@@ -616,6 +618,10 @@ const CameraManager = ({
 
       {/* Ceiling light source */}
       <mesh position={[0, 10, 0]}>
+      {/* <ambientLight intensity={0.5} 
+          color="#ffffff"
+      
+      /> */}
         <directionalLight
           intensity={10}
           color="#ffffff"
@@ -667,7 +673,6 @@ function V4({ empty }: { empty?: boolean }) {
     cost: number;
     details: string;
   } | null>(null);
-  const [dpr, setDpr] = useState(1)
   // Add mobile detection
   const isMobile = useMemo(() => {
     if (typeof window === "undefined") return false;
@@ -675,15 +680,14 @@ function V4({ empty }: { empty?: boolean }) {
       navigator.userAgent
     );
   }, []);
-
   // Adjust quality settings based on device
   const qualitySettings = useMemo(
     () => ({
-      dpr:dpr,
-      antialias:!isMobile,
-      shadows: !isMobile,
-      precision: isMobile ? "mediump" : "highp",
-      performance: {  min: 0.2, max: 1, debounce: 300, } satisfies Partial<Omit<Performance, "regress">>,
+      // dpr:dpr,
+      antialias:true,
+      shadows:true,
+      precision: "mediump" ,
+      performance: {  min: 0.2, max: 2,  debounce: 200, current : 0.5 } satisfies Partial<Omit<Performance, "regress">>,
     }),
     [isMobile]
   );
@@ -703,10 +707,12 @@ function V4({ empty }: { empty?: boolean }) {
     setEnvironmentMode(mode);
   };
 
+
+
   return (
       <div className="w-full h-full" style={{ position: "relative" }}>
-      <ControlSelector type={controlType} onChange={setControlType} />
-      <Canvas
+      {/* <ControlSelector type={controlType} onChange={setControlType} /> */}
+    <Canvas
         camera={{
           position: [cameraPosition.x, cameraPosition.y, cameraPosition.z],
           fov: 50,
@@ -749,7 +755,7 @@ function V4({ empty }: { empty?: boolean }) {
           return renderer;
         }}
         shadows={qualitySettings.shadows}
-        dpr={qualitySettings.dpr}
+        // dpr={qualitySettings.dpr}
         performance={qualitySettings.performance}
         onCreated={({ gl, size, set }) => {
           if (qualitySettings.shadows) {
@@ -776,70 +782,56 @@ function V4({ empty }: { empty?: boolean }) {
           return () => clearInterval(memoryCheckInterval);
         }}
       >
-        <PerformanceMonitor onChange={({ factor }) =>{
-          console.log(factor)
-           setDpr(0.5 + factor * 0.5)
-        }} />
         <Physics>
           <CameraManager
             onEnvironmentRadiusChange={handleEnvironmentRadiusChange}
             onEnvironmentModeChange={handleEnvironmentModeChange}
             onCharacterHeightChange={setCharacterHeight}
           />
-          <Suspense fallback={<LoadingPlaceholder position={[-10, 0, -25]} />}>
+          {/* <Suspense fallback={<LoadingPlaceholder position={[-10, 0, -25]} />}> */}
             <DetmayModel
               castShadow
               receiveShadow
               position={[20, 0, -10]}
               rotation={[0, 0, 0]}
             />
-          </Suspense>
-         <Suspense fallback={<LoadingPlaceholder position={[-11, 0, -1]} />}>
+          {/* </Suspense> */}
             <TechModel
               position={[0, 0, -11]}
               rotation={[0, 0, 0]}
               castShadow
               receiveShadow
             />
-          </Suspense>
-        <Suspense fallback={<LoadingPlaceholder position={[-11.5, 0, 20]} />}>
             <WoodModel
               position={[-20, 0, -11]}
               rotation={[0, 0, 0]}
               castShadow
               receiveShadow
             />
-          </Suspense>
-             <Suspense fallback={<LoadingPlaceholder position={[12, 0, -25]} />}>
             <ThuysanModel
               position={[20, 0, 12]}
               rotation={[0, Math.PI, 0]}
               castShadow
               receiveShadow
             />
-          </Suspense>
           
-          <Suspense fallback={<LoadingPlaceholder position={[10, 0, -4]} />}>
             <ThucongModel
               position={[0, 0, 10]}
               rotation={[0, Math.PI, 0]}
               castShadow
               receiveShadow
             />
-          </Suspense>
-          <Suspense fallback={<LoadingPlaceholder position={[12, 0, 15]} />}>
             <FoodModel
               position={[-20, 0, 12]}
               rotation={[0, Math.PI, 0]}
               castShadow
               receiveShadow
             />
-          </Suspense> 
           <CameraControls
             type={controlType}
             cameraPositions={cameraPositions}
           />
-          <Environment
+       <Suspense fallback={  <Environment
             files="/VR2/hall-min.jpeg"
             {...(environmentMode === "background"
               ? { background: true }
@@ -851,7 +843,21 @@ function V4({ empty }: { empty?: boolean }) {
                   },
                 })}
             environmentIntensity={0.5}
+          />}>
+       <Environment
+            files="/VR2/hall.hdr"
+            {...(environmentMode === "background"
+              ? { background: true }
+              : {
+                  ground: {
+                    height: 5,
+                    radius: environmentRadius,
+                    scale: 200,
+                  },
+                })}
+            environmentIntensity={0.5}
           />
+       </Suspense>
         </Physics>
       </Canvas>
       <Leva collapsed />

@@ -272,65 +272,153 @@ export function LOD2({materials,nodes}) {
   )
 }
 
-function LOD4({nodes,materials}){
+function LOD3({nodes,materials}){
   return (
     <group >
+      <group
+        position={[-4.823, 1.601, 2.115]}
+        rotation={[-Math.PI / 2, 0, 1.76]}
+        scale={[0.002, 0.001, 0.001]}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes._l3_bagest_1.geometry}
+          material={materials['Green Lizerd']}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes._l3_bagest_2.geometry}
+          material={materials['Fast Gold']}
+        />
+      </group>
       <mesh
         castShadow
         receiveShadow
-        geometry={nodes._l4_Man_mannequin002.geometry}
-        material={materials.Aluminum}
-        position={[3.256, -0.013, 1.808]}
-        rotation={[-0.014, -1.321, 0.017]}
-        scale={0.158}
+        geometry={nodes._l3_Shoes_box.geometry}
+        material={materials.adskMatPhysicalMaterial_1}
+        position={[-5.819, 0.554, 2.436]}
+        rotation={[-Math.PI / 2, 0, 0.171]}
+        scale={[0.002, 0.001, 0.001]}
+      />
+      <group
+        position={[-6.109, 0.248, 3.491]}
+        rotation={[-1.383, 0.02, -1.118]}
+        scale={[0.043, 0.043, 0.052]}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes._l3_Shose_1.geometry}
+          material={materials['adskMatPhysicalMaterial_10.002']}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes._l3_Shose_2.geometry}
+          material={materials['adskMatPhysicalMaterial_6.001']}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes._l3_Shose_3.geometry}
+          material={materials['adskMatPhysicalMaterial_9.001']}
+        />
+      </group>
+      <group
+        position={[-3.461, 2.081, 0.825]}
+        rotation={[-Math.PI / 2, 0, 1.916]}
+        scale={[0.002, 0.001, 0.001]}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes._l3_Women_mannequin_1.geometry}
+          material={materials.adskMatPhysicalMaterial_14}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes._l3_Women_mannequin_2.geometry}
+          material={materials.adskMatPhysicalMaterial_12}
+        />
+      </group>
+      <group
+        position={[-3.681, 1.067, 2.179]}
+        rotation={[-Math.PI / 2, 0, 0.688]}
+        scale={[0.002, 0.001, 0.001]}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes._l3_Women_mannequin001_1.geometry}
+          material={materials.adskMatPhysicalMaterial_7}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes._l3_Women_mannequin001_2.geometry}
+          material={materials['adskMatPhysicalMaterial_10.001']}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes._l3_Women_mannequin001_3.geometry}
+          material={materials.adskMatPhysicalMaterial_6}
+        />
+      </group>
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes._l3_Women_mannequin_box.geometry}
+        material={materials['adskMatPhysicalMaterial_1.001']}
+        position={[-3.494, 0.169, 0.903]}
+        rotation={[-Math.PI / 2, 0, 0.291]}
+        scale={[0.002, 0.001, 0.001]}
       />
       <mesh
         castShadow
         receiveShadow
-        geometry={nodes._l4_Man_mannequin001.geometry}
-        material={materials.Plastic_black_matte123123123123}
-        position={[3.256, -0.013, 1.808]}
-        rotation={[-0.014, -1.321, 0.017]}
-        scale={0.158}
+        geometry={nodes._l3_Women_mannequin_box001.geometry}
+        material={materials.adskMatPhysicalMaterial_1}
+        position={[-4.771, 0.687, 2.214]}
+        rotation={[-Math.PI / 2, 0, 1.76]}
+        scale={[0.002, 0.001, 0.001]}
       />
       <mesh
         castShadow
         receiveShadow
-        geometry={nodes._l4_Man_mannequin.geometry}
-        material={materials['Material.014']}
-        position={[3.256, -0.013, 1.808]}
-        rotation={[-0.014, -1.321, 0.017]}
-        scale={0.158}
+        geometry={nodes._l3_Women_mannequin_box002.geometry}
+        material={materials.adskMatPhysicalMaterial_1}
+        position={[-3.736, 0.28, 1.831]}
+        rotation={[-Math.PI / 2, 0, -0.349]}
+        scale={[0.002, 0.001, 0.001]}
       />
     </group>
   )
 }
 
 export default function DetmayModel(props) {
-  const [level1,level2 , level4] = useGLTF(['/V7/DETMAY_LOD/detmay_L1.glb','/V7/DETMAY_LOD/detmay_L2.glb','/V7/DETMAY_LOD/detmay_L4.glb'])
+  const [level1,level2 , level3] = useGLTF(['/V7/DETMAY_LOD/detmay_L1.glb','/V7/DETMAY_LOD/detmay_L2.glb','/V7/DETMAY_LOD/detmay_L3.glb'])
 
   return <group {...props}>
     <Detailed
-         distances={[0, 11, 15, 25 ]}>
+        distances={[10, 35, 40]}>
      <group>
           <LOD1 {...level1} />
           <LOD2 {...level2} />
-          {/* <LOD3 {...level3} /> */}
-          <LOD4 {...level4} />
+          <LOD3 {...level3} />
+          {/* <LOD4s {...level4} /> */}
         </group>
         <group>
           <LOD1 {...level1} />
           <LOD2 {...level2} />
-          {/* <LOD3 {...level3} /> */}
+          <LOD3 {...level3} />
         </group>
         <group>
           <LOD1 {...level1} />
           <LOD2 {...level2} />
         </group>
-        <LOD1 {...level1} />
-        {/* <group></group> */}
     </Detailed>
   </group>
 }
 
-// useGLTF.preload('/V7/DETMAY_LOD/detmay_L1.glb ')
+useGLTF.preload('/V7/DETMAY_LOD/detmay_L1.glb ')
+useGLTF.preload('/V7/DETMAY_LOD/detmay_L2.glb ')

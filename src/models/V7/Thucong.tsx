@@ -1296,8 +1296,8 @@ export default function ThuCong(props) {
 
   return <group {...props}>
     <Detailed
-         distances={[0, 11, 15, 25 ]}>
-     <group>
+       distances={[10, 35, 40]}>
+      <group>
           <LOD1 {...level1} />
           <LOD2 {...level2} />
           <LOD3 {...level3} />
@@ -1312,10 +1312,11 @@ export default function ThuCong(props) {
           <LOD1 {...level1} />
           <LOD2 {...level2} />
         </group>
-        <LOD1 {...level1} />
+        {/* <LOD1 {...level1} /> */}
         {/* <group></group> */}
     </Detailed>
   </group>
 }
 
-// useGLTF.preload('/V7/THUCONG_LOD/thucong_L1.glb')
+useGLTF.preload('/V7/THUCONG_LOD/thucong_L1.glb')
+useGLTF.preload('/V7/THUCONG_LOD/thucong_L2.glb')

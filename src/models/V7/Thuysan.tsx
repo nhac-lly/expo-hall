@@ -7,8 +7,17 @@ export function LOD1({nodes,materials}) {
       <mesh
         castShadow
         receiveShadow
+        geometry={nodes._l1_FLOOR.geometry}
+        material={materials['Material.003']}
+        position={[-0.064, 0, 0]}
+        rotation={[0, 1.571, 0]}
+        scale={[1.4, 4.227, 1.502]}
+      />
+      <mesh
+        castShadow
+        receiveShadow
         geometry={nodes._l1_Panel.geometry}
-        material={materials['LCD06.001']}
+        material={materials.LCD06}
         position={[0.044, 5.781, -4.975]}
         scale={[1.484, 1, 1]}
       />
@@ -754,7 +763,7 @@ export default function Thuysan(props) {
 
   return <group {...props}>
     <Detailed
-         distances={[0, 11, 15, 25 ]}>
+       distances={[10, 35, 40 ]}>
      <group>
           <LOD1 {...level1} />
           <LOD2 {...level2} />
@@ -770,10 +779,11 @@ export default function Thuysan(props) {
           <LOD1 {...level1} />
           <LOD2 {...level2} />
         </group>
-        <LOD1 {...level1} />
+        {/* <LOD1 {...level1} /> */}
         {/* <group></group> */}
     </Detailed>
   </group>
 }
 
-// useGLTF.preload('/V7/THUYSAN_LOD/thuysan_L1.glb')
+useGLTF.preload('/V7/THUYSAN_LOD/thuysan_L1.glb')
+useGLTF.preload('/V7/THUYSAN_LOD/thuysan_L2.glb')
