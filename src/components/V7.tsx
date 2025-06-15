@@ -1,7 +1,7 @@
 "use client";
 
-import { Canvas } from "@react-three/fiber";
-import { Environment, useGLTF, Html } from "@react-three/drei";
+import { Canvas, Dpr, Performance } from "@react-three/fiber";
+import { Environment, useGLTF, Html, PerformanceMonitor } from "@react-three/drei";
 import React, {
   Suspense,
   useState,
@@ -26,6 +26,7 @@ import ThucongModel from "@/models/V7/Thucong";
 import ThuysanModel from "@/models/V7/Thuysan";
 import WoodModel from "@/models/V7/Wood";
 import  DetmayModel  from "@/models/V7/Detmay";
+import { DefaultGLProps } from "@react-three/fiber/dist/declarations/src/core/renderer";
 
 // Loading placeholder component
 const LoadingPlaceholder = ({
@@ -666,7 +667,7 @@ function V4({ empty }: { empty?: boolean }) {
     cost: number;
     details: string;
   } | null>(null);
-
+  const [dpr, setDpr] = useState(1)
   // Add mobile detection
   const isMobile = useMemo(() => {
     if (typeof window === "undefined") return false;
@@ -678,11 +679,11 @@ function V4({ empty }: { empty?: boolean }) {
   // Adjust quality settings based on device
   const qualitySettings = useMemo(
     () => ({
-      dpr: 1,
-      antialias: !isMobile,
+      dpr:dpr,
+      antialias:!isMobile,
       shadows: !isMobile,
       precision: isMobile ? "mediump" : "highp",
-      performance: { min: isMobile ? 0.1 : 0.5 },
+      performance: {  min: 0.2, max: 1, debounce: 300, } satisfies Partial<Omit<Performance, "regress">>,
     }),
     [isMobile]
   );
@@ -715,25 +716,25 @@ function V4({ empty }: { empty?: boolean }) {
         gl={async (defaults) => {
           const options = {
             antialias: qualitySettings.antialias,
-            powerPreference: "high-performance",
+            powerPreference: isMobile ? "low-power" : "high-performance",
             alpha: true,
             stencil: true,
             depth: true,
-            toneMappingExposure: 1.0,
+            // toneMappingExposure: 1.0,
             precision: qualitySettings.precision,
             // Add VRAM management settings
-            maxMorphTargets: 8,
-            maxMorphNormals: 4,
-            maxTextureSize: 2048,
-            maxCubemapSize: 2048,
-            maxAnisotropy: 4,
-            maxPrecision: "mediump",
-            maxMemoryUsage: 1024 * 1024 * 1024, // 1GB in bytes
-          };
+            // maxMorphTargets: 8,
+            // maxMorphNormals: 4,
+            // maxTextureSize: 2048,
+            // maxCubemapSize: 2048,
+            // maxAnisotropy: 4,
+            // maxPrecision: "mediump",
+            // maxMemoryUsage: 1024 * 1024 * 1024, // 1GB in bytes
+          } satisfies THREE.WebGLRendererParameters;
           const renderer = new THREE.WebGLRenderer({
             ...defaults,
             ...options,
-          } as any);
+          } );
 
           // Set texture memory limits
           renderer.info.autoReset = false;
@@ -775,6 +776,10 @@ function V4({ empty }: { empty?: boolean }) {
           return () => clearInterval(memoryCheckInterval);
         }}
       >
+        <PerformanceMonitor onChange={({ factor }) =>{
+          console.log(factor)
+           setDpr(0.5 + factor * 0.5)
+        }} />
         <Physics>
           <CameraManager
             onEnvironmentRadiusChange={handleEnvironmentRadiusChange}
