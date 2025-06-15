@@ -722,7 +722,7 @@ function V4({ empty }: { empty?: boolean }) {
         gl={async (defaults) => {
           const options = {
             antialias: qualitySettings.antialias,
-            powerPreference: isMobile ? "low-power" : "high-performance",
+            powerPreference: "high-performance",
             alpha: true,
             stencil: true,
             depth: true,
