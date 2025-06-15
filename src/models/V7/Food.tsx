@@ -600,7 +600,7 @@ export default function DetmayModel(props) {
 
   return <group {...props}>
     <Detailed
-         distances={[0, 11, 15, 25 , 30]}>
+         distances={[0, 11, 15, 25 ]}>
      <group>
           <LOD1 {...level1} />
           <LOD2 {...level2} />
@@ -617,7 +617,7 @@ export default function DetmayModel(props) {
           <LOD2 {...level2} />
         </group>
         <LOD1 {...level1} />
-        <group></group>
+        {/* <group></group> */}
     </Detailed>
   </group>
 }
