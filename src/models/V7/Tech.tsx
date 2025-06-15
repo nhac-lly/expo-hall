@@ -1103,7 +1103,7 @@ export function LOD4({nodes,materials}) {
 }
 
 export default function Tech(props) {
-  const [level1,level2 , level3 , level4] = useGLTF(['/V7/TECH_LOD/tech_L1.glb','/V7/TECH_LOD/tech_L2.glb','/V7/TECH_LOD/tech_L3.glb','/V7/TECH_LOD/tech_L4.glb'])
+  const [level1,level2 , level3 , level4] = useGLTF(['/V7/TECH_LOD/tech_l1.glb','/V7/TECH_LOD/tech_l2.glb','/V7/TECH_LOD/tech_l3.glb','/V7/TECH_LOD/tech_l4.glb'])
 
   return <group {...props}>
     <Detailed
