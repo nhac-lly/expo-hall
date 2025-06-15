@@ -433,7 +433,7 @@ export function CameraControls({
       checkGamepads();
 
       // Check periodically
-      const interval = setInterval(checkGamepads, 1000);
+      const interval = setInterval(checkGamepads, 1500);
 
       return () => clearInterval(interval);
     }
