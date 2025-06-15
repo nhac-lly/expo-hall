@@ -683,7 +683,7 @@ function V4({ empty }: { empty?: boolean }) {
   // Adjust quality settings based on device
   const qualitySettings = useMemo(
     () => ({
-      // dpr:dpr,
+      dpr:isMobile ? 0.5: undefined,
       antialias:isMobile ? false:true,
       shadows:isMobile ? false:true,
       precision: "mediump" ,
