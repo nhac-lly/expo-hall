@@ -7,6 +7,8 @@ import {
   Html,
   PerformanceMonitor,
   Loader,
+  ContactShadows,
+  CubeCamera,
 } from "@react-three/drei";
 import React, {
   Suspense,
@@ -586,6 +588,43 @@ const CameraManager = ({
 
       {/* Ground plane for clicking */}
       <RigidBody type="fixed" colliders="cuboid">
+        <ContactShadows
+          renderOrder={2}
+          frames={1}
+          resolution={1024}
+          scale={120}
+          blur={2}
+          opacity={0.6}
+          far={100}
+        />
+        <CubeCamera
+          frames={1}
+          position={[camera.position.x, 0, camera.position.z]}
+          rotation={[0, 0, 0]}
+          resolution={2048}
+          near={1}
+          far={1000}
+        >
+          {(texture) => (
+            <mesh
+              name="full-ground"
+              rotation={[-Math.PI / 2, 0, 0]}
+              receiveShadow
+              position={[0, 0.01, 0]}
+              scale={1}
+            >
+              <planeGeometry args={[100, 100]} />
+              <meshStandardMaterial
+                color="#aaa"
+                transparent
+                opacity={0.2}
+                envMap={texture}
+                roughness={0}
+                metalness={1}
+              />
+            </mesh>
+          )}
+        </CubeCamera>
         <mesh
           name="ground"
           rotation={[-Math.PI / 2, 0, 0]}
@@ -595,14 +634,7 @@ const CameraManager = ({
           receiveShadow
         >
           <planeGeometry args={[70, 5]} />
-          <meshStandardMaterial
-            color="#ffffff"
-            transparent
-            opacity={0}
-            side={THREE.DoubleSide}
-            roughness={0.8}
-            metalness={0.2}
-          />
+          <meshStandardMaterial color="#ffffff" transparent opacity={0} />
         </mesh>
         <CuboidCollider args={[50, 0.1, 50]} />
       </RigidBody>
@@ -773,6 +805,7 @@ function V4({ empty }: { empty?: boolean }) {
           const checkMemoryUsage = () => {
             const info = gl.info;
             const memoryUsage = info.memory.geometries + info.memory.textures;
+            console.log("memoryUsage", memoryUsage);
             if (memoryUsage > 1024 * 1024 * 1024) {
               // 1GB
               console.warn("VRAM usage exceeded 1GB limit:", memoryUsage);
@@ -837,37 +870,19 @@ function V4({ empty }: { empty?: boolean }) {
             type={controlType}
             cameraPositions={cameraPositions}
           />
-          <Suspense
-            fallback={
-              <Environment
-                files="/VR2/hall.hdr"
-                {...(environmentMode === "background"
-                  ? { background: true }
-                  : {
-                      ground: {
-                        height: 2.5,
-                        radius: environmentRadius,
-                        scale: 900,
-                      },
-                    })}
-                environmentIntensity={0.5}
-              />
-            }
-          >
-            <Environment
-              files={isMobile ? "/VR2/hall.hdr" : "/VR2/big_hall.hdr"}
-              {...(environmentMode === "background"
-                ? { background: true }
-                : {
-                    ground: {
-                      height: 2.5,
-                      radius: environmentRadius,
-                      scale: 900,
-                    },
-                  })}
-              environmentIntensity={0.5}
-            />
-          </Suspense>
+          <Environment
+            files={isMobile ? "/VR2/hall.hdr" : "/VR2/big_hall.hdr"}
+            {...(environmentMode === "background"
+              ? { background: true }
+              : {
+                  ground: {
+                    height: 2.5,
+                    radius: environmentRadius,
+                    scale: 900,
+                  },
+                })}
+            environmentIntensity={0.5}
+          />
         </Physics>
       </Canvas>
       <Leva collapsed />
