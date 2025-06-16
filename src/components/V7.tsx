@@ -1,7 +1,13 @@
 "use client";
 
 import { Canvas, Dpr, Performance } from "@react-three/fiber";
-import { Environment, useGLTF, Html, PerformanceMonitor, Loader } from "@react-three/drei";
+import {
+  Environment,
+  useGLTF,
+  Html,
+  PerformanceMonitor,
+  Loader,
+} from "@react-three/drei";
 import React, {
   Suspense,
   useState,
@@ -20,12 +26,12 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { Leva, monitor, useControls } from "leva";
 import { Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
 // import { DetmayModel } from "@/models/V4/Detmay";
-import FoodModel  from "@/models/V7/Food";
+import FoodModel from "@/models/V7/Food";
 import TechModel from "@/models/V7/Tech";
 import ThucongModel from "@/models/V7/Thucong";
 import ThuysanModel from "@/models/V7/Thuysan";
 import WoodModel from "@/models/V7/Wood";
-import  DetmayModel  from "@/models/V7/Detmay";
+import DetmayModel from "@/models/V7/Detmay";
 import { round } from "lodash-es";
 
 // Loading placeholder component
@@ -588,9 +594,7 @@ const CameraManager = ({
           onPointerUp={handleGroundMouseUp}
           receiveShadow
         >
-        
-          <planeGeometry
-          args={[70, 5]}  />
+          <planeGeometry args={[70, 5]} />
           <meshStandardMaterial
             color="#ffffff"
             transparent
@@ -618,7 +622,7 @@ const CameraManager = ({
 
       {/* Ceiling light source */}
       <mesh position={[0, 10, 0]}>
-      {/* <ambientLight intensity={0.5} 
+        {/* <ambientLight intensity={0.5} 
           color="#ffffff"
       
       /> */}
@@ -683,11 +687,15 @@ function V4({ empty }: { empty?: boolean }) {
   // Adjust quality settings based on device
   const qualitySettings = useMemo(
     () => ({
-      dpr:isMobile ? 0.5: undefined,
-      antialias:isMobile ? false:true,
-      shadows:isMobile ? false:true,
-      precision: "mediump" ,
-      performance: isMobile ?undefined: {  min: 0.2, max: 2,  debounce: 200, current : 0.5 } satisfies Partial<Omit<Performance, "regress">>,
+      dpr: isMobile ? 0.5 : undefined,
+      antialias: isMobile ? false : true,
+      shadows: isMobile ? false : true,
+      precision: "mediump",
+      performance: isMobile
+        ? undefined
+        : ({ min: 0.2, max: 2, debounce: 200, current: 0.5 } satisfies Partial<
+            Omit<Performance, "regress">
+          >),
     }),
     [isMobile]
   );
@@ -707,12 +715,10 @@ function V4({ empty }: { empty?: boolean }) {
     setEnvironmentMode(mode);
   };
 
-
-
   return (
-      <div className="w-full h-full" style={{ position: "relative" }}>
+    <div className="w-full h-full" style={{ position: "relative" }}>
       {/* <ControlSelector type={controlType} onChange={setControlType} /> */}
-    <Canvas
+      <Canvas
         camera={{
           position: [cameraPosition.x, cameraPosition.y, cameraPosition.z],
           fov: 50,
@@ -740,7 +746,7 @@ function V4({ empty }: { empty?: boolean }) {
           const renderer = new THREE.WebGLRenderer({
             ...defaults,
             ...options,
-          } );
+          });
 
           // Set texture memory limits
           renderer.info.autoReset = false;
@@ -789,75 +795,79 @@ function V4({ empty }: { empty?: boolean }) {
             onCharacterHeightChange={setCharacterHeight}
           />
           {/* <Suspense fallback={<LoadingPlaceholder position={[-10, 0, -25]} />}> */}
-            <DetmayModel
-              castShadow
-              receiveShadow
-              position={[20, 0, -10]}
-              rotation={[0, 0, 0]}
-            />
+          <DetmayModel
+            castShadow
+            receiveShadow
+            position={[20, 0, -10]}
+            rotation={[0, 0, 0]}
+          />
           {/* </Suspense> */}
-            <TechModel
-              position={[0, 0, -11]}
-              rotation={[0, 0, 0]}
-              castShadow
-              receiveShadow
-            />
-            <WoodModel
-              position={[-20, 0, -11]}
-              rotation={[0, 0, 0]}
-              castShadow
-              receiveShadow
-            />
-            <ThuysanModel
-              position={[20, 0, 12]}
-              rotation={[0, Math.PI, 0]}
-              castShadow
-              receiveShadow
-            />
-          
-            <ThucongModel
-              position={[0, 0, 10]}
-              rotation={[0, Math.PI, 0]}
-              castShadow
-              receiveShadow
-            />
-            <FoodModel
-              position={[-20, 0, 12]}
-              rotation={[0, Math.PI, 0]}
-              castShadow
-              receiveShadow
-            />
+          <TechModel
+            position={[0, 0, -11]}
+            rotation={[0, 0, 0]}
+            castShadow
+            receiveShadow
+          />
+          <WoodModel
+            position={[-20, 0, -11]}
+            rotation={[0, 0, 0]}
+            castShadow
+            receiveShadow
+          />
+          <ThuysanModel
+            position={[20, 0, 12]}
+            rotation={[0, Math.PI, 0]}
+            castShadow
+            receiveShadow
+          />
+
+          <ThucongModel
+            position={[0, 0, 10]}
+            rotation={[0, Math.PI, 0]}
+            castShadow
+            receiveShadow
+          />
+          <FoodModel
+            position={[-20, 0, 12]}
+            rotation={[0, Math.PI, 0]}
+            castShadow
+            receiveShadow
+          />
           <CameraControls
             type={controlType}
             cameraPositions={cameraPositions}
           />
-       <Suspense fallback={  <Environment
-            files="/VR2/hall-min.jpeg"
-            {...(environmentMode === "background"
-              ? { background: true }
-              : {
-                  ground: {
-                    height: 5,
-                    radius: environmentRadius,
-                    scale: 200,
-                  },
-                })}
-            environmentIntensity={0.5}
-          />}>
-       <Environment
-            files={isMobile ? "/VR2/hall-min.jpeg" : "/VR2/hall.hdr"}
-            {...(environmentMode === "background"
-              ? { background: true }
-              : {
-                  ground: {
-                    height: 5,
-                    radius: environmentRadius,
-                    scale: 200,
-                  },
-                })}
-            environmentIntensity={0.5}
-          />
-       </Suspense>
+          <Suspense
+            fallback={
+              <Environment
+                files="/VR2/hall.hdr"
+                {...(environmentMode === "background"
+                  ? { background: true }
+                  : {
+                      ground: {
+                        height: 2.5,
+                        radius: environmentRadius,
+                        scale: 900,
+                      },
+                    })}
+                environmentIntensity={0.5}
+              />
+            }
+          >
+            <Environment
+              files={isMobile ? "/VR2/hall.hdr" : "/VR2/big_hall.hdr"}
+              {...(environmentMode === "background"
+                ? { background: true }
+                : {
+                    ground: {
+                      height: 2.5,
+                      radius: environmentRadius,
+                      scale: 900,
+                    },
+                  })}
+              environmentIntensity={0.5}
+            />
+          </Suspense>
         </Physics>
       </Canvas>
       <Leva collapsed />
