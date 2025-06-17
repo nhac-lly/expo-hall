@@ -521,7 +521,7 @@ const CameraManager = ({
         <CuboidCollider args={[0.5, 0.5, 0.5]} />
       </RigidBody>
 
-      <CubeCamera
+      {/* <CubeCamera
         frames={1}
         position={[camera.position.x, 0.001, camera.position.z]}
         rotation={[0, 0, 0]}
@@ -546,7 +546,7 @@ const CameraManager = ({
             />
           </mesh>
         )}
-      </CubeCamera>
+      </CubeCamera> */}
       <mesh
         name="ground"
         rotation={[-Math.PI / 2, 0, 0]}
