@@ -14,11 +14,11 @@ export default function SankhauModel(props: any) {
         receiveShadow
         geometry={nodes.biz.geometry}
         material={materials["Material.004"]}
-        position={[3.886, 0.638, -38.762]}
-        rotation={[Math.PI / 2, 0, 0.58]}
-        scale={[0.036, 0.184, 0.036]}
+        position={[3.8858, 0.6381, -38.7622]}
+        rotation={[Math.PI / 2, 0, 0.5805]}
+        scale={[0.0364, 0.1835, 0.0364]}
       />
-      <group position={[-1.151, 0.349, -39.038]} scale={2.03}>
+      <group position={[-1.1507, 0.3489, -39.0381]} scale={2.0296}>
         <mesh
           castShadow
           receiveShadow
@@ -44,7 +44,7 @@ export default function SankhauModel(props: any) {
           material={materials.wire_008061138}
         />
       </group>
-      <group position={[-1.124, 0.359, -37.535]} scale={2.03}>
+      <group position={[-1.1238, 0.3593, -37.535]} scale={2.0296}>
         <mesh
           castShadow
           receiveShadow
@@ -64,7 +64,7 @@ export default function SankhauModel(props: any) {
           material={materials.wire_225087143}
         />
       </group>
-      <group position={[0, -0.07, -39.762]} scale={2.03}>
+      <group position={[0, -0.07, -39.7616]} scale={2.0296}>
         <mesh
           castShadow
           receiveShadow
@@ -89,17 +89,17 @@ export default function SankhauModel(props: any) {
         receiveShadow
         geometry={nodes.KV_LED001.geometry}
         material={materials["Material.003"]}
-        position={[0, 0.277, -39.65]}
-        scale={2.03}
+        position={[0, 0.277, -39.6501]}
+        scale={2.0296}
       />
       <mesh
         castShadow
         receiveShadow
         geometry={nodes.HALL_BACK_DOOR.geometry}
         material={materials["HALL_BACK DOOR"]}
-        position={[0.049, 2.148, 50.759]}
+        position={[0.0489, 2.1484, 50.7591]}
         rotation={[Math.PI / 2, 0, 0]}
-        scale={5.355}
+        scale={5.3553}
       />
     </group>
   );
